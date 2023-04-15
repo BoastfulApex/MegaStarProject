@@ -1,0 +1,292 @@
+import psycopg2
+import os 
+import uuid
+import datetime
+import random 
+import json
+
+from dotenv import load_dotenv
+
+from .get_data import categories, sub_categories, manufacturers, clients, items, invoices
+from .db_get_id import *
+
+load_dotenv()
+
+
+def generateOTP():
+    return random.randint(111111, 999999)
+
+
+DB_USERNAME = os.getenv('DB_USERNAME' , None)
+DB_PASS     = os.getenv('DB_PASS'     , None)
+DB_HOST     = os.getenv('DB_HOST'     , None)
+DB_PORT     = os.getenv('DB_PORT'     , None)
+DB_NAME     = os.getenv('DB_NAME'     , None)
+
+
+
+def add_category(conn, groupname, number):
+    cursor = conn.cursor()
+    guid = str(uuid.uuid4())
+    created_date = datetime.datetime.now()
+    try:
+        cursor.execute("SELECT * FROM main_category WHERE number = %s AND groupname = %s LIMIT 1", [number, groupname])
+        row = cursor.fetchone()
+    except:
+        row = None
+    if row is not None:
+        return row
+    else:
+        cursor.execute("INSERT INTO main_category (guid, number, groupname, created_date) VALUES (%s, %s, %s, %s) RETURNING id", [guid, number, groupname, created_date])
+        new_row = cursor.fetchone()
+        return new_row
+    
+
+def add_subcategory(conn, code, name, u_group):
+    cursor = conn.cursor()
+    guid = str(uuid.uuid4())
+    created_date = datetime.datetime.now()
+    cursor.execute("SELECT * FROM main_subcategory WHERE code = %s AND name = %s LIMIT 1", [code, name])
+    row = cursor.fetchone()
+
+    if row:
+        return row
+    else:
+        cursor.execute("INSERT INTO main_subcategory (guid, code, name, created_date, category_id) VALUES (%s, %s, %s, %s, %s) RETURNING id", [guid, code, name, created_date, str(get_category_by_number(u_group))])
+        new_row = cursor.fetchone()
+        return new_row
+
+
+def add_manufacturer(conn, code, name):
+    cursor = conn.cursor()
+    guid = str(uuid.uuid4())
+    created_date = datetime.datetime.now()
+    cursor.execute("SELECT * FROM main_manufacturer WHERE code = %s AND manufacturer_name = %s LIMIT 1", [code, name])
+    row = cursor.fetchone()
+
+    if row:
+        return row
+    else:
+        cursor.execute("INSERT INTO main_manufacturer (guid, code, manufacturer_name, created_date) VALUES (%s, %s, %s, %s) RETURNING id", [guid, code, name, created_date])
+        new_row = cursor.fetchone()
+        return new_row
+   
+
+def add_client(conn, cardcode, cardname, phone):
+    cursor = conn.cursor()
+    created_date = datetime.datetime.now()
+    if phone:
+        phone = phone[1:]
+        cursor.execute("SELECT * FROM authentication_megauser WHERE phone = %s LIMIT 1", [phone])
+        row = cursor.fetchone()
+
+        if row:
+            return row
+        else:
+            otp = generateOTP()
+            cursor.execute("INSERT INTO authentication_megauser (phone, password, is_superuser, date_joined, is_staff, is_active, card_code, card_name, otp) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [phone, otp, False, created_date, False, True, cardcode, cardname, otp])
+            new_row = cursor.fetchone()
+            return new_row
+    else:
+        pass
+
+
+def add_item(conn, itemcode, itemname, category, sub_category, manufacturer):
+    cursor = conn.cursor()
+    created_date = datetime.datetime.now()
+    guid = str(uuid.uuid4())
+    cursor.execute("SELECT * FROM main_product WHERE itemcode = %s LIMIT 1", [itemcode])
+    row = cursor.fetchone()
+    if row:
+        return row
+    else:
+        if sub_category != "None":
+            cursor.execute("INSERT INTO main_product (guid, created_date, itemcode, itemname, category_id, sub_category_id, manufacturer_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [guid, created_date, itemcode, itemname, get_category_by_number(category), get_subcategory_by_code(sub_category), get_manufacturer_by_code(manufacturer), 0])
+            new_row = cursor.fetchone()
+            return new_row
+        else:
+            cursor.execute("INSERT INTO main_product (guid, created_date, itemcode, itemname, category_id, manufacturer_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id", [guid, created_date, itemcode, itemname, get_category_by_number(category), get_manufacturer_by_code(manufacturer), 0])
+            new_row = cursor.fetchone()
+            return new_row
+
+
+def add_order_detail(conn, order_id, ItemCode, count, U_priceUZS, Price):
+    cursor = conn.cursor()
+    product_id = get_item_by_itemcode(ItemCode)
+    if product_id is not None:
+        cursor.execute("INSERT INTO main_orderdetail (order_id, product_id, count, total, total_uzs) VALUES (%s, %s, %s, %s, %s) RETURNING id", [order_id, product_id, count, Price, U_priceUZS])
+        new_row = cursor.fetchone()
+        print(new_row[0])
+        return new_row
+
+def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
+    cursor = conn.cursor()
+    user = get_user_by_cardcode(CardCode)
+    if user is not None:
+        cursor.execute("SELECT * FROM main_order WHERE doc_entry = %s AND doc_num = %s LIMIT 1", [DocEntry, DocNum])
+        row = cursor.fetchone()
+        
+        if row is not None:
+            return row[0]
+        else:
+            guid = str(uuid.uuid4())
+            date_format = "%Y-%m-%dT%H:%M:%SZ"
+            created_date =  datetime.datetime.strptime(DocDate, date_format)
+            cursor.execute("INSERT INTO main_order (guid, created_date, user_id, doc_entry, doc_num, summa, u_sumuzs, is_sale) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [guid, created_date, user, DocEntry, DocNum, DocTotal, U_sumUZS, False])
+            new_row = cursor.fetchone()
+            return new_row[0]
+    else: 
+        return None 
+
+def add_postgres_invoices():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    json_data = invoices()
+       
+    for data in json_data:
+        order = add_order(conn=conn,
+                  DocEntry=str(data['DocEntry']), 
+                  CardCode=str(data['CardCode']), 
+                  DocNum=str(data['DocNum']), 
+                  DocTotal=data['DocTotal'],
+                  DocDate=str(data['DocDate']),
+                  U_sumUZS = data['U_sumUZS '])
+        details = data['DocumentLines']
+        for detail in details:
+            if order is not None:               
+                orderdetail = add_order_detail(
+                    conn=conn,
+                    order_id=str(order),
+                    Price=detail['Price'],
+                    count=detail['Quantity'],
+                    U_priceUZS=detail['U_priceUZS'],
+                    ItemCode=detail['ItemCode']
+                    )
+            else:
+                print("None Order")
+    conn.commit()
+    conn.close()
+
+
+def add_postgres_category():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    json_data = categories()
+    
+    for data in json_data:
+        category = add_category(
+            conn=conn,
+            groupname=str(data['GroupName']),
+            number=str(data['Number'])
+        )
+        print(category[0])
+    conn.commit()
+    conn.close()
+
+
+def add_postgres_users():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    json_data = clients()
+    
+    for data in json_data:
+        if data['Phone1'] is not None:
+            client = add_client(
+                conn=conn,
+                phone=data['Phone1'][1:],
+                cardcode=data['CardCode'],
+                cardname=data['CardName']
+            )
+            print(client[0])
+    conn.commit()
+    conn.close()
+
+
+def add_postgres_subcategory():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    json_data = sub_categories()
+    
+    for data in json_data:
+        category = add_subcategory(
+            conn=conn,
+            code=str(data['Code']),
+            name=str(data['Name']),
+            u_group=str(data['U_group'])
+        )
+        print(category[0])
+        
+    conn.commit()
+    conn.close()
+
+
+def add_postgres_manufacturer():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    json_data = manufacturers()
+    
+    for data in json_data:
+        man = add_manufacturer(
+            conn=conn,
+            code=str(data['Code']),
+            name=str(data['ManufacturerName']),
+        )
+        print(man[0])
+    conn.commit()
+    conn.close()
+
+
+def add_postgres_item():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    json_data = items()
+    
+    for data in json_data:
+        item = add_item(
+            conn=conn,
+            itemcode=str(data['ItemCode']),
+            itemname=str(data['ItemName']),
+            category=str(data['ItemsGroupCode']),
+            manufacturer=str(data['Manufacturer']),
+            sub_category=str(data['U_Subgroup']),
+        )
+        print(item[0])
+    conn.commit()
+    conn.close()
+
