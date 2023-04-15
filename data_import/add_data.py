@@ -116,7 +116,6 @@ def add_order_detail(conn, order_id, ItemCode, count, U_priceUZS, Price):
     if product_id is not None:
         cursor.execute("INSERT INTO main_orderdetail (order_id, product_id, count, total, total_uzs) VALUES (%s, %s, %s, %s, %s) RETURNING id", [order_id, product_id, count, Price, U_priceUZS])
         new_row = cursor.fetchone()
-        print(new_row[0])
         return new_row
 
 def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
@@ -168,8 +167,6 @@ def add_postgres_invoices():
                     U_priceUZS=detail['U_priceUZS'],
                     ItemCode=detail['ItemCode']
                     )
-            else:
-                print("None Order")
     conn.commit()
     conn.close()
 
@@ -191,7 +188,6 @@ def add_postgres_category():
             groupname=str(data['GroupName']),
             number=str(data['Number'])
         )
-        print(category[0])
     conn.commit()
     conn.close()
 
@@ -215,7 +211,6 @@ def add_postgres_users():
                 cardcode=data['CardCode'],
                 cardname=data['CardName']
             )
-            print(client[0])
     conn.commit()
     conn.close()
 
@@ -238,7 +233,6 @@ def add_postgres_subcategory():
             name=str(data['Name']),
             u_group=str(data['U_group'])
         )
-        print(category[0])
         
     conn.commit()
     conn.close()
@@ -261,7 +255,6 @@ def add_postgres_manufacturer():
             code=str(data['Code']),
             name=str(data['ManufacturerName']),
         )
-        print(man[0])
     conn.commit()
     conn.close()
 
@@ -286,7 +279,6 @@ def add_postgres_item():
             manufacturer=str(data['Manufacturer']),
             sub_category=str(data['U_Subgroup']),
         )
-        print(item[0])
     conn.commit()
     conn.close()
 
