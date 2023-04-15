@@ -211,6 +211,7 @@ def add_postgres_users():
                 cardcode=data['CardCode'],
                 cardname=data['CardName']
             )
+            print(client[0])
     conn.commit()
     conn.close()
 
