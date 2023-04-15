@@ -62,10 +62,9 @@ async def get_phone(message: types.Message, state: FSMContext):
     keyboard = await back_key()
     otp = await generateOTP()
     if await chek_user(phone_number):
-        # await send_sms(phone=phone_number, otp=otp)
+        await send_sms(phone=phone_number, otp=otp)
         user = await get_user_by_phone(phone_number)
         user.otp = otp
-        print(otp)
         await state.update_data(phone=phone_number, action='phone')
         user.save()
         await message.answer(f"{phone_number} raqamiga yozilgan SMS ni kiriting", reply_markup=keyboard)
@@ -91,8 +90,7 @@ async def get_phone(message: types.Message, state: FSMContext):
         back_keyboard = await back_key()
         user.otp = otp
         user.save()
-        print(otp)
-        # await send_sms(phone=phone_number, otp=otp)
+        await send_sms(phone=phone_number, otp=otp)
         await message.answer(f"{phone_number} raqamiga yozilgan SMS ni kiriting", reply_markup=back_keyboard)
         await state.set_state("get_otp")
     else:
@@ -108,7 +106,6 @@ async def get_phone(message: types.Message, state: FSMContext):
     if message.text == user.otp:
         # await set_user_telegram(phone=data['phone'], user_id=message.from_id, name=data['name'])
         keyboard = await menu_keyboard()
-        print(data['name'])
         user.first_name = data['name']
         user.telegram_id = message.from_user.id
         user.save()
