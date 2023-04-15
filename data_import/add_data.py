@@ -207,7 +207,7 @@ def add_postgres_users():
         if data['Phone1'] is not None:
             client = add_client(
                 conn=conn,
-                phone=data['Phone1'][1:],
+                phone=data['Phone1'][0:],
                 cardcode=data['CardCode'],
                 cardname=data['CardName']
             )
