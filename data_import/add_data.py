@@ -114,9 +114,14 @@ def add_order_detail(conn, order_id, ItemCode, count, U_priceUZS, Price):
     cursor = conn.cursor()
     product_id = get_item_by_itemcode(ItemCode)
     if product_id is not None:
-        cursor.execute("INSERT INTO main_orderdetail (order_id, product_id, count, total, total_uzs) VALUES (%s, %s, %s, %s, %s) RETURNING id", [order_id, product_id, count, Price, U_priceUZS])
-        new_row = cursor.fetchone()
-        return new_row
+        cursor.execute("SELECT * FROM main_orderdetail WHERE order_id = %s and product_id = %s LIMIT 1", [order_id, product_id])
+        row = cursor.fetchone()
+        if row is not None:
+            return row
+        else:
+            cursor.execute("INSERT INTO main_orderdetail (order_id, product_id, count, total, total_uzs) VALUES (%s, %s, %s, %s, %s) RETURNING id", [order_id, product_id, count, Price, U_priceUZS])
+            new_row = cursor.fetchone()
+            return new_row
 
 def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
     cursor = conn.cursor()
@@ -156,17 +161,20 @@ def add_postgres_invoices():
                   DocTotal=data['DocTotal'],
                   DocDate=str(data['DocDate']),
                   U_sumUZS = data['U_sumUZS '])
-        details = data['DocumentLines']
-        for detail in details:
-            if order is not None:               
-                orderdetail = add_order_detail(
-                    conn=conn,
-                    order_id=str(order),
-                    Price=detail['Price'],
-                    count=detail['Quantity'],
-                    U_priceUZS=detail['U_priceUZS'],
-                    ItemCode=detail['ItemCode']
-                    )
+
+        if order is not None:             
+            print("Order: ", order[0])  
+            details = data['DocumentLines']
+            for detail in details:
+                    orderdetail = add_order_detail(
+                        conn=conn,
+                        order_id=str(order),
+                        Price=detail['Price'],
+                        count=detail['Quantity'],
+                        U_priceUZS=detail['U_priceUZS'],
+                        ItemCode=detail['ItemCode']
+                        )
+                    print("Detail", orderdetail[0])
     conn.commit()
     conn.close()
 
