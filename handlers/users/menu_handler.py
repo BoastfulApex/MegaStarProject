@@ -29,11 +29,13 @@ async def menu(message: types.Message, state: FSMContext):
         back_keyboard = await back_key()
         await message.answer("Hozirda aktiv bo'lgan aksiyalar 👇", reply_markup=back_keyboard)
         sale = await get_active_sales()
-        if sale != []:
+        try:
             sale = sale[0]
             text = f"🔥 {sale.name}\n\n 🎁{sale.required_quantity} dona {sale.product.itemname} uchun {sale.gift_quantity} dona {sale.gift_product.itemname}\n Aksiya amal qilish muddati {sale.expiration_date.strftime('%d.%m.%Y')} gacha"
             keyboard = await sale_keyboard() 
             await message.answer(text, reply_markup=keyboard)
+        except:
+            pass
         await state.set_state('aksiya')
     if message.text == "Izoh qoldirish":
         keyboard = await back_key()

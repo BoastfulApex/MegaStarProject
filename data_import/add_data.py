@@ -188,6 +188,7 @@ def add_postgres_category():
             groupname=str(data['GroupName']),
             number=str(data['Number'])
         )
+        print("Category", category[0])
     conn.commit()
     conn.close()
 
@@ -234,7 +235,7 @@ def add_postgres_subcategory():
             name=str(data['Name']),
             u_group=str(data['U_group'])
         )
-        
+        print("Category", category[0]) 
     conn.commit()
     conn.close()
 
@@ -256,6 +257,7 @@ def add_postgres_manufacturer():
             code=str(data['Code']),
             name=str(data['ManufacturerName']),
         )
+        print("Category", man[0])
     conn.commit()
     conn.close()
 
