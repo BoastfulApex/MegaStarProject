@@ -282,6 +282,7 @@ def add_postgres_item():
             manufacturer=str(data['Manufacturer']),
             sub_category=str(data['U_Subgroup']),
         )
+        print("Product", item[0])
     conn.commit()
     conn.close()
 
