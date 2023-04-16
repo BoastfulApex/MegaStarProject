@@ -18,10 +18,15 @@ BackCongfig = {
 }
 
 
-@dp.message_handler(lambda message: message.text == '⬅️ Orqaga', state='*')
+@dp.message_handler(lambda message: message.text == '⬅️ Orqaga', state='get_otp')
 async def back_funcktion(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    action = data['action']
-    keybpard = await BackCongfig[action]['keyboard']
-    await message.answer(text=BackCongfig[action]['text'], reply_markup=keybpard)
-    await state.set_state(BackCongfig[action]['state'])
+    keyboard = await phone_keyboard()
+    await message.answer(text="Telefon raqamininfizni xalqaro formatda(998YYXXXXXXX) kiriting. Yoki raqamni ulashing 👇", reply_markup=keyboard)
+    await state.set_state("get_phone")
+
+
+@dp.message_handler(lambda message: message.text == '⬅️ Orqaga', state='get_comment')
+async def back_funcktion(message: types.Message, state: FSMContext):
+    keyboard = await menu_keyboard()
+    await message.answer(text="Kerakli bo'limni tanlang 👇", reply_markup=keyboard)
+    await state.set_state("get_phone")

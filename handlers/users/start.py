@@ -60,19 +60,18 @@ async def get_name(message: types.Message, state: FSMContext):
 async def get_phone(message: types.Message, state: FSMContext):    
     phone_number = message.contact.phone_number[1:]
     keyboard = await back_key()
-    otp = await generateOTP()
     if await chek_user(phone_number):
-        await send_sms(phone=phone_number, otp=otp)
+        otp = await generateOTP()
         user = await get_user_by_phone(phone_number)
-        user.otp = otp
         await state.update_data(phone=phone_number, action='phone')
+        user.otp = otp
         user.save()
-        await message.answer(f"{phone_number} raqamiga yozilgan SMS ni kiriting", reply_markup=keyboard)
+        await send_sms(phone=phone_number, otp=user.otp)
+        await message.answer(f"{phone_number} raqamiga yozilgan 📩 SMS ni kiriting 👇", reply_markup=keyboard)
         await state.set_state("get_otp")
     else:
-        await message.answer(f"Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.", reply_markup=ReplyKeyboardRemove())
-        await state.finish()
-        await state.set_state("non_user")
+        keyboard = await phone_keyboard()
+        await message.answer(f"🚫 Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.", reply_markup=keyboard)
         
     
 @dp.message_handler(state='get_phone', content_types=types.ContentTypes.TEXT)
@@ -81,22 +80,21 @@ async def get_phone(message: types.Message, state: FSMContext):
     phone_number = message.text
     if not await isValid(phone_number):
         keyboard = await phone_keyboard()
-        await message.answer("Telefon raqamingizni noto'g'ri formatda kiritdingiz. Iltimos, qaytadan kiriting.", reply_markup=keyboard)
+        await message.answer("⚠️ Telefon raqamingizni noto'g'ri kiritdingiz. Iltimos, qaytadan kiriting.", reply_markup=keyboard)
         return
-    otp = await generateOTP()
     if await chek_user(phone_number):
         await state.update_data(phone=phone_number)
         user = await get_user_by_phone(phone_number)
+        otp = await generateOTP()
         back_keyboard = await back_key()
         user.otp = otp
         user.save()
-        await send_sms(phone=phone_number, otp=otp)
-        await message.answer(f"{phone_number} raqamiga yozilgan SMS ni kiriting", reply_markup=back_keyboard)
+        await send_sms(phone=phone_number, otp=user.otp)
+        await message.answer(f"{phone_number} raqamiga yozilgan 📩 SMS ni kiriting 👇", reply_markup=back_keyboard)
         await state.set_state("get_otp")
     else:
-        await message.answer(f"Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.", reply_markup=ReplyKeyboardRemove())
-        await state.finish()
-        await state.set_state("non_user")
+        keyboard = await phone_keyboard()
+        await message.answer(f"🚫 Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.", reply_markup=keyboard)
 
     
 @dp.message_handler(state='get_otp', content_types=types.ContentTypes.TEXT)
@@ -104,7 +102,6 @@ async def get_phone(message: types.Message, state: FSMContext):
     data = await state.get_data()
     user = await get_user_by_phone(data['phone'])
     if message.text == user.otp:
-        # await set_user_telegram(phone=data['phone'], user_id=message.from_id, name=data['name'])
         keyboard = await menu_keyboard()
         user.first_name = data['name']
         user.telegram_id = message.from_user.id
