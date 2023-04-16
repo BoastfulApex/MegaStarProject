@@ -65,6 +65,7 @@ async def get_phone(message: types.Message, state: FSMContext):
         user = await get_user_by_phone(phone_number)
         await state.update_data(phone=phone_number, action='phone')
         user.otp = otp
+        print(otp)
         user.save()
         await send_sms(phone=phone_number, otp=user.otp)
         await message.answer(f"{phone_number} raqamiga yozilgan 📩 SMS ni kiriting 👇", reply_markup=keyboard)
@@ -88,6 +89,7 @@ async def get_phone(message: types.Message, state: FSMContext):
         otp = await generateOTP()
         back_keyboard = await back_key()
         user.otp = otp
+        print(otp)
         user.save()
         await send_sms(phone=phone_number, otp=user.otp)
         await message.answer(f"{phone_number} raqamiga yozilgan 📩 SMS ni kiriting 👇", reply_markup=back_keyboard)
