@@ -18,6 +18,18 @@ from django.urls import path, include
 from .settings import STATIC_ROOT, STATIC_URL, MEDIA_ROOT, MEDIA_URL
 from django.conf.urls.static import static
 
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="My API",
+        default_version='v1'),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     # Admin
@@ -27,6 +39,10 @@ urlpatterns = [
 
     # API
     path("auth/", include("apps.authentication.auth_urls")),
+
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
 ]
 
 
