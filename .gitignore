@@ -9,7 +9,7 @@ media
 
 .env
 
-./env
+env
 ./venv
 
-./.idea
+.idea
