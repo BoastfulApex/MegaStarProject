@@ -8,19 +8,21 @@ import re
 import aiohttp
 import random
 
+
 async def generateOTP():
     return random.randint(111111, 999999)
-import aiohttp
 
 
 async def send_sms(otp, phone):
     username = 'intouch'
     password = '-u62Yq-s79HR'
     sms_data = {
-        "messages":[{"recipient":f"{phone}","message-id":"abc000000003","sms":{"originator": "3700","content": {"text": f"Ваш код подтверждения для BOT: {otp}"}}}]}
+        "messages": [{"recipient": f"{phone}", "message-id": "abc000000003",
+                      "sms": {"originator": "3700", "content": {"text": f"Ваш код подтверждения для BOT: {otp}"}}}]}
     url = "http://91.204.239.44/broker-api/send"
     async with aiohttp.ClientSession() as session:
-        async with session.post(url, auth=aiohttp.BasicAuth(login=username, password=password), json=sms_data) as response:
+        async with session.post(url, auth=aiohttp.BasicAuth(login=username, password=password),
+                                json=sms_data) as response:
             print(response.status)
 
 
@@ -52,12 +54,13 @@ async def start_func(message: types.Message, state: FSMContext):
 async def get_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text)
     keyboard = await phone_keyboard()
-    await message.answer("Telefon raqamininfizni xalqaro formatda(998YYXXXXXXX) kiriting. Yoki raqamni ulashing 👇", reply_markup=keyboard)
+    await message.answer("Telefon raqamininfizni xalqaro formatda(998YYXXXXXXX) kiriting. Yoki raqamni ulashing 👇",
+                         reply_markup=keyboard)
     await state.set_state('get_phone')
 
 
 @dp.message_handler(state='get_phone', content_types=types.ContentTypes.CONTACT)
-async def get_phone(message: types.Message, state: FSMContext):    
+async def get_phone(message: types.Message, state: FSMContext):
     phone_number = message.contact.phone_number[1:]
     keyboard = await back_key()
     if await chek_user(phone_number):
@@ -72,16 +75,18 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("get_otp")
     else:
         keyboard = await phone_keyboard()
-        await message.answer(f"🚫 Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.", reply_markup=keyboard)
-        
-    
+        await message.answer(f"🚫 Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.",
+                             reply_markup=keyboard)
+
+
 @dp.message_handler(state='get_phone', content_types=types.ContentTypes.TEXT)
 async def get_phone(message: types.Message, state: FSMContext):
     phone_number = ''
     phone_number = message.text
     if not await isValid(phone_number):
         keyboard = await phone_keyboard()
-        await message.answer("⚠️ Telefon raqamingizni noto'g'ri kiritdingiz. Iltimos, qaytadan kiriting.", reply_markup=keyboard)
+        await message.answer("⚠️ Telefon raqamingizni noto'g'ri kiritdingiz. Iltimos, qaytadan kiriting.",
+                             reply_markup=keyboard)
         return
     if await chek_user(phone_number):
         await state.update_data(phone=phone_number)
@@ -96,9 +101,10 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("get_otp")
     else:
         keyboard = await phone_keyboard()
-        await message.answer(f"🚫 Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.", reply_markup=keyboard)
+        await message.answer(f"🚫 Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.",
+                             reply_markup=keyboard)
 
-    
+
 @dp.message_handler(state='get_otp', content_types=types.ContentTypes.TEXT)
 async def get_phone(message: types.Message, state: FSMContext):
     data = await state.get_data()
@@ -119,4 +125,3 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("user_menu")
     else:
         await message.answer("❌ Kiritiltgan tasdiqlash kodi xato. Qayta unirib ko'ring")
-    

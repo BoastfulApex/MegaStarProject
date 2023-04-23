@@ -20,9 +20,13 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
     path("", include("apps.authentication.urls")),
     path("", include("apps.home.urls")),
+
+    # API
+    path("auth/", include("apps.authentication.auth_urls")),
 ]
 
 
