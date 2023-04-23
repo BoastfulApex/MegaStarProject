@@ -8,3 +8,6 @@ db.sqlite3-journal
 media
 
 .env
+
+./env
+./venv
