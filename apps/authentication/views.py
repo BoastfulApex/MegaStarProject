@@ -5,14 +5,13 @@ from .forms import LoginForm
 from django.contrib.auth import login
 
 from rest_framework import permissions
-from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 
 from rest_framework.response import Response
 from rest_framework import generics
 
 from .models import MegaUser
-from .serializers import PhoneVerifySerializer
+from .serializers import PhoneVerifySerializer, PhoneAuthTokenSerializer
 
 
 def login_view(request):
@@ -40,7 +39,7 @@ class LoginView(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
-        serializer = AuthTokenSerializer(data=request.data)
+        serializer = PhoneAuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
@@ -57,4 +56,4 @@ class PhoneVerify(generics.CreateAPIView):
             user = MegaUser.objects.get(phone=request.data["phone"])
             user.generate_otp()
 
-            return Response({"status": "created"})
+            return Response({"status": f"created {user.otp}"})
