@@ -15,7 +15,7 @@ def set_scheduled_jobs(scheduler, *args, **kwargs):
     # scheduler.add_job(add_postgres_users, "interval", seconds=20)
     # scheduler.add_job(add_postgres_subcategory, "interval", seconds=60)
     # scheduler.add_job(add_postgres_item, "interval", seconds=10)
-    scheduler.add_job(add_postgres_invoices, "interval", seconds=15)
+    scheduler.add_job(add_postgres_invoices, "interval", minutes=10)
 
 
 async def on_startup(dp):
@@ -59,4 +59,3 @@ if __name__ == '__main__':
     start_schudeler()
 
     executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
-    # customer()
