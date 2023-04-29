@@ -90,6 +90,18 @@ class ProductView(generics.ListAPIView):
         return Response(serializer.data)
 
 
+class TopProductAPIView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        itemcodes = self.request.GET.getlist('itemcodes')
+        if itemcodes:
+            queryset = queryset.filter(itemcode__in=itemcodes)
+        return queryset
+
+
 class OrderView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]

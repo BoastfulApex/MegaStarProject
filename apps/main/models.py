@@ -19,7 +19,7 @@ class UserCashback(BaseModel):
     )
     
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    expration_date = models.DateTimeField(null=True)
+    expiration_date = models.DateTimeField(null=True)
     period = models.CharField(max_length=50, null=True, blank=True, choices=PERIOD_TYPES)
     summa = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
@@ -27,11 +27,11 @@ class UserCashback(BaseModel):
     def save(self, *args, **kwargs):
         if not self.pk:
             if self.period == MONTH:
-                self.expration_date = self.created_date + timedelta(days=30)
+                self.expiration_date = self.created_date + timedelta(days=30)
             elif self.period == SEASON:
-                self.expration_date = self.created_date + timedelta(days=90)
+                self.expiration_date = self.created_date + timedelta(days=90)
             elif self.period == YEAR:
-                self.expration_date = self.created_date + timedelta(weeks=52)
+                self.expiration_date = self.created_date + timedelta(weeks=52)
 
         super(UserCashback, self).save(*args, **kwargs)
 
