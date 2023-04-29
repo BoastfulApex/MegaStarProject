@@ -142,6 +142,7 @@ def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
     else: 
         return None 
 
+
 def add_postgres_invoices():
     conn = psycopg2.connect(
         host=DB_HOST,
@@ -174,7 +175,7 @@ def add_postgres_invoices():
                         U_priceUZS=detail['U_priceUZS'],
                         ItemCode=detail['ItemCode']
                         )
-                    print("Detail", orderdetail[0])
+                    print("    Detail", orderdetail[0])
     conn.commit()
     conn.close()
 
