@@ -108,16 +108,4 @@ def items():
 
 
 def invoices():
-    session = get_session_id()
-    url = 'Invoices?$select=DocEntry,DocNum,DocDate,DocDueDate,CardCode,CardName,DocTotal,U_sumUZS,DiscountPercent,' \
-          'DocumentLines'
-    results = []
-    while True:
-        items = get_objects(url=url, session=session)
-        results += [item for item in items['value']]
-        print(len(results))
-        if '@odata.nextLink' in items:
-            url = items['@odata.nextLink']
-        else:
-            break   
-    return results
+    pass

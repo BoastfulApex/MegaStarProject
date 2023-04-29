@@ -7,7 +7,7 @@ import json
 
 from dotenv import load_dotenv
 
-from .get_data import categories, sub_categories, manufacturers, clients, items, invoices
+from .get_data import categories, sub_categories, manufacturers, clients, items, invoices, get_session_id, get_objects
 from .db_get_id import *
 
 load_dotenv()
@@ -151,22 +151,26 @@ def add_postgres_invoices():
         user=DB_USERNAME,
         password=DB_PASS
     )
+    session = get_session_id()
+    url = 'Invoices?$select=DocEntry,DocNum,DocDate,DocDueDate,CardCode,CardName,DocTotal,U_sumUZS,DiscountPercent,' \
+          'DocumentLines'
+    while True:
+        results = []
+        items = get_objects(url=url, session=session)
+        results += [item for item in items['value']]
+        for data in results:
+            order = add_order(conn=conn,
+                              DocEntry=str(data['DocEntry']),
+                              CardCode=str(data['CardCode']),
+                              DocNum=str(data['DocNum']),
+                              DocTotal=data['DocTotal'],
+                              DocDate=str(data['DocDate']),
+                              U_sumUZS=data['U_sumUZS '])
 
-    json_data = invoices()
-       
-    for data in json_data:
-        order = add_order(conn=conn,
-                  DocEntry=str(data['DocEntry']), 
-                  CardCode=str(data['CardCode']), 
-                  DocNum=str(data['DocNum']), 
-                  DocTotal=data['DocTotal'],
-                  DocDate=str(data['DocDate']),
-                  U_sumUZS = data['U_sumUZS '])
-
-        if order is not None:             
-            print("Order: ", order[0])  
-            details = data['DocumentLines']
-            for detail in details:
+            if order is not None:
+                print("Order: ", order[0])
+                details = data['DocumentLines']
+                for detail in details:
                     orderdetail = add_order_detail(
                         conn=conn,
                         order_id=str(order),
@@ -174,10 +178,15 @@ def add_postgres_invoices():
                         count=detail['Quantity'],
                         U_priceUZS=detail['U_priceUZS'],
                         ItemCode=detail['ItemCode']
-                        )
+                    )
                     print("    Detail", orderdetail[0])
-    conn.commit()
-    conn.close()
+        conn.commit()
+        conn.close()
+        if '@odata.nextLink' in items:
+            url = items['@odata.nextLink']
+        else:
+            break
+    return results
 
 
 def add_postgres_category():
@@ -266,7 +275,7 @@ def add_postgres_manufacturer():
             code=str(data['Code']),
             name=str(data['ManufacturerName']),
         )
-        print("Menufacturer", man[0])
+        print("Manufacturer", man[0])
     conn.commit()
     conn.close()
 
