@@ -1,8 +1,8 @@
 import psycopg2
-import os 
+import os
 import uuid
 import datetime
-import random 
+import random
 import json
 
 from dotenv import load_dotenv
@@ -17,12 +17,68 @@ def generateOTP():
     return random.randint(111111, 999999)
 
 
-DB_USERNAME = os.getenv('DB_USERNAME' , None)
-DB_PASS     = os.getenv('DB_PASS'     , None)
-DB_HOST     = os.getenv('DB_HOST'     , None)
-DB_PORT     = os.getenv('DB_PORT'     , None)
-DB_NAME     = os.getenv('DB_NAME'     , None)
+DB_USERNAME = os.getenv('DB_USERNAME', None)
+DB_PASS = os.getenv('DB_PASS', None)
+DB_HOST = os.getenv('DB_HOST', None)
+DB_PORT = os.getenv('DB_PORT', None)
+DB_NAME = os.getenv('DB_NAME', None)
 
+
+def check_user_sale(user_id):
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    # Retrieve all active sales for the user
+    cur = conn.cursor()
+    cur.execute("SELECT s.id, s.name, s.product_id, s.expiration_date, s.required_quantity, s.gift_product_id, "
+                "s.gift_quantity, s.active, s.orders, us.order_quantity, us.is_full FROM main_sale s "
+                "JOIN main_usersale us ON s.id = us.sale_id WHERE us.user_id = %s AND s.active = True", (user_id,))
+    rows = cur.fetchall()
+
+    # Add 1 to the order_quantity of each active sale for the user
+    for row in rows:
+        sale_id = row[0]
+        order_quantity = row[9]
+        cur.execute("UPDATE main_usersale SET order_quantity = %s WHERE user_id = %s AND sale_id = %s",
+                    (order_quantity + 1, user_id, sale_id))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def add_cashback_to_user(order_id, conn):
+    cur = conn.cursor()
+
+    # set order id and datetime
+
+    # get order amount from the Order model using a SQL query
+    cur.execute("SELECT summa, created_date FROM main_order WHERE id=%s", (order_id,))
+    order = cur.fetchone()
+    order_amount = order[0]
+    order_datetime = order[1]
+    # get unexpired usercashbacks using a SQL query
+    cur.execute("SELECT * FROM main_usercashback WHERE expiration_date > %s AND active=True", (order_datetime,))
+    user_cashbacks = cur.fetchall()
+
+    # loop through the usercashbacks and add 1% of the order amount to the summa field
+    for user_cashback in user_cashbacks:
+        user_cashback_id = user_cashback[0]
+        user_cashback_summa = user_cashback[3]
+        new_user_cashback_summa = user_cashback_summa + (order_amount * 0.01)
+        cur.execute("UPDATE main_usercashback SET summa=%s WHERE id=%s", (new_user_cashback_summa, user_cashback_id))
+
+        # add 1% of the order amount to the user's all_cashback field
+        user_id = user_cashback[1]
+        cur.execute("UPDATE authentication_megauser SET all_cashback=all_cashback+%s WHERE id=%s", (order_amount * 0.01, user_id))
+
+    # commit changes to the database
+    conn.commit()
 
 
 def add_category(conn, groupname, number):
@@ -37,10 +93,12 @@ def add_category(conn, groupname, number):
     if row is not None:
         return row
     else:
-        cursor.execute("INSERT INTO main_category (guid, number, groupname, created_date) VALUES (%s, %s, %s, %s) RETURNING id", [guid, number, groupname, created_date])
+        cursor.execute(
+            "INSERT INTO main_category (guid, number, groupname, created_date) VALUES (%s, %s, %s, %s) RETURNING id",
+            [guid, number, groupname, created_date])
         new_row = cursor.fetchone()
         return new_row
-    
+
 
 def add_subcategory(conn, code, name, u_group):
     cursor = conn.cursor()
@@ -52,7 +110,10 @@ def add_subcategory(conn, code, name, u_group):
     if row:
         return row
     else:
-        cursor.execute("INSERT INTO main_subcategory (guid, code, name, created_date, category_id) VALUES (%s, %s, %s, %s, %s) RETURNING id", [guid, code, name, created_date, str(get_category_by_number(u_group))])
+        cursor.execute(
+            "INSERT INTO main_subcategory (guid, code, name, created_date, category_id) VALUES (%s, %s, %s, %s, "
+            "%s) RETURNING id",
+            [guid, code, name, created_date, str(get_category_by_number(u_group))])
         new_row = cursor.fetchone()
         return new_row
 
@@ -67,10 +128,13 @@ def add_manufacturer(conn, code, name):
     if row:
         return row
     else:
-        cursor.execute("INSERT INTO main_manufacturer (guid, code, manufacturer_name, created_date) VALUES (%s, %s, %s, %s) RETURNING id", [guid, code, name, created_date])
+        cursor.execute(
+            "INSERT INTO main_manufacturer (guid, code, manufacturer_name, created_date) VALUES (%s, %s, %s, "
+            "%s) RETURNING id",
+            [guid, code, name, created_date])
         new_row = cursor.fetchone()
         return new_row
-   
+
 
 def add_client(conn, cardcode, cardname, phone):
     cursor = conn.cursor()
@@ -84,7 +148,10 @@ def add_client(conn, cardcode, cardname, phone):
             return row
         else:
             otp = generateOTP()
-            cursor.execute("INSERT INTO authentication_megauser (phone, password, is_superuser, date_joined, is_staff, is_active, card_code, card_name, otp) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [phone, otp, False, created_date, False, True, cardcode, cardname, otp])
+            cursor.execute(
+                "INSERT INTO authentication_megauser (phone, password, is_superuser, date_joined, is_staff, "
+                "is_active, card_code, card_name, otp) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                [phone, otp, False, created_date, False, True, cardcode, cardname, otp])
             new_row = cursor.fetchone()
             return new_row
     else:
@@ -101,11 +168,19 @@ def add_item(conn, itemcode, itemname, category, sub_category, manufacturer):
         return row
     else:
         if sub_category != "None":
-            cursor.execute("INSERT INTO main_product (guid, created_date, itemcode, itemname, category_id, sub_category_id, manufacturer_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [guid, created_date, itemcode, itemname, get_category_by_number(category), get_subcategory_by_code(sub_category), get_manufacturer_by_code(manufacturer), 0])
+            cursor.execute(
+                "INSERT INTO main_product (guid, created_date, itemcode, itemname, category_id, sub_category_id, "
+                "manufacturer_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                [guid, created_date, itemcode, itemname, get_category_by_number(category),
+                 get_subcategory_by_code(sub_category), get_manufacturer_by_code(manufacturer), 0])
             new_row = cursor.fetchone()
             return new_row
         else:
-            cursor.execute("INSERT INTO main_product (guid, created_date, itemcode, itemname, category_id, manufacturer_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id", [guid, created_date, itemcode, itemname, get_category_by_number(category), get_manufacturer_by_code(manufacturer), 0])
+            cursor.execute(
+                "INSERT INTO main_product (guid, created_date, itemcode, itemname, category_id, manufacturer_id, "
+                "price) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                [guid, created_date, itemcode, itemname, get_category_by_number(category),
+                 get_manufacturer_by_code(manufacturer), 0])
             new_row = cursor.fetchone()
             return new_row
 
@@ -114,14 +189,17 @@ def add_order_detail(conn, order_id, ItemCode, count, U_priceUZS, Price):
     cursor = conn.cursor()
     product_id = get_item_by_itemcode(ItemCode)
     if product_id is not None:
-        cursor.execute("SELECT * FROM main_orderdetail WHERE order_id = %s and product_id = %s LIMIT 1", [order_id, product_id])
+        cursor.execute("SELECT * FROM main_orderdetail WHERE order_id = %s and product_id = %s LIMIT 1",
+                       [order_id, product_id])
         row = cursor.fetchone()
         if row is not None:
             return row
         else:
-            cursor.execute("INSERT INTO main_orderdetail (order_id, product_id, count, total, total_uzs) VALUES (%s, %s, %s, %s, %s) RETURNING id", [order_id, product_id, count, Price, U_priceUZS])
+            cursor.execute("INSERT INTO main_orderdetail (order_id, product_id, count, total, total_uzs) VALUES (%s, "
+                           "%s, %s, %s, %s) RETURNING id", [order_id, product_id, count, Price, U_priceUZS])
             new_row = cursor.fetchone()
             return new_row
+
 
 def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
     cursor = conn.cursor()
@@ -129,32 +207,43 @@ def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
     if user is not None:
         cursor.execute("SELECT * FROM main_order WHERE doc_entry = %s AND doc_num = %s LIMIT 1", [DocEntry, DocNum])
         row = cursor.fetchone()
-        
         if row is not None:
             return row[0]
         else:
             guid = str(uuid.uuid4())
             date_format = "%Y-%m-%dT%H:%M:%SZ"
-            created_date =  datetime.datetime.strptime(DocDate, date_format)
-            cursor.execute("INSERT INTO main_order (guid, created_date, user_id, doc_entry, doc_num, summa, u_sumuzs, is_sale) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", [guid, created_date, user, DocEntry, DocNum, DocTotal, U_sumUZS, False])
+            created_date = datetime.datetime.strptime(DocDate, date_format)
+            cursor.execute("INSERT INTO main_order (guid, created_date, user_id, doc_entry, doc_num, summa, "
+                           "u_sumuzs, is_sale) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                           [guid, created_date,
+                            user[0], DocEntry, DocNum,
+                            DocTotal, U_sumUZS, user[1]])
             new_row = cursor.fetchone()
+            if user[1]:
+                check_user_sale(user[0])
+            else:
+                add_cashback_to_user(new_row[0], conn)
             return new_row[0]
-    else: 
-        return None 
+    else:
+        return None
 
 
 def add_postgres_invoices():
-    conn = psycopg2.connect(
-        host=DB_HOST,
-        port=DB_PORT,
-        dbname=DB_NAME,
-        user=DB_USERNAME,
-        password=DB_PASS
-    )
     session = get_session_id()
     url = 'Invoices?$select=DocEntry,DocNum,DocDate,DocDueDate,CardCode,CardName,DocTotal,U_sumUZS,DiscountPercent,' \
           'DocumentLines'
+    i = 1
     while True:
+        print(i)
+        i += 1
+
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            dbname=DB_NAME,
+            user=DB_USERNAME,
+            password=DB_PASS
+        )
         results = []
         items = get_objects(url=url, session=session)
         results += [item for item in items['value']]
@@ -165,10 +254,9 @@ def add_postgres_invoices():
                               DocNum=str(data['DocNum']),
                               DocTotal=data['DocTotal'],
                               DocDate=str(data['DocDate']),
-                              U_sumUZS=data['U_sumUZS '])
-
+                              U_sumUZS=data['U_sumUZS'])
             if order is not None:
-                print("Order: ", order[0])
+                print("Order: ", order)
                 details = data['DocumentLines']
                 for detail in details:
                     orderdetail = add_order_detail(
@@ -179,14 +267,14 @@ def add_postgres_invoices():
                         U_priceUZS=detail['U_priceUZS'],
                         ItemCode=detail['ItemCode']
                     )
-                    print("    Detail", orderdetail[0])
+                    if orderdetail is not None:
+                        print("    Detail", orderdetail[0])
         conn.commit()
         conn.close()
         if '@odata.nextLink' in items:
             url = items['@odata.nextLink']
         else:
             break
-    return results
 
 
 def add_postgres_category():
@@ -199,7 +287,7 @@ def add_postgres_category():
     )
 
     json_data = categories()
-    
+
     for data in json_data:
         category = add_category(
             conn=conn,
@@ -221,7 +309,7 @@ def add_postgres_users():
     )
 
     json_data = clients()
-    
+
     for data in json_data:
         if data['Phone1'] is not None:
             client = add_client(
@@ -245,7 +333,7 @@ def add_postgres_subcategory():
     )
 
     json_data = sub_categories()
-    
+
     for data in json_data:
         category = add_subcategory(
             conn=conn,
@@ -253,7 +341,7 @@ def add_postgres_subcategory():
             name=str(data['Name']),
             u_group=str(data['U_group'])
         )
-        print("SubCategory", category[0]) 
+        print("SubCategory", category[0])
     conn.commit()
     conn.close()
 
@@ -268,7 +356,7 @@ def add_postgres_manufacturer():
     )
 
     json_data = manufacturers()
-    
+
     for data in json_data:
         man = add_manufacturer(
             conn=conn,
@@ -290,7 +378,7 @@ def add_postgres_item():
     )
 
     json_data = items()
-    
+
     for data in json_data:
         item = add_item(
             conn=conn,
@@ -303,4 +391,3 @@ def add_postgres_item():
         print("Product", item[0])
     conn.commit()
     conn.close()
-

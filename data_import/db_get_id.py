@@ -76,10 +76,10 @@ def get_user_by_cardcode(code):
         password=DB_PASS
     )
     cursor = conn.cursor()
-    cursor.execute(f"SELECT id FROM authentication_megauser WHERE card_code = '{code}';")
+    cursor.execute(f"SELECT id, is_sale FROM authentication_megauser WHERE card_code = '{code}';")
     row = cursor.fetchone()
     if row is not None:
-        return row[0]
+        return row
     else:
         print("User None")
         return None

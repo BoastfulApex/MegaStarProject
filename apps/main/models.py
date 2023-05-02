@@ -10,6 +10,18 @@ MONTH, SEASON, YEAR = (
 )
 
 
+class Cashback(models.Model):
+    PERIOD_TYPES = (
+        (MONTH, MONTH),
+        (SEASON, SEASON),
+        (YEAR, YEAR)
+    )
+
+    name = models.CharField(max_length=500, null=True, blank=True)
+    period = models.CharField(max_length=50, null=True, blank=True, choices=PERIOD_TYPES)
+    summa = models.IntegerField(default=0)
+    
+
 class UserCashback(BaseModel):
     
     PERIOD_TYPES = (
