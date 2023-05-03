@@ -200,7 +200,7 @@ def get_cashback_monthly():
 @sync_to_async
 def get_cashback_season():
     cashback, created = Cashback.objects.get_or_create(
-        name="Mavsumiy",
+        name="Retro",
         period="season"
     )
     return cashback
