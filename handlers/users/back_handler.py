@@ -30,3 +30,10 @@ async def back_funcktion(message: types.Message, state: FSMContext):
     keyboard = await menu_keyboard()
     await message.answer(text="Kerakli bo'limni tanlang 👇", reply_markup=keyboard)
     await state.set_state("get_phone")
+
+
+@dp.message_handler(lambda message: message.text == '⬅️ Orqaga', state='aksiya')
+async def back_funcktion(message: types.Message, state: FSMContext):
+    keyboard = await menu_keyboard()
+    await message.answer(text="Kerakli bo'limni tanlang 👇", reply_markup=keyboard)
+    await state.set_state("get_phone")

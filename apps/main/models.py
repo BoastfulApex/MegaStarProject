@@ -91,7 +91,7 @@ class Order(BaseModel):
 
     is_sale = models.BooleanField(default=False)
     summa = models.FloatField(default=0)
-    u_sumuzs = models.FloatField(default=0)
+    u_sumuzs = models.FloatField(default=0, null=True)
 
     doc_entry = models.CharField(max_length=100, null=True, blank=True)
     doc_num = models.CharField(max_length=2000, null=True, blank=True)

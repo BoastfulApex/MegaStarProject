@@ -39,10 +39,13 @@ async def start_func(message: types.Message, state: FSMContext):
         orders_m = await get_user_monthly(message.from_id)
         orders_y = await get_user_yearly(message.from_id)
         orders_s = await get_user_seasonly(message.from_id)
+        cashback_m = await get_cashback_monthly()
+        cashback_s = await get_cashback_season()
+        cashback_y = await get_cashback_year()
         text = "👋 Mega start botiga xush kelibsiz.\n\n💰Sizda bonusgacha qoldi:\n"
-        text += f"💎 Oylik : {round(orders_m, 2)}/ 10 000 000 (10 mln)\n"
-        text += f"💎 Retro : {round(orders_s, 2)}/ 30 000 000 (30 mln)\n"
-        text += f"💎 Yillik : {round(orders_y, 2)}/ 100 000 000 (100 mln)\n\n"
+        text += f"💎 {cashback_m.name} : {round(orders_m, 2)}/ {cashback_m.summa}\n"
+        text += f"💎 {cashback_s.name} : {round(orders_s, 2)}/ {cashback_s.summa}\n"
+        text += f"💎 {cashback_y.name} : {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
         await message.answer(text, reply_markup=keyboard)
         await state.set_state("user_menu")
     else:

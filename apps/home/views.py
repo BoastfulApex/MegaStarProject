@@ -6,12 +6,15 @@ from django.core.paginator import Paginator
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from apps.authentication.models import *
+from apps.main.models import *
 
 
 @login_required(login_url="/login/")
 def index(request):
+    cashback = Cashback.objects.all()
     context = {
-        'segment': 'dashboard'
+        'segment': 'dashboard',
+        'cashbacks': cashback
     }
 
     html_template = loader.get_template('home/index.html')

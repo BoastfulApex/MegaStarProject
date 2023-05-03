@@ -2,7 +2,7 @@ import datetime
 from typing import List, Any
 from asgiref.sync import sync_to_async
 from apps.authentication.models import MegaUser as User
-from apps.main.models import Order, Sale, Comment, UserCashback, UserSale, OrderDetail
+from apps.main.models import Order, Sale, Comment, UserCashback, UserSale, OrderDetail, Cashback
 
 
 @sync_to_async
@@ -186,5 +186,30 @@ def get_sale(sale_id):
 @sync_to_async
 def get_order_details(order_id):
     return OrderDetail.objects.filter(order_id=order_id).all()
-    
-    
+
+
+@sync_to_async
+def get_cashback_monthly():
+    cashback, created = Cashback.objects.get_or_create(
+        name="Oylik",
+        period="month"
+    )
+    return cashback
+
+
+@sync_to_async
+def get_cashback_season():
+    cashback, created = Cashback.objects.get_or_create(
+        name="Mavsumiy",
+        period="season"
+    )
+    return cashback
+
+
+@sync_to_async
+def get_cashback_year():
+    cashback, created = Cashback.objects.get_or_create(
+        name="Yillik",
+        period="year"
+    )
+    return cashback

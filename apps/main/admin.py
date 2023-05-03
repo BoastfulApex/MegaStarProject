@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import *
 
 
+admin.site.register(Cashback)
 admin.site.register(Order)
 admin.site.register(Sale)
 admin.site.register(Product)

@@ -6,6 +6,7 @@ from keyboards.inline.main_inline import *
 from utils.db_api.database import *
 import qrcode
 
+
 @dp.message_handler(state='user_menu')
 async def menu(message: types.Message, state: FSMContext):
     await state.update_data(action='menu')
@@ -16,9 +17,12 @@ async def menu(message: types.Message, state: FSMContext):
         orders_s = await get_user_seasonly(message.from_id)
         cashbacks = await get_user_kashbacks(message.from_user.id)
         user_sales = await get_user_sales(message.from_id)
+        cashback_m = await get_cashback_monthly()
+        cashback_s = await get_cashback_season()
+        cashback_y = await get_cashback_year()
         text = f"💵Ushbu oydagi xaridlar: {round(orders_m, 2)}\n"
-        text += f"\n💰Sizda bonusgacha qoldi:\n    💵 Oylik: {round(orders_m, 2)}/10 000 000 (10 mln)\n    💵 Retro: {round(orders_s, 2)}/30 000 000 (30mln)\n"
-        text += f"    💵 Yillik : {round(orders_y, 2)}/100 000 000 (100 mln)\n"
+        text += f"\n💰Sizda bonusgacha qoldi:\n    💵 {cashback_m.name}: {round(orders_m, 2)}/{cashback_m.summa}\n    💵 {cashback_s.name}: {round(orders_s, 2)}/{cashback_s.summa}\n"
+        text += f"    💵 {cashback_y.name} : {round(orders_y, 2)}/{cashback_y.summa}\n"
         text += f"\nQo'shimcha aksiyalar: \n"
         for sale in user_sales:
             text += f"📌{sale.sale.name}\n   {sale.sale.required_quantity} dona {sale.sale.product.itemname} uchun {sale.sale.gift_quantity} dona {sale.sale.gift_product.itemname}\n    {sale.order_quantity}/{sale.sale.required_quantity}. Muddat: {sale.sale.expiration_date.strftime('%d.%m.%Y')}"
@@ -58,7 +62,7 @@ async def menu(message: types.Message, state: FSMContext):
         i = 1
         for order in orders:
             details = await get_order_details(order.id)
-            text = f"{i})🗓 Sana: {order.created_date.strftime('%d.%m.%Y')},  Summa: {round(order.summa, 2)}\n"
+            text = f"{i})🗓 Sana: {order.created_date.strftime('%d.%m.%Y')},  Summa: {round(order.u_sumuzs, 2)}\n"
             for detail in details:
                 text += f"   {detail.product.itemname} ✖️ {detail.count}  {detail.total_uzs}\n"
             chunks = [text[i:i+4096] for i in range(0, len(text), 4096)] # split the text into chunks of 4096 characters
