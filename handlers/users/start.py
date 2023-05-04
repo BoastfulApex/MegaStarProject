@@ -64,7 +64,7 @@ async def get_name(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state='get_phone', content_types=types.ContentTypes.CONTACT)
 async def get_phone(message: types.Message, state: FSMContext):
-    phone_number = message.contact.phone_number[1:]
+    phone_number = message.contact.phone_number[0:]
     keyboard = await back_key()
     if await chek_user(phone_number):
         otp = await generateOTP()
