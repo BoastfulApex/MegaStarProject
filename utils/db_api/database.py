@@ -1,5 +1,4 @@
 import datetime
-from typing import List, Any
 from asgiref.sync import sync_to_async
 from apps.authentication.models import MegaUser as User
 from apps.main.models import Order, Sale, Comment, UserCashback, UserSale, OrderDetail, Cashback

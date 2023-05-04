@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} Kategoriyalar {% endblock %}
+{% block title %} Sub Kategoriyalar {% endblock %}
 
 <!-- Element injected in the BODY element -->
 {% block body_class %} dashboard {% endblock body_class %} 
@@ -27,27 +27,34 @@
 							<div class="card flex-fill">
 								<div class="card-header">
 
-									<h5 class="card-title mb-0">Xaridorlar ro'yxati</h5>
+									<h5 class="card-title mb-0">Sub Kategoriyalar ro'yxati</h5>
 									<h5 class="card-title mb-0">{{ search_query}}</h5>
 								</div>
 								<table class="table table-hover my-0">
 									<thead>
 										<tr>
-											<th>Ismi</th>
-											<th class="d-none d-xl-table-cell">Tel.</th>
-											<th class="d-none d-xl-table-cell">CardCode</th>
-											<th>Telegram_id</th>
-											<th class="d-none d-md-table-cell">Keshbek</th>
+											<th>Nomi</th>
+											<th class="d-none d-xl-table-cell">Raqami</th>
+											<th class="d-none d-xl-table-cell">Kategoriyasi</th>
+											<th class="d-none d-xl-table-cell">Rasmi</th>
+											<th></th>
 										</tr>
 									</thead>
 									<tbody>
-									{% for user in page_obj %}
+									{% for category in page_obj %}
 										<tr>
-											<td class="d-none d-xl-table-cell">{{ user.card_name }}</td>
-											<td>{{ user.phone }}</td>
-											<td class="d-none d-xl-table-cell">{{ user.card_code }}</td>
-											<td><span class="badge bg-primary">{{user.telegram_id}}</span></td>
-											<td class="d-none d-md-table-cell">0</td>
+											<td class="d-none d-xl-table-cell">{{ category.name }}</td>
+											<td class="d-none d-xl-table-cell">{{ category.code }}</td>
+											<td class="d-none d-md-table-cell">{{ category.category.groupname }}</td>
+											<td class="d-none d-md-table-cell">
+
+												<div class="col-auto">
+													<div class="stat text-primary">
+														<a href="{% url 'subcategory_update' category.id %}"><i class="align-middle" data-feather="edit-3"></i></a>
+													</div>
+												</div>
+
+											</td>
 										</tr>
 									{% endfor %}
 									</tbody>

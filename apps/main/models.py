@@ -54,6 +54,16 @@ class Category(BaseModel):
     groupname = models.CharField(max_length=2000, null=True)
     number = models.CharField(max_length=2000, null=True)
 
+    @property
+    def PhotoURL(self):
+        try:
+            return self.image.url
+        except:
+            return ''
+
+    def __str__(self):
+        return self.groupname
+
 
 class SubCategory(BaseModel):
     image = models.FileField(null=True)
@@ -63,13 +73,26 @@ class SubCategory(BaseModel):
     # u_group = models.CharField(max_length=2000, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
 
+    @property
+    def PhotoURL(self):
+        try:
+            return self.image.url
+        except:
+            return ''
+
+    def __str__(self):
+        return self.name
+
 
 class Manufacturer(BaseModel):
     image = models.FileField(null=True)
 
     manufacturer_name = models.CharField(max_length=2000, null=True)
     code = models.CharField(max_length=2000, null=True)
-    
+
+    def __str__(self):
+        return self.manufacturer_name
+
 
 class Product(BaseModel):
     itemcode = models.CharField(max_length=100, null=True, blank=True)
