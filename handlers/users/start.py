@@ -64,7 +64,7 @@ async def get_name(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state='get_phone', content_types=types.ContentTypes.CONTACT)
 async def get_phone(message: types.Message, state: FSMContext):
-    phone_number = message.contact.phone_number[0:]
+    phone_number = message.contact.phone_number.split('+')[1]
     keyboard = await back_key()
     if await chek_user(phone_number):
         otp = await generateOTP()
@@ -78,7 +78,7 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("get_otp")
     else:
         keyboard = await phone_keyboard()
-        await message.answer(f"🚫 Mijozlar ro'yxatida {phone_number} raqami bila ma'lumotlar topilmadi.",
+        await message.answer(f"🚫 Mijozlar ro'yxatida {phone_number} raqami bilan ma'lumotlar topilmadi.",
                              reply_markup=keyboard)
 
 

@@ -234,7 +234,6 @@ def add_postgres_invoices():
           'DocumentLines'
     i = 1
     while True:
-        print(i)
         i += 1
 
         conn = psycopg2.connect(
@@ -256,7 +255,7 @@ def add_postgres_invoices():
                               DocDate=str(data['DocDate']),
                               U_sumUZS=data['U_sumUZS'])
             if order is not None:
-                print("Order: ", order)
+                # print("Order: ", order)
                 details = data['DocumentLines']
                 for detail in details:
                     orderdetail = add_order_detail(
@@ -267,8 +266,8 @@ def add_postgres_invoices():
                         U_priceUZS=detail['U_priceUZS'],
                         ItemCode=detail['ItemCode']
                     )
-                    if orderdetail is not None:
-                        print("    Detail", orderdetail[0])
+                    # if orderdetail is not None:
+                    #     print("    Detail", orderdetail[0])
         conn.commit()
         conn.close()
         if '@odata.nextLink' in items:
@@ -294,7 +293,7 @@ def add_postgres_category():
             groupname=str(data['GroupName']),
             number=str(data['Number'])
         )
-        print("Category", category[0])
+        # print("Category", category[0])
     conn.commit()
     conn.close()
 
@@ -318,7 +317,7 @@ def add_postgres_users():
                 cardcode=data['CardCode'],
                 cardname=data['CardName']
             )
-            print(client[0])
+            # print(client[0])
     conn.commit()
     conn.close()
 
@@ -341,7 +340,7 @@ def add_postgres_subcategory():
             name=str(data['Name']),
             u_group=str(data['U_group'])
         )
-        print("SubCategory", category[0])
+        # print("SubCategory", category[0])
     conn.commit()
     conn.close()
 
@@ -363,7 +362,7 @@ def add_postgres_manufacturer():
             code=str(data['Code']),
             name=str(data['ManufacturerName']),
         )
-        print("Manufacturer", man[0])
+        # print("Manufacturer", man[0])
     conn.commit()
     conn.close()
 
@@ -388,6 +387,6 @@ def add_postgres_item():
             manufacturer=str(data['Manufacturer']),
             sub_category=str(data['U_Subgroup']),
         )
-        print("Product", item[0])
+        # print("Product", item[0])
     conn.commit()
     conn.close()
