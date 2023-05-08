@@ -21,7 +21,8 @@ async def menu(message: types.Message, state: FSMContext):
         cashback_s = await get_cashback_season()
         cashback_y = await get_cashback_year()
         text = f"💵Ushbu oydagi xaridlar: {round(orders_m, 2)}\n"
-        text += f"\n💰Sizda bonusgacha qoldi:\n    💵 {cashback_m.name}: {round(orders_m, 2)}/{cashback_m.summa}\n    💵 {cashback_s.name}: {round(orders_s, 2)}/{cashback_s.summa}\n"
+        text += f"\n💰Sizda bonusgacha qoldi:\n    💵 {cashback_m.name}: {round(orders_m, 2)}/{cashback_m.summa}\n    " \
+                f"💵 {cashback_s.name}: {round(orders_s, 2)}/{cashback_s.summa}\n"
         text += f"    💵 {cashback_y.name} : {round(orders_y, 2)}/{cashback_y.summa}\n"
         text += f"\nQo'shimcha aksiyalar: \n"
         for sale in user_sales:
@@ -55,22 +56,82 @@ async def menu(message: types.Message, state: FSMContext):
         keyboard = await menu_keyboard()
         photo = open('qrcode.png', 'rb')
         cashbacks = await get_user_kashbacks(message.from_user.id)  
-        await message.answer_photo(photo=photo, caption=f"Sizning keshbekingizni ishlatish uchun QR codingiz 👆\n\nHozirgi keshbekingiz: {cashbacks} UZS", reply_markup=keyboard)
+        await message.answer_photo(photo=photo, caption=f"Sizning keshbekingizni ishlatish uchun QR codingiz "
+                                                        f"👆\n\nHozirgi keshbekingiz: {cashbacks} UZS",
+                                   reply_markup=keyboard)
     if message.text == "To'lovlar tarixi":
         orders = await get_orders(message.from_id)
-        text = "To'lovlaringiz tarixi:\n\n"
+        text = "To'lovlar tarixi bo'limi\n\n"
+        await message.answer(text, reply_markup=ReplyKeyboardRemove())
+        years = []
+        for order in orders:
+            years.append(order.created_date.year)
+        years = list(dict.fromkeys(years))
+        markup = await year_keyboard(years)
+        await message.answer(text='Kerakli yilni tanlang 👇', reply_markup=markup)
+        await state.set_state('get_year_')
+
+        if message.text == "Yangiliklar":
+            await message.answer("Yangiliklar")
+
+
+@dp.callback_query_handler(state="get_year_")
+async def get_year(call: types.CallbackQuery, state: FSMContext):
+    data = call.data
+    if data != 'back_menu':
+        date = []
+        orders = await get_orders_by_year(call.from_user.id, year=data)
+        for order in orders:
+            if order.created_date.year == int(data):
+                date.append(order.created_date.month)
+        date = list(dict.fromkeys(date))
+        markup = await month_keyboard(date)
+        await call.message.edit_text(text='Kerakli oyni tanlang 👇', reply_markup=markup)
+        await state.update_data(year=data)
+        print(data)
+        await state.set_state('get_month_')
+    else:
+        await call.message.delete()
+        # await bot.send_message(chat_id=call.from_user.id, text=f".", reply_markup=ReplyKeyboardRemove())
+        markup = await menu_keyboard()
+        await state.finish()
+        await bot.send_message(chat_id=call.from_user.id, text='Kerakli buyruqni tanlang 👇', reply_markup=markup)
+
+
+@dp.callback_query_handler(state="get_month_")
+async def get_year(call: types.CallbackQuery, state: FSMContext):
+    data = call.data
+    state_data = await state.get_data()
+    if data != 'back_menu':
+        await call.message.delete()
+        orders = await get_orders_by_month(user_id=call.from_user.id, year=state_data["year"], month=data)
         i = 1
         for order in orders:
             details = await get_order_details(order.id)
             text = f"{i})🗓 Sana: {order.created_date.strftime('%d.%m.%Y')},  Summa: {round(order.u_sumuzs, 2)}\n"
             for detail in details:
                 text += f"   {detail.product.itemname} ✖️ {detail.count}  {detail.total_uzs}\n"
-            chunks = [text[i:i+4096] for i in range(0, len(text), 4096)] # split the text into chunks of 4096 characters
+            chunks = [text[i:i+4096] for i in range(0, len(text), 4096)]
             for chunk in chunks:
-                await message.answer(chunk)
-            i += 1    
-        if message.text == "Yangiliklar":
-            await message.answer("Yangiliklar")
+                await bot.send_message(chat_id=call.from_user.id, text=chunk)
+            i += 1
+        years = []
+        orders = await get_orders(call.from_user.id)
+        for order in orders:
+            years.append(order.created_date.year)
+        years = list(dict.fromkeys(years))
+        markup = await year_keyboard(years)
+        await bot.send_message(chat_id=call.from_user.id, text='Kerakli yilni tanlang 👇', reply_markup=markup)
+        await state.set_state('get_year_')
+    else:
+        years = []
+        orders = await get_orders(call.from_user.id)
+        for order in orders:
+            years.append(order.created_date.year)
+        years = list(dict.fromkeys(years))
+        markup = await year_keyboard(years)
+        await call.message.edit_text(text='Kerakli yilni tanlang 👇', reply_markup=markup)
+        await state.set_state('get_year_')
 
 
 @dp.message_handler(state="get_comment")

@@ -49,8 +49,9 @@ def set_user_telegram(user_id, phone, name):
 def get_user_monthly(user_id):
     try:
         month = datetime.date.today().month
-        orders = Order.objects.filter(user__telegram_id=user_id, created_date__month=month, created_date__year=datetime.date.today().year).values('summa').all()
-        order_sum_list = [order['summa'] for order in orders]
+        orders = Order.objects.filter(user__telegram_id=user_id, created_date__month=month, created_date__year=datetime
+                                      .date.today().year).values('u_sumuzs').all()
+        order_sum_list = [order['u_sumuzs'] for order in orders]
         return sum(order_sum_list)   
     except Exception as exx:
         print(exx)
@@ -60,8 +61,9 @@ def get_user_monthly(user_id):
 @sync_to_async
 def get_user_yearly(user_id):
     try:
-        orders = Order.objects.filter(user__telegram_id=user_id, created_date__year=datetime.date.today().year).values('summa').all()
-        order_sum_list = [order['summa'] for order in orders]
+        orders = Order.objects.filter(user__telegram_id=user_id, created_date__year=datetime.date.today().year)\
+            .values('u_sumuzs').all()
+        order_sum_list = [order['u_sumuzs'] for order in orders]
         return sum(order_sum_list)   
     except Exception as exx:
         print(exx)
@@ -79,8 +81,8 @@ def get_user_seasonly(user_id):
                                       created_date__year=year,
                                       created_date__month__gte=start_month,
                                       created_date__month__lte=end_month
-                                      ).values('summa').all()
-        order_sum_list = [order['summa'] for order in orders]
+                                      ).values('u_sumuzs').all()
+        order_sum_list = [order['u_sumuzs'] for order in orders]
         return sum(order_sum_list)
     except Exception as exx:
         print(exx)
@@ -124,6 +126,29 @@ def add_comment(user_id, comment):
 def get_orders(user_id):
     try:
         orders = Order.objects.filter(user__telegram_id=user_id).all()
+        return orders
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_orders_by_year(user_id, year):
+    try:
+        orders = Order.objects.filter(user__telegram_id=user_id, created_date__year=year).all()
+        return orders
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_orders_by_month(user_id, year, month):
+    try:
+        orders = Order.objects.filter(
+            user__telegram_id=user_id,
+            created_date__year=year,
+            created_date__month=month).all()
         return orders
     except Exception as exx:
         print(exx)
