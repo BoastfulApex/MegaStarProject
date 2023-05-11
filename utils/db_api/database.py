@@ -215,7 +215,6 @@ def get_order_details(order_id):
 @sync_to_async
 def get_cashback_monthly():
     cashback, created = Cashback.objects.get_or_create(
-        name="Oylik",
         period="month"
     )
     return cashback
@@ -224,7 +223,6 @@ def get_cashback_monthly():
 @sync_to_async
 def get_cashback_season():
     cashback, created = Cashback.objects.get_or_create(
-        name="Retro",
         period="season"
     )
     return cashback
@@ -233,7 +231,6 @@ def get_cashback_season():
 @sync_to_async
 def get_cashback_year():
     cashback, created = Cashback.objects.get_or_create(
-        name="Yillik",
         period="year"
     )
     return cashback

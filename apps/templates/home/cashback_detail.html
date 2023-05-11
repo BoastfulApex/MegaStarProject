@@ -1,13 +1,13 @@
 {% extends "layouts/base.html" %}
 {% load static %}
-{% block title %} Dashboard {% endblock %} 
+{% block title %} Keshbeklar {% endblock %}
 
 <!-- Element injected in the BODY element -->
-{% block body_class %} dashboard {% endblock body_class %}
+{% block body_class %} Keshbeklar {% endblock body_class %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
-  <link href="{% static 'css/app.css' %}" rel="stylesheet">
+<link href="{% static 'css/app.css' %}" rel="stylesheet" xmlns="http://www.w3.org/1999/html">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   
 {% endblock stylesheets %}
@@ -16,39 +16,43 @@
 
 			<main class="content">
 				<div class="container-fluid p-0">
+					<div class="card-body">
+						<form role="form" method="post" action="" enctype="multipart/form-data">
 
-					<h1 class="h3 mb-3"><strong>Keshbeklar </strong>Ro'yxati </h1>
+							{% csrf_token %}
 
-					<div class="row">
-						<div class="col-xl-12 col-xxl-12 d-flex">
-							<div class="w-100">
-								<div class="row">
-									{% for cashback in cashbacks %}
-									<div class="col-sm-6">
-										<div class="card">
-											<div class="card-body">
-												<div class="row">
-													<div class="col mt-0">
-														<h5 class="card-title">{{cashback.name}}  {{cashback.persent}}%</h5>
-													</div>
-													<div class="col-auto">
-														<div class="stat text-primary">
-															<a href="{% url 'cashback_update' cashback.id %}"><i class="align-middle" data-feather="edit-3"></i></a>
-														</div>
-													</div>
+							<div class="form-group">
+							  	<label for="inputName">Keshbek Nomi</label>
+								{{ form.name }}
+							</div>
+							<br>
+							<div class="form-group">
+								<label > Keshbek muddati</label>
+								{{ form.period }}
+							</div>
+							<br>
+							<div class="form-group">
+								<label > Keshbek summasi</label><br>
+								{{ form.summa }}
+							</div>
+							<br>
+							<div class="form-group">
+								<label > Keshbek foizi </label>
+								{{ form.persent }}
+								<br>
+							</div>
 
-												</div>
-												<h1 class="mt-1 mb-3">{{cashback.summa}} UZS</h1>
-											</div>
-										</div>
-									</div>
-									{% endfor %}
+							<br>
+							<br>
+							<div class="row">
+								<div class="col-12">
+									<input type="submit" class="btn btn-success float-right" value="Saqlash">
 								</div>
 							</div>
-						</div>
+						</form>
 					</div>
 				</div>
-			</main>
+            </main>
 {% endblock content %}
 
 {% block javascripts %}

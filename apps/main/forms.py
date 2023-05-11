@@ -126,3 +126,44 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ["itemname", "itemcode", "description", "price", "image"]
+
+
+class CashbackForm(forms.ModelForm):
+    PERIOD_TYPES = (
+        (MONTH, MONTH),
+        (SEASON, SEASON),
+        (YEAR, YEAR)
+    )
+
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ))
+    period = forms.ChoiceField(
+        choices=PERIOD_TYPES,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+                'readonly': 'readonly'
+            }
+        ))
+    summa = forms.FloatField(
+        widget=forms.NumberInput(
+            attrs={
+                "placeholder": "Summa",
+                "class": "form-control",
+            }
+        ))
+    persent = forms.FloatField(
+        widget=forms.NumberInput(
+            attrs={
+                "placeholder": "Summa",
+                "class": "form-control",
+            }
+        ))
+
+    class Meta:
+        model = Product
+        fields = ["name", "summa", "period", "persent"]

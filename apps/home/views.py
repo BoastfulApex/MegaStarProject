@@ -165,3 +165,19 @@ def product_detail(request, pk):
                   'home/product_detail.html',
                   {'form': form, 'product': product, 'segment': 'product'})
 
+
+def cashback_detail(request, pk):
+    cashback = Cashback.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = CashbackForm(request.POST, request.FILES, instance=cashback)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = CashbackForm(instance=cashback)
+
+    return render(request,
+                  'home/cashback_detail.html',
+                  {'form': form, 'cashback': cashback, 'segment': 'product'})
+

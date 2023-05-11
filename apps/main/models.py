@@ -20,6 +20,7 @@ class Cashback(models.Model):
     name = models.CharField(max_length=500, null=True, blank=True)
     period = models.CharField(max_length=50, null=True, blank=True, choices=PERIOD_TYPES)
     summa = models.IntegerField(default=0)
+    persent = models.IntegerField(default=1)
     
 
 class UserCashback(BaseModel):
