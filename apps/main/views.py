@@ -159,4 +159,4 @@ class UserTotalStatusView(generics.ListAPIView):
 
 class UserPost(generics.ListCreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer()
+    serializer_class = UserSerializer
