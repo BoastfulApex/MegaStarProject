@@ -14,4 +14,7 @@ urlpatterns = [
     path('products', ProductView.as_view(), name='products'),
 
     path('user_totals', UserTotalStatusView.as_view(), name='user_totals    '),
+
+    path('users', UserPost.as_view(), name='users'),
+
 ]

@@ -57,6 +57,12 @@ class UserSaleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
 class UserTotalStatusSerializer(serializers.Serializer):
     monthly = serializers.DecimalField(max_digits=10, decimal_places=2)
     seasonal = serializers.DecimalField(max_digits=10, decimal_places=2)
