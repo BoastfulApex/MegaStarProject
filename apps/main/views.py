@@ -157,6 +157,6 @@ class UserTotalStatusView(generics.ListAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserPost(generics.CreateAPIView):
+class UserPost(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer()
