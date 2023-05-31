@@ -15,23 +15,72 @@ def check_expired_sales():
 
 
 class CategoryView(generics.ListAPIView):
-    queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return Category.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        mans = self.get_queryset()
+        ser = self.get_serializer(mans, many=True)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": ser.data,
+             "message": []}
+        )
 
 
 class SubCategoryView(generics.ListAPIView):
-    queryset = SubCategory.objects.all()
     serializer_class = SubCategorySerializer
+
+    def get_queryset(self):
+        return SubCategory.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        mans = self.get_queryset()
+        ser = self.get_serializer(mans, many=True)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": ser.data,
+             "message": []}
+        )
 
 
 class ManufacturerView(generics.ListAPIView):
-    queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
+
+    def get_queryset(self):
+        return Manufacturer.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        mans = self.get_queryset()
+        ser = self.get_serializer(mans, many=True)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": ser.data,
+             "message": []}
+        )
 
 
 class SaleView(generics.ListAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+
+    def get_queryset(self):
+        return Sale.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        mans = self.get_queryset()
+        ser = self.get_serializer(mans, many=True)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": ser.data,
+             "message": []}
+        )
 
 
 class UserSaleView(generics.ListAPIView):
@@ -46,9 +95,14 @@ class UserSaleView(generics.ListAPIView):
         return active_sales
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        mans = self.get_queryset()
+        ser = self.get_serializer(mans, many=True)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": ser.data,
+             "message": []}
+        )
 
 
 class ProductView(generics.ListAPIView):
@@ -87,7 +141,12 @@ class ProductView(generics.ListAPIView):
         serializer = ProductSerializer(paginated_queryset, many=True)
 
         # Return response with serialized data
-        return Response(serializer.data)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": serializer.data,
+             "message": []}
+        )
 
 
 class TopProductAPIView(generics.ListAPIView):
@@ -121,7 +180,12 @@ class OrderView(generics.ListAPIView):
             order_data = serializer.data[queryset.index(order)]
             order_data['order_details'] = order_detail_serializer.data
             response_data.append(order_data)
-        return Response(response_data)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": response_data,
+             "message": []}
+        )
 
 
 class OrderDetailView(generics.RetrieveAPIView):
@@ -142,7 +206,12 @@ class OrderDetailView(generics.RetrieveAPIView):
         response_data = serializer.data
         response_data['order_details'] = order_detail_serializer.data
 
-        return Response(response_data)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": response_data,
+             "message": []}
+        )
 
 
 class UserTotalStatusView(generics.ListAPIView):
@@ -154,7 +223,12 @@ class UserTotalStatusView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         serializer = self.serializer_class(context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": serializer.data,
+             "message": []}
+        )
 
 
 class UserPost(generics.ListCreateAPIView):

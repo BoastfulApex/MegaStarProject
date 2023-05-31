@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
+from django.contrib.auth.signals import user_logged_in, user_logged_out
+from knox.models import AuthToken
 
 from django.contrib.auth import login
 
@@ -43,7 +45,18 @@ class LoginView(KnoxLoginView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        return super(LoginView, self).post(request, format=None)
+        token_ttl = self.get_token_ttl()
+        instance, token = AuthToken.objects.create(request.user, token_ttl)
+        user_logged_in.send(sender=request.user.__class__,
+                            request=request, user=request.user)
+        data = self.get_post_response_data(request, token, instance)
+
+        return Response(
+            {"status": True,
+             "code": 200,
+             "data": data,
+             "message": []}
+        )
 
 
 class PhoneVerify(generics.CreateAPIView):
@@ -55,5 +68,9 @@ class PhoneVerify(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             user = MegaUser.objects.get(phone=request.data["phone"])
             user.generate_otp()
-
-            return Response({"status": f"created {user.otp}"})
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": user.otp,
+                 "message": []}
+            )

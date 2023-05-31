@@ -1,6 +1,7 @@
 from django.db.models import Sum
 from rest_framework import serializers
 from .models import *
+from rest_framework.exceptions import NotFound
 
 
 class CategorySerializer(serializers.ModelSerializer):
