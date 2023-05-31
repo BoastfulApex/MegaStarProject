@@ -95,14 +95,12 @@ class ProductForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                'readonly': 'readonly'
             }
         ))
     itemcode = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                'readonly': 'readonly'
             }
         ))
     description = forms.CharField(

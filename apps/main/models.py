@@ -102,7 +102,7 @@ class Product(BaseModel):
     sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, null=True, blank=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=True, blank=True)
 
-    image = models.FileField(null=True)
+    image = models.FileField(null=True, blank=True)
     description = models.TextField(max_length=5000, null=True, blank=True)
     price = models.IntegerField()
     

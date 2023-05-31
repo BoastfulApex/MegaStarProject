@@ -154,10 +154,12 @@ def product_detail(request, pk):
     product = Product.objects.get(id=pk)
 
     if request.method == 'POST':
-        form = ManufacturerForm(request.POST, request.FILES, instance=product)
+        form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
             return redirect('home_products')
+        else:
+            print("ERROR: ", form.errors)
     else:
         form = ProductForm(instance=product)
 
