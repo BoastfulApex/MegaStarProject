@@ -3,7 +3,7 @@ from .serializers import *
 from rest_framework import permissions
 from rest_framework.response import Response
 from django.utils import timezone
-
+from data_import.get_data import get_top_products
 
 def check_expired_sales():
     """
@@ -21,13 +21,21 @@ class CategoryView(generics.ListAPIView):
         return Category.objects.all()
 
     def list(self, request, *args, **kwargs):
-        mans = self.get_queryset()
-        ser = self.get_serializer(mans, many=True)
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": ser.data,
-             "message": []}
+        try:
+            mans = self.get_queryset()
+            ser = self.get_serializer(mans, many=True)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": ser.data,
+                 "message": []}, status=status.HTTP_200_OK
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -73,14 +81,22 @@ class SaleView(generics.ListAPIView):
         return Sale.objects.all()
 
     def list(self, request, *args, **kwargs):
-        mans = self.get_queryset()
-        ser = self.get_serializer(mans, many=True)
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": ser.data,
-             "message": []}
-        )
+        try:
+            mans = self.get_queryset()
+            ser = self.get_serializer(mans, many=True)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": ser.data,
+                 "message": []}, status=status.HTTP_200_OK
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class UserSaleView(generics.ListAPIView):
@@ -95,48 +111,80 @@ class UserSaleView(generics.ListAPIView):
         return active_sales
 
     def list(self, request, *args, **kwargs):
-        mans = self.get_queryset()
-        ser = self.get_serializer(mans, many=True)
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": ser.data,
-             "message": []}
-        )
+        try:
+            mans = self.get_queryset()
+            ser = self.get_serializer(mans, many=True)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": ser.data,
+                 "message": []}, status=status.HTTP_200_OK,
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 
 class ProductView(generics.ListAPIView):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    # pagination_class = MyPagination
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        category_id = self.request.GET.get('category_id')
+        subcategory_id = self.request.GET.get('subcategory_id')
+        brand_id = self.request.GET.get('brand_id')
+
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+
+        if subcategory_id:
+            queryset = queryset.filter(subcategory_id=subcategory_id)
+
+        if brand_id:
+            queryset = queryset.filter(brand_id=brand_id)
+
+        return queryset
 
     def list(self, request, *args, **kwargs):
-        page = request.query_params.get('page')
-        page_size = request.query_params.get('page_size')
+        try:
+            page = request.query_params.get('page')
+            page_size = request.query_params.get('page_size')
 
-        # Get the queryset
-        queryset = Product.objects.all()
+            queryset = self.get_queryset()
 
-        page = int(page) if page else 1
-        page_size = int(page_size) if page_size else 10
+            page = int(page) if page else 1
+            page_size = int(page_size) if page_size else 10
 
-        if page < 1:
-            page = 1
-        if page_size < 1 or page_size > 100:
-            page_size = 10
+            if page < 1:
+                page = 1
+            if page_size < 1 or page_size > 100:
+                page_size = 10
 
-        start_index = (page - 1) * page_size
-        end_index = start_index + page_size
-        paginated_queryset = queryset[start_index:end_index]
+            start_index = (page - 1) * page_size
+            end_index = start_index + page_size
+            paginated_queryset = queryset[start_index:end_index]
 
-        serializer = ProductSerializer(paginated_queryset, many=True)
+            serializer = ProductSerializer(paginated_queryset, many=True)
 
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": serializer.data,
-             "message": []}
-        )
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class TopProductAPIView(generics.ListAPIView):
@@ -145,10 +193,29 @@ class TopProductAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        itemcodes = self.request.GET.getlist('itemcodes')
-        if itemcodes:
-            queryset = queryset.filter(itemcode__in=itemcodes)
+        top_products = get_top_products()
+        item_codes = [item['ItemCode'] for item in top_products['value']]
+        if item_codes:
+            queryset = queryset.filter(itemcode__in=item_codes)
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        try:
+            mans = self.get_queryset()
+            ser = self.get_serializer(mans, many=True)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": ser.data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class OrderView(generics.ListAPIView):
@@ -161,21 +228,29 @@ class OrderView(generics.ListAPIView):
         return orders
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        response_data = []
-        for order in queryset:
-            order_details = OrderDetail.objects.filter(order=order)
-            order_detail_serializer = OrderDetailSerializer(order_details, many=True)
-            order_data = serializer.data[queryset.index(order)]
-            order_data['order_details'] = order_detail_serializer.data
-            response_data.append(order_data)
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": response_data,
-             "message": []}
-        )
+        try:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            response_data = []
+            for order in queryset:
+                order_details = OrderDetail.objects.filter(order=order)
+                order_detail_serializer = OrderDetailSerializer(order_details, many=True)
+                order_data = serializer.data[queryset.index(order)]
+                order_data['order_details'] = order_detail_serializer.data
+                response_data.append(order_data)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": response_data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class OrderDetailView(generics.RetrieveAPIView):
@@ -188,20 +263,28 @@ class OrderDetailView(generics.RetrieveAPIView):
         return orders
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
 
-        order_details = OrderDetail.objects.filter(order=instance)
-        order_detail_serializer = OrderDetailSerializer(order_details, many=True)
-        response_data = serializer.data
-        response_data['order_details'] = order_detail_serializer.data
+            order_details = OrderDetail.objects.filter(order=instance)
+            order_detail_serializer = OrderDetailSerializer(order_details, many=True)
+            response_data = serializer.data
+            response_data['order_details'] = order_detail_serializer.data
 
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": response_data,
-             "message": []}
-        )
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": response_data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class UserTotalStatusView(generics.ListAPIView):
@@ -212,18 +295,46 @@ class UserTotalStatusView(generics.ListAPIView):
         return []
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(context={'request': request})
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": serializer.data,
-             "message": []}
-        )
+        try:
+            serializer = self.serializer_class(context={'request': request})
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}, status=status.HTTP_200_OK
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
-class UserPost(generics.ListAPIView):
+class UserListView(generics.ListCreateAPIView):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return User.objects.filter(id=self.request.user.id)
+    # def get_queryset(self):
+    #     return User.objects.filter(id=self.request.user.id)
+
+    def list(self, request, *args, **kwargs):
+        try:
+            mans = self.get_queryset()
+            ser = self.get_serializer(mans, many=True)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": ser.data,
+                 "message": []}, status=status.HTTP_200_OK
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+

@@ -14,8 +14,9 @@ urlpatterns = [
 
     path('products/', ProductView.as_view(), name='products'),
 
-    path('user_totals/', UserTotalStatusView.as_view(), name='user_totals    '),
+    path('user_totals/', UserTotalStatusView.as_view(), name='user_totals'),
+    path('top_products/', TopProductAPIView.as_view(), name='top_products'),
 
-    path('users/', UserPost.as_view(), name='users'),
+    path('users/', UserListView.as_view(), name='users'),
 
 ]
