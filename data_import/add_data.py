@@ -55,18 +55,13 @@ def check_user_sale(user_id):
 def add_cashback_to_user(order_id, conn):
     cur = conn.cursor()
 
-    # set order id and datetime
-
-    # get order amount from the Order model using a SQL query
     cur.execute("SELECT summa, created_date FROM main_order WHERE id=%s", (order_id,))
     order = cur.fetchone()
     order_amount = order[0]
     order_datetime = order[1]
-    # get unexpired usercashbacks using a SQL query
     cur.execute("SELECT * FROM main_usercashback WHERE expiration_date > %s AND active=True", (order_datetime,))
     user_cashbacks = cur.fetchall()
 
-    # loop through the usercashbacks and add 1% of the order amount to the summa field
     for user_cashback in user_cashbacks:
         user_cashback_id = user_cashback[0]
         user_cashback_summa = user_cashback[3]
@@ -258,7 +253,7 @@ def add_postgres_invoices():
                 # print("Order: ", order)
                 details = data['DocumentLines']
                 for detail in details:
-                    orderdetail = add_order_detail(
+                    add_order_detail(
                         conn=conn,
                         order_id=str(order),
                         Price=detail['Price'],
@@ -266,8 +261,6 @@ def add_postgres_invoices():
                         U_priceUZS=detail['U_priceUZS'],
                         ItemCode=detail['ItemCode']
                     )
-                    # if orderdetail is not None:
-                    #     print("    Detail", orderdetail[0])
         conn.commit()
         conn.close()
         if '@odata.nextLink' in items:

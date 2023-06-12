@@ -117,30 +117,20 @@ class ProductView(generics.ListAPIView):
         # Get the queryset
         queryset = Product.objects.all()
 
-        # If page and page_size are not provided, return full queryset
-        if not page and not page_size:
-            serializer = ProductSerializer(queryset, many=True)
-            return Response(serializer.data)
-
-        # Convert page and page_size to integers and set default values
         page = int(page) if page else 1
         page_size = int(page_size) if page_size else 10
 
-        # Validate page and page_size values
         if page < 1:
             page = 1
         if page_size < 1 or page_size > 100:
             page_size = 10
 
-        # Perform slicing to get paginated queryset
         start_index = (page - 1) * page_size
         end_index = start_index + page_size
         paginated_queryset = queryset[start_index:end_index]
 
-        # Serialize paginated queryset
         serializer = ProductSerializer(paginated_queryset, many=True)
 
-        # Return response with serialized data
         return Response(
             {"status": True,
              "code": 200,
@@ -231,6 +221,9 @@ class UserTotalStatusView(generics.ListAPIView):
         )
 
 
-class UserPost(generics.ListCreateAPIView):
-    queryset = User.objects.all()
+class UserPost(generics.ListAPIView):
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)

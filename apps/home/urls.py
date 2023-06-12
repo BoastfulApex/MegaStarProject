@@ -14,5 +14,6 @@ urlpatterns = [
     path('cashback/<int:pk>', views.cashback_detail, name='cashback_update'),
     path('products/', views.products, name='home_products'),
     path('products/<int:pk>', views.product_detail, name='product_update'),
+    path('cashbacks_by_cashback/<int:pk>', views.user_cashback_by_cashback, name='cashbacks_by_cashback'),
 
 ]

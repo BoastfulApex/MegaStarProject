@@ -32,6 +32,7 @@ class UserCashback(BaseModel):
     )
     
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    cashback = models.ForeignKey(Cashback, on_delete=models.SET_NULL, null=True)
     expiration_date = models.DateTimeField(null=True)
     period = models.CharField(max_length=50, null=True, blank=True, choices=PERIOD_TYPES)
     summa = models.IntegerField(default=0)

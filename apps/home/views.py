@@ -181,5 +181,16 @@ def cashback_detail(request, pk):
 
     return render(request,
                   'home/cashback_detail.html',
-                  {'form': form, 'cashback': cashback, 'segment': 'product'})
+                  {'form': form, 'cashback': cashback, 'segment': 'cashback'})
+
+
+def user_cashback_by_cashback(request, pk):
+    user_cashback = UserCashback.objects.filter(cashback_id=pk).all()
+    context = {
+        "cashs":user_cashback,
+        "segment":"cashback"
+    }
+
+    return render(request,
+                  'home/cashback_users.html', context)
 

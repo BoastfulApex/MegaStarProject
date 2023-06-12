@@ -5,7 +5,8 @@ import requests
 import urllib3
 
 load_dotenv()
-  
+
+
 def get_session_id():
     headers = {}
     url = 'https://212.83.152.252:50000/b1s/v2/Login'
