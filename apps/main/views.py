@@ -4,6 +4,7 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from django.utils import timezone
 from data_import.get_data import get_top_products
+from ..authentication.permission_classes import IsAuthenticatedCustom
 
 def check_expired_sales():
     """
@@ -129,7 +130,6 @@ class UserSaleView(generics.ListAPIView):
             )
 
 
-
 class ProductView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
@@ -220,7 +220,7 @@ class TopProductAPIView(generics.ListAPIView):
 
 class OrderView(generics.ListAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         user = self.request.user
@@ -315,10 +315,10 @@ class UserTotalStatusView(generics.ListAPIView):
 class UserListView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
-    # def get_queryset(self):
-    #     return User.objects.filter(id=self.request.user.id)
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id).first()
 
     def list(self, request, *args, **kwargs):
         try:
@@ -330,6 +330,29 @@ class UserListView(generics.ListCreateAPIView):
                  "data": ser.data,
                  "message": []}, status=status.HTTP_200_OK
             )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class DashboardListView(generics.ListAPIView):
+
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = Product.objects.all()
+            top_products = get_top_products()
+            item_codes = [item['ItemCode'] for item in top_products['value']]
+            top_queryset = queryset.filter(itemcode__in=item_codes)
+
+
         except Exception as exx:
             return Response(
                 {"status": True,
