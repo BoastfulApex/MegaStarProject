@@ -84,14 +84,13 @@ async def get_phone(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state='get_phone', content_types=types.ContentTypes.TEXT)
 async def get_phone(message: types.Message, state: FSMContext):
-    phone_number = ''
     phone_number = message.text
     if not await isValid(phone_number):
         keyboard = await phone_keyboard()
         await message.answer("⚠️ Telefon raqamingizni noto'g'ri kiritdingiz. Iltimos, qaytadan kiriting.",
                              reply_markup=keyboard)
         return
-    if await chek_user(phone_number):
+    elif await chek_user(phone_number):
         await state.update_data(phone=phone_number)
         user = await get_user_by_phone(phone_number)
         otp = await generateOTP()
