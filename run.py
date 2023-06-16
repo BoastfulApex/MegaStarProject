@@ -20,10 +20,6 @@ def set_scheduled_jobs(scheduler, *args, **kwargs):
 
 async def on_startup(dp):
     from utils.set_bot_commands import set_default_commands
-    import filters
-    import middlewares
-    filters.setup(dp)
-    middlewares.setup(dp)
     await set_default_commands(dp)
 
 
