@@ -18,6 +18,10 @@ urlpatterns = [
     path('top_products/', TopProductAPIView.as_view(), name='top_products'),
     path('similar_products/', SimilarProductView.as_view(), name='similar_products'),
 
+    path('cards/', CardView.as_view(), name='cards'),
+    path('cards/<int:pk>', CardObject.as_view(), name='card-object'),
+    path('add_order', AddOrderView.as_view(), name='add-order'),
+
     path('users/', UserListView.as_view(), name='api-users'),
 
 ]

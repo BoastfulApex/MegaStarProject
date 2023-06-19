@@ -382,8 +382,128 @@ class DashboardListView(generics.ListAPIView):
             top_products = get_top_products()
             item_codes = [item['ItemCode'] for item in top_products['value']]
             top_queryset = queryset.filter(itemcode__in=item_codes)
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
+class CardView(generics.ListCreateAPIView):
+    serializer_class = CardSerializer
+    permissions = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Card.objects.filter(user=self.request.user).all()
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            ser = self.get_serializer(queryset, many=True)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": ser.data,
+                 "message": []}, status=status.HTTP_200_OK
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}, status=status.HTTP_201_CREATED, headers=headers
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class CardObject(generics.RetrieveUpdateAPIView):
+    serializer_class = CardSerializer
+    permissions = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Card.objects.filter(user=self.request.user).all()
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def update(self, request, *args, **kwargs):
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class AddOrderView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permissions = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return []
+
+    def list(self, request, *args, **kwargs):
+        try:
+            cards = Card.objects.filter(user=request.user)
+            for card in cards:
+                card.delete()
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": 'XArid amalga oshirildi',
+                 "message": []}
+            )
         except Exception as exx:
             return Response(
                 {"status": True,

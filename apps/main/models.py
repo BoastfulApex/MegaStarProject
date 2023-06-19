@@ -133,7 +133,7 @@ class OrderDetail(models.Model):
         if not self.pk:
             self.order.summa += self.product.price
             self.order.save()
-        super(UserCashback, self).save(*args, **kwargs)
+        super(OrderDetail, self).save(*args, **kwargs)
 
 
 class Sale(BaseModel):
@@ -163,4 +163,21 @@ class News(BaseModel):
 class Comment(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(max_length=4500)    
+
+
+class Card(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    count = models.IntegerField(default=0)
+    summa = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        self.summa = self.product.price * self.count
+        super(Card, self).save(*args, **kwargs)
+
+
+class PromoCode(models.Model):
+    promocode = models.CharField(max_length=100, unique=True)
+    active = models.BooleanField(default=True)
+    summa = models.IntegerField()
 

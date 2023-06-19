@@ -28,6 +28,18 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = '__all__'
+
+
+class PromocodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PromoCode
+        fields = '__all__'
+
+
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
