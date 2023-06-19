@@ -24,86 +24,30 @@ class CategoryView(viewlist.ListAPIView):
     def get_queryset(self):
         return Category.objects.all()
 
-    # def list(self, request, *args, **kwargs):
-    #     try:
-    #         mans = self.get_queryset()
-    #         ser = self.get_serializer(mans, many=True)
-    #         return Response(
-    #             {"status": True,
-    #              "code": 200,
-    #              "data": ser.data,
-    #              "message": []}, status=status.HTTP_200_OK
-    #         )
-    #     except Exception as exx:
-    #         return Response(
-    #             {"status": True,
-    #              "code": 200,
-    #              "data": [],
-    #              "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #     )
 
-
-class SubCategoryView(generics.ListAPIView):
+class SubCategoryView(viewlist.ListAPIView):
     serializer_class = SubCategorySerializer
 
     def get_queryset(self):
         return SubCategory.objects.all()
 
-    def list(self, request, *args, **kwargs):
-        mans = self.get_queryset()
-        ser = self.get_serializer(mans, many=True)
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": ser.data,
-             "message": []}
-        )
 
-
-class ManufacturerView(generics.ListAPIView):
+class ManufacturerView(viewlist.ListAPIView):
     serializer_class = ManufacturerSerializer
 
     def get_queryset(self):
         return Manufacturer.objects.all()
 
-    def list(self, request, *args, **kwargs):
-        mans = self.get_queryset()
-        ser = self.get_serializer(mans, many=True)
-        return Response(
-            {"status": True,
-             "code": 200,
-             "data": ser.data,
-             "message": []}
-        )
 
-
-class SaleView(generics.ListAPIView):
+class SaleView(viewlist.ListAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
 
     def get_queryset(self):
         return Sale.objects.all()
 
-    def list(self, request, *args, **kwargs):
-        try:
-            mans = self.get_queryset()
-            ser = self.get_serializer(mans, many=True)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": ser.data,
-                 "message": []}, status=status.HTTP_200_OK
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
 
-
-class UserSaleView(generics.ListAPIView):
+class UserSaleView(viewlist.ListAPIView):
     serializer_class = SaleSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -114,26 +58,8 @@ class UserSaleView(generics.ListAPIView):
         active_sales = Sale.objects.filter(active=True, id__in=active_user_sales.values_list('sale_id', flat=True))
         return active_sales
 
-    def list(self, request, *args, **kwargs):
-        try:
-            mans = self.get_queryset()
-            ser = self.get_serializer(mans, many=True)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": ser.data,
-                 "message": []}, status=status.HTTP_200_OK,
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
 
-
-class ProductView(viewlist.ListAPIView):
+class ProductView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
@@ -207,7 +133,7 @@ class ProductView(viewlist.ListAPIView):
             )
 
 
-class TopProductAPIView(generics.ListAPIView):
+class TopProductAPIView(viewlist.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
@@ -219,26 +145,8 @@ class TopProductAPIView(generics.ListAPIView):
             queryset = queryset.filter(itemcode__in=item_codes)
         return queryset
 
-    def list(self, request, *args, **kwargs):
-        try:
-            mans = self.get_queryset()
-            ser = self.get_serializer(mans, many=True)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": ser.data,
-                 "message": []}
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
 
-
-class SimilarProductView(generics.ListAPIView):
+class SimilarProductView(viewlist.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
@@ -344,31 +252,13 @@ class UserTotalStatusView(generics.ListAPIView):
             )
 
 
-class UserListView(generics.ListCreateAPIView):
+class UserListView(viewlist.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return User.objects.filter(id=self.request.user.id).first()
-
-    def list(self, request, *args, **kwargs):
-        try:
-            mans = self.get_queryset()
-            ser = self.get_serializer(mans, many=True)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": ser.data,
-                 "message": []}, status=status.HTTP_200_OK
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
 
 
 class DashboardListView(generics.ListAPIView):
@@ -392,7 +282,7 @@ class DashboardListView(generics.ListAPIView):
             )
 
 
-class CardView(generics.ListCreateAPIView):
+class CardView(viewlist.ListCreateAPIView):
     serializer_class = CardSerializer
     permissions = [permissions.IsAuthenticated]
 
@@ -400,91 +290,14 @@ class CardView(generics.ListCreateAPIView):
         queryset = Card.objects.filter(user=self.request.user).all()
         return queryset
 
-    def list(self, request, *args, **kwargs):
-        try:
-            queryset = self.get_queryset()
-            ser = self.get_serializer(queryset, many=True)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": ser.data,
-                 "message": []}, status=status.HTTP_200_OK
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
 
-    def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": serializer.data,
-                 "message": []}, status=status.HTTP_201_CREATED, headers=headers
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-
-class CardObject(generics.RetrieveUpdateAPIView):
+class CardObject(viewlist.RetrieveUpdateAPIView):
     serializer_class = CardSerializer
     permissions = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         queryset = Card.objects.filter(user=self.request.user).all()
         return queryset
-
-    def retrieve(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": serializer.data,
-                 "message": []}
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-    def update(self, request, *args, **kwargs):
-        try:
-            partial = kwargs.pop('partial', False)
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": serializer.data,
-                 "message": []}
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
 
 
 class AddOrderView(generics.ListAPIView):
