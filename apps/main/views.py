@@ -24,23 +24,23 @@ class CategoryView(viewlist.ListAPIView):
     def get_queryset(self):
         return Category.objects.all()
 
-    def list(self, request, *args, **kwargs):
-        try:
-            mans = self.get_queryset()
-            ser = self.get_serializer(mans, many=True)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": ser.data,
-                 "message": []}, status=status.HTTP_200_OK
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    # def list(self, request, *args, **kwargs):
+    #     try:
+    #         mans = self.get_queryset()
+    #         ser = self.get_serializer(mans, many=True)
+    #         return Response(
+    #             {"status": True,
+    #              "code": 200,
+    #              "data": ser.data,
+    #              "message": []}, status=status.HTTP_200_OK
+    #         )
+    #     except Exception as exx:
+    #         return Response(
+    #             {"status": True,
+    #              "code": 200,
+    #              "data": [],
+    #              "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #     )
 
 
 class SubCategoryView(generics.ListAPIView):
