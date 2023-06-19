@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from django.utils import timezone
 from data_import.get_data import get_top_products
 from ..authentication.permission_classes import IsAuthenticatedCustom
+from django.db.models import Q
+
 
 def check_expired_sales():
     """
@@ -139,6 +141,9 @@ class ProductView(generics.ListAPIView):
         category_id = self.request.GET.get('category_id')
         subcategory_id = self.request.GET.get('subcategory_id')
         brand_id = self.request.GET.get('brand_id')
+        min_price = self.request.GET.get('min_price')
+        max_price = self.request.GET.get('max_price')
+        order_by = self.request.GET.get('order_by')  # 'asc' or 'desc'
 
         if category_id:
             queryset = queryset.filter(category_id=category_id)
@@ -148,6 +153,20 @@ class ProductView(generics.ListAPIView):
 
         if brand_id:
             queryset = queryset.filter(brand_id=brand_id)
+
+        if min_price and max_price:
+            queryset = queryset.filter(
+                Q(price__gte=min_price) & Q(price__lte=max_price)
+            )
+        elif min_price:
+            queryset = queryset.filter(price__gte=min_price)
+        elif max_price:
+            queryset = queryset.filter(price__lte=max_price)
+
+        if order_by == 'asc':
+            queryset = queryset.order_by('price')
+        elif order_by == 'desc':
+            queryset = queryset.order_by('-price')
 
         return queryset
 
@@ -216,6 +235,18 @@ class TopProductAPIView(generics.ListAPIView):
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+class SimilarProductView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        product_id = self.request.GET.get('product_id')
+        product = generics.get_object_or_404(Product, id=product_id)
+
+        similar_products = Product.objects.filter(category=product.category).exclude(id=product_id)[:5]
+
+        return similar_products
 
 
 class OrderView(generics.ListAPIView):

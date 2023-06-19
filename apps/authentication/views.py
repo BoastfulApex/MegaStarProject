@@ -12,7 +12,7 @@ from knox.views import LoginView as KnoxLoginView
 from rest_framework.response import Response
 from rest_framework import generics
 
-from .models import MegaUser
+from .models import MegaUser, send_sms
 from .serializers import PhoneVerifySerializer, PhoneAuthTokenSerializer
 
 
@@ -68,6 +68,7 @@ class PhoneVerify(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             user = MegaUser.objects.get(phone=request.data["phone"])
             user.generate_otp()
+            send_sms(phone=user.phone, otp=user.otp)
             return Response(
                 {"status": True,
                  "code": 200,

@@ -16,6 +16,7 @@ urlpatterns = [
 
     path('user_totals/', UserTotalStatusView.as_view(), name='user_totals'),
     path('top_products/', TopProductAPIView.as_view(), name='top_products'),
+    path('similar_products/', SimilarProductView.as_view(), name='similar_products'),
 
     path('users/', UserListView.as_view(), name='api-users'),
 
