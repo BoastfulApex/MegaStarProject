@@ -18,7 +18,7 @@ def check_expired_sales():
     expired_sales.update(active=False)
 
 
-class CategoryView(generics.ListAPIView):
+class CategoryView(viewlist.ListAPIView):
     serializer_class = CategorySerializer
 
     def get_queryset(self):
