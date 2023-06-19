@@ -6,6 +6,7 @@ from django.utils import timezone
 from data_import.get_data import get_top_products
 from ..authentication.permission_classes import IsAuthenticatedCustom
 from django.db.models import Q
+from auth_models import viewlist
 
 
 def check_expired_sales():
@@ -132,7 +133,7 @@ class UserSaleView(generics.ListAPIView):
             )
 
 
-class ProductView(generics.ListAPIView):
+class ProductView(viewlist.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
