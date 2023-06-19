@@ -70,8 +70,10 @@ class PhoneVerify(generics.CreateAPIView):
             user.generate_otp()
             send_sms(phone=user.phone, otp=user.otp)
             return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": user.otp,
-                 "message": []}
+                {
+                    "status": True,
+                    "code": 200,
+                    "data": user.otp,
+                    "message": []
+                }
             )

@@ -18,7 +18,7 @@ async def send_sms(otp, phone):
     password = '-u62Yq-s79HR'
     sms_data = {
         "messages": [{"recipient": f"{phone}", "message-id": "abc000000003",
-                      "sms": {"originator": "MEGASTAR", "content": {"text": f"Ваш код подтверждения для BOT: {otp}"}}}]}
+                      "sms": {"originator": "MEGASTAR", "content": {"text": f"Mega Star uchun tasdiqkash kodi: {otp}"}}}]}
     url = "http://91.204.239.44/broker-api/send"
     async with aiohttp.ClientSession() as session:
         async with session.post(url, auth=aiohttp.BasicAuth(login=username, password=password),
