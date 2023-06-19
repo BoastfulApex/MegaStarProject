@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404 as _get_object_or_404
 
 from rest_framework import views
 from rest_framework.settings import api_settings
-import mixins
+from auth_models import mixins
 
 
 def get_object_or_404(queryset, *filter_args, **filter_kwargs):
