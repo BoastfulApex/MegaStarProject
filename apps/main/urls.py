@@ -10,13 +10,14 @@ urlpatterns = [
     path('user_lases/', UserSaleView.as_view(), name='user_sales'),
     path('orders/', OrderView.as_view(), name='orders'),
     path('order_details/', OrderDetailView.as_view(), name='order_details'),
-    path('order_details/', OrderDetailView.as_view(), name='order_details'),
-
     path('products/', ProductView.as_view(), name='products'),
 
     path('user_totals/', UserTotalStatusView.as_view(), name='user_totals'),
     path('top_products/', TopProductAPIView.as_view(), name='top_products'),
     path('similar_products/', SimilarProductView.as_view(), name='similar_products'),
+    path('sale_products/', SaleProducts.as_view(), name='sale_products'),
+
+    path('check_promocode/', CheckPromoCode.as_view(), name='check_promocode'),
 
     path('cards/', CardView.as_view(), name='cards'),
     path('cards/<int:pk>', CardObject.as_view(), name='card-object'),

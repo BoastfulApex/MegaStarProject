@@ -114,3 +114,7 @@ class UserTotalStatusSerializer(serializers.Serializer):
             "seasonal": season,
             "yearly": yearly
         }
+
+
+class PromoCodeStatusSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=200)

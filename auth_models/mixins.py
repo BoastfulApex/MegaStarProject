@@ -66,7 +66,7 @@ class ListModelMixin:
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -89,7 +89,7 @@ class RetrieveModelMixin:
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -120,7 +120,7 @@ class UpdateModelMixin:
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -149,7 +149,7 @@ class DestroyModelMixin:
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -106,6 +106,7 @@ class Product(BaseModel):
     image = models.FileField(null=True, blank=True)
     description = models.TextField(max_length=5000, null=True, blank=True)
     price = models.IntegerField()
+    order_sale = models.IntegerField(default=0)
     
     def __str__(self):
         return self.itemname

@@ -127,7 +127,7 @@ class ProductView(generics.ListAPIView):
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -187,7 +187,7 @@ class OrderView(generics.ListAPIView):
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -221,7 +221,7 @@ class OrderDetailView(generics.RetrieveAPIView):
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -246,7 +246,7 @@ class UserTotalStatusView(generics.ListAPIView):
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -276,7 +276,7 @@ class DashboardListView(generics.ListAPIView):
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -315,14 +315,42 @@ class AddOrderView(generics.ListAPIView):
             return Response(
                 {"status": True,
                  "code": 200,
-                 "data": 'XArid amalga oshirildi',
+                 "data": 'Xarid amalga oshirildi',
                  "message": []}
             )
         except Exception as exx:
             return Response(
                 {"status": True,
-                 "code": 200,
+                 "code": 500,
                  "data": [],
                  "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+
+class SaleProducts(viewlist.ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        return Product.objects.filter(sale__gt=0).all()
+
+
+class CheckPromoCode(generics.CreateAPIView):
+    serializer_class = PromoCodeStatusSerializer
+
+    def create(self, request, *args, **kwargs):
+        code = request.data['code']
+        promo_code = PromoCode.objects.get(promocode=code)
+        if not promo_code:
+            return Response(
+                {"status": True,
+                 "code": 404,
+                 "data": [],
+                 "message": "Not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        else:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": promo_code.values(),
+                 "message": []}, status=status.HTTP_200_OK
+            )
