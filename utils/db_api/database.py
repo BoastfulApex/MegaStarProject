@@ -1,7 +1,7 @@
 import datetime
 from asgiref.sync import sync_to_async
 from apps.authentication.models import MegaUser as User
-from apps.main.models import Order, Sale, Comment, UserCashback, UserSale, OrderDetail, Cashback
+from apps.main.models import Order, Sale, Comment, UserCashback, UserSale, OrderDetail, Cashback, Admin
 
 
 @sync_to_async
@@ -234,3 +234,12 @@ def get_cashback_year():
         period="year"
     )
     return cashback
+
+
+@sync_to_async
+def check_user_is_admin(user_id):
+    admin = Admin.objects.get(user_id=user_id)
+    if admin:
+        return True
+    return False
+

@@ -182,3 +182,6 @@ class PromoCode(models.Model):
     active = models.BooleanField(default=True)
     summa = models.IntegerField()
 
+
+class Admin(models.Model):
+    user_id = models.CharField(max_length=100)

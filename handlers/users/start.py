@@ -8,6 +8,8 @@ import re
 import aiohttp
 import random
 
+from aiogram.utils.deep_linking import decode_payload, get_start_link
+
 
 async def generateOTP():
     return random.randint(111111, 999999)
@@ -33,24 +35,50 @@ async def isValid(s):
 
 @dp.message_handler(commands=['start'], state='*')
 async def start_func(message: types.Message, state: FSMContext):
-    user = await get_user(message.from_user.id)
-    if user is not None:
-        keyboard = await menu_keyboard()
-        orders_m = await get_user_monthly(message.from_id)
-        orders_y = await get_user_yearly(message.from_id)
-        orders_s = await get_user_seasonly(message.from_id)
-        cashback_m = await get_cashback_monthly()
-        cashback_s = await get_cashback_season()
-        cashback_y = await get_cashback_year()
-        text = "👋 Mega start botiga xush kelibsiz.\n\n💰Sizda bonusgacha qoldi:\n"
-        text += f"💎 {cashback_m.name} : {round(orders_m, 2)}/ {cashback_m.summa}\n"
-        text += f"💎 {cashback_s.name} : {round(orders_s, 2)}/ {cashback_s.summa}\n"
-        text += f"💎 {cashback_y.name} : {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
-        await message.answer(text, reply_markup=keyboard)
-        await state.set_state("user_menu")
+    args = message.get_args()
+    payload = decode_payload(args)
+    if payload != '':
+        if check_user_is_admin(message.from_user.id):
+            await message.answer("Keshbek yechildi")
+        else:
+            user = await get_user(message.from_user.id)
+            if user is not None:
+                keyboard = await menu_keyboard()
+                orders_m = await get_user_monthly(message.from_id)
+                orders_y = await get_user_yearly(message.from_id)
+                orders_s = await get_user_seasonly(message.from_id)
+                cashback_m = await get_cashback_monthly()
+                cashback_s = await get_cashback_season()
+                cashback_y = await get_cashback_year()
+                text = "👋 Mega start botiga xush kelibsiz.\n\n"
+                text += f"💎 {cashback_m.name} bonus uchun limit: {round(orders_m, 2)}/ {cashback_m.summa}\n"
+                text += f"💎 {cashback_s.name} bunus uchun limit: {round(orders_s, 2)}/ {cashback_s.summa}\n"
+                text += f"💎 {cashback_y.name} bunus uchun limit: {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
+                await message.answer(text, reply_markup=keyboard)
+                await state.set_state("user_menu")
+            else:
+                await message.answer(
+                    "👋 Assalomu alaykum\nMega Star botiga xush kelibsiz Iltimos ism, sharifingizni kiriting")
+                await state.set_state("get_name")
     else:
-        await message.answer("👋 Assalomu alaykum\nMega Star botiga xush kelibsiz Iltimos ism, sharifingizni kiriting")
-        await state.set_state("get_name")
+        user = await get_user(message.from_user.id)
+        if user is not None:
+            keyboard = await menu_keyboard()
+            orders_m = await get_user_monthly(message.from_id)
+            orders_y = await get_user_yearly(message.from_id)
+            orders_s = await get_user_seasonly(message.from_id)
+            cashback_m = await get_cashback_monthly()
+            cashback_s = await get_cashback_season()
+            cashback_y = await get_cashback_year()
+            text = "👋 Mega start botiga xush kelibsiz.\n\n"
+            text += f"💎 {cashback_m.name} bonus uchun limit: {round(orders_m, 2)}/ {cashback_m.summa}\n"
+            text += f"💎 {cashback_s.name} bunus uchun limit: {round(orders_s, 2)}/ {cashback_s.summa}\n"
+            text += f"💎 {cashback_y.name} bunus uchun limit: {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
+            await message.answer(text, reply_markup=keyboard)
+            await state.set_state("user_menu")
+        else:
+            await message.answer("👋 Assalomu alaykum\nMega Star botiga xush kelibsiz Iltimos ism, sharifingizni kiriting")
+            await state.set_state("get_name")
 
 
 @dp.message_handler(state='get_name')
