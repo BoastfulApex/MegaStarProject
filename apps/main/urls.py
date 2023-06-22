@@ -19,6 +19,8 @@ urlpatterns = [
 
     path('check_promocode/', CheckPromoCode.as_view(), name='check_promocode'),
 
+    path('qr_code/', QrCodeView.as_view(), name='qr_code'),
+
     path('cards/', CardView.as_view(), name='cards'),
     path('cards/<int:pk>', CardObject.as_view(), name='card-object'),
     path('add_order', AddOrderView.as_view(), name='add-order'),

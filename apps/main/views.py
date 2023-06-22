@@ -7,6 +7,7 @@ from data_import.get_data import get_top_products
 from ..authentication.permission_classes import IsAuthenticatedCustom
 from django.db.models import Q
 from auth_models import viewlist
+from django.http import HttpResponse
 
 
 def check_expired_sales():
@@ -354,3 +355,16 @@ class CheckPromoCode(generics.CreateAPIView):
                  "data": promo_code.values(),
                  "message": []}, status=status.HTTP_200_OK
             )
+
+
+class QrCodeView(generics.ListAPIView):
+
+    def get_queryset(self):
+        return []
+
+    def list(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return HttpResponse('<html><body></body></html>',
+                                status=403)
+        else:
+            return HttpResponse('<html><body>Succes</body></html>')
