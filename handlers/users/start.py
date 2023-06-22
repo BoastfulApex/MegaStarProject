@@ -50,7 +50,7 @@ async def start_func(message: types.Message, state: FSMContext):
                 cashback_m = await get_cashback_monthly()
                 cashback_s = await get_cashback_season()
                 cashback_y = await get_cashback_year()
-                text = "👋 Mega start botiga xush kelibsiz.\n\n"
+                text = "👋 Mega Star botiga xush kelibsiz.\n\n"
                 text += f"💎 {cashback_m.name} bonus uchun limit: {round(orders_m, 2)}/ {cashback_m.summa}\n"
                 text += f"💎 {cashback_s.name} bunus uchun limit: {round(orders_s, 2)}/ {cashback_s.summa}\n"
                 text += f"💎 {cashback_y.name} bunus uchun limit: {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
@@ -70,7 +70,7 @@ async def start_func(message: types.Message, state: FSMContext):
             cashback_m = await get_cashback_monthly()
             cashback_s = await get_cashback_season()
             cashback_y = await get_cashback_year()
-            text = "👋 Mega start botiga xush kelibsiz.\n\n"
+            text = "👋 Mega Star botiga xush kelibsiz.\n\n"
             text += f"💎 {cashback_m.name} bonus uchun limit: {round(orders_m, 2)}/ {cashback_m.summa}\n"
             text += f"💎 {cashback_s.name} bunus uchun limit: {round(orders_s, 2)}/ {cashback_s.summa}\n"
             text += f"💎 {cashback_y.name} bunus uchun limit: {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
