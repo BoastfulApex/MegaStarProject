@@ -77,7 +77,8 @@ async def start_func(message: types.Message, state: FSMContext):
             await message.answer(text, reply_markup=keyboard)
             await state.set_state("user_menu")
         else:
-            await message.answer("👋 Assalomu alaykum\nMega Star botiga xush kelibsiz Iltimos ism, sharifingizni kiriting")
+            await message.answer("👋 Assalomu alaykum\nMega Star botiga xush kelibsiz Iltimos ism,"
+                                 " sharifingizni kiriting")
             await state.set_state("get_name")
 
 
@@ -140,17 +141,20 @@ async def get_phone(message: types.Message, state: FSMContext):
     data = await state.get_data()
     user = await get_user_by_phone(data['phone'])
     if message.text == user.otp:
-        keyboard = await menu_keyboard()
         user.first_name = data['name']
         user.telegram_id = message.from_user.id
         user.save()
+        keyboard = await menu_keyboard()
         orders_m = await get_user_monthly(message.from_id)
         orders_y = await get_user_yearly(message.from_id)
         orders_s = await get_user_seasonly(message.from_id)
-        text = "👋 Mega star botiga xush kelibsiz.\n\n💰Sizda bonusgacha qoldi:\n"
-        text += f"💎 Oylik : {round(orders_m, 2)}/ 10 000 000 (10 mln)\n"
-        text += f"💎 Retro : {round(orders_s, 2)}/ 30 000 000 (30 mln)\n"
-        text += f"💎 Yillik : {round(orders_y, 2)}/ 100 000 000 (100 mln)\n\n"
+        cashback_m = await get_cashback_monthly()
+        cashback_s = await get_cashback_season()
+        cashback_y = await get_cashback_year()
+        text = "👋 Mega Star botiga xush kelibsiz.\n\n"
+        text += f"💎 {cashback_m.name} bonus uchun limit: {round(orders_m, 2)}/ {cashback_m.summa}\n"
+        text += f"💎 {cashback_s.name} bunus uchun limit: {round(orders_s, 2)}/ {cashback_s.summa}\n"
+        text += f"💎 {cashback_y.name} bunus uchun limit: {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
         await message.answer(text, reply_markup=keyboard)
         await state.set_state("user_menu")
     else:
