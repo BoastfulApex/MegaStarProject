@@ -51,7 +51,7 @@ async def menu(message: types.Message, state: FSMContext):
         await state.set_state("get_comment")
     if message.text == 'QrCode':
         user = await get_user(message.from_id)
-        q = qrcode.make(f'{user.id}')
+        q = qrcode.make(f'https://t.me/Megastar_cashback_bot?start={user.telegram_id}')
         q.save('qrcode.png')
         keyboard = await menu_keyboard()
         photo = open('qrcode.png', 'rb')
