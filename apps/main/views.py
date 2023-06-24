@@ -64,7 +64,7 @@ class ProductView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = Product.objects.all()
 
         category_id = self.request.GET.get('category_id')
         subcategory_id = self.request.GET.get('subcategory_id')
