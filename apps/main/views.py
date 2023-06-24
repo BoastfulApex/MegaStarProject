@@ -77,7 +77,7 @@ class ProductView(generics.ListAPIView):
             queryset = queryset.filter(category_id=category_id)
 
         if subcategory_id:
-            queryset = queryset.filter(subcategory_id=subcategory_id)
+            queryset = queryset.filter(sub_category_id=subcategory_id)
 
         if brand_id:
             queryset = queryset.filter(brand_id=brand_id)
