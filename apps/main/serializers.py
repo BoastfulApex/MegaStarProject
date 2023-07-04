@@ -137,3 +137,4 @@ class QrCodeSerializer(serializers.Serializer):
             msg = _('Foydalanuvchida keshbek miqdori yetarli emas')
             raise serializers.ValidationError(msg)
 
+        return attrs

@@ -381,7 +381,7 @@ class QrCodeView(generics.CreateAPIView):
         return []
 
     def create(self, request, *args, **kwargs):
-        if request.user.is_superuser:
+        if not request.user.is_superuser:
             return HttpResponse('<html><body></body></html>',
                                 status=403)
         else:
@@ -390,8 +390,10 @@ class QrCodeView(generics.CreateAPIView):
                 data = serializer.validated_data
                 card_code = data['card_code']
                 cashback = data['cashback']
-                user = User.objects.filter(card_code=card_code)
+                user = User.objects.filter(card_code=card_code).first()
                 user.all_cashback = user.all_cashback - int(cashback)
                 user.save()
-
-            return Response({'status': 'success'})
+                return Response({'status': 'success'})
+            else:
+                errors = serializer.errors
+                return Response(errors)
