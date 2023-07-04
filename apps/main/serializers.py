@@ -2,6 +2,7 @@ from django.db.models import Sum
 from rest_framework import serializers
 from .models import *
 from rest_framework.exceptions import NotFound
+from django.utils.translation import gettext_lazy as _
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -118,3 +119,21 @@ class UserTotalStatusSerializer(serializers.Serializer):
 
 class PromoCodeStatusSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=200)
+
+
+class QrCodeSerializer(serializers.Serializer):
+    card_code = serializers.CharField(max_length=100)
+    cashback = serializers.IntegerField()
+
+    def validate(self, attrs):
+        card_code = attrs.get('card_code')
+        cashback = attrs.get('cashback')
+
+        user = User.objects.filter(card_code=card_code).first()
+        if not user:
+            msg = _('Foydalanuvchi topilmadi')
+            raise serializers.ValidationError(msg)
+        elif user.all_cashback < int(cashback):
+            msg = _('Foydalanuvchida keshbek miqdori yetarli emas')
+            raise serializers.ValidationError(msg)
+

@@ -374,14 +374,24 @@ class CheckPromoCode(generics.CreateAPIView):
             )
 
 
-class QrCodeView(generics.ListAPIView):
+class QrCodeView(generics.CreateAPIView):
+    serializer_class = QrCodeSerializer
 
     def get_queryset(self):
         return []
 
-    def list(self, request, *args, **kwargs):
-        if not request.user.is_superuser:
+    def create(self, request, *args, **kwargs):
+        if request.user.is_superuser:
             return HttpResponse('<html><body></body></html>',
                                 status=403)
         else:
-            return HttpResponse('<html><body>Succes</body></html>')
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                data = serializer.validated_data
+                card_code = data['card_code']
+                cashback = data['cashback']
+                user = User.objects.filter(card_code=card_code)
+                user.all_cashback = user.all_cashback - int(cashback)
+                user.save()
+
+            return Response({'status': 'success'})
