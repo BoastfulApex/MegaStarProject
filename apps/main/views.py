@@ -30,7 +30,12 @@ class SubCategoryView(viewlist.ListAPIView):
     serializer_class = SubCategorySerializer
 
     def get_queryset(self):
-        return SubCategory.objects.all()
+        queryset = SubCategory.objects.all()
+        category_id = self.request.GET.get('category_id')
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+
+        return queryset
 
 
 class ManufacturerView(viewlist.ListAPIView):
@@ -108,21 +113,33 @@ class ProductView(generics.ListAPIView):
             page = int(page) if page else 1
             page_size = int(page_size) if page_size else 10
 
-            if page < 1:
+            if page <= 1:
                 page = 1
             if page_size < 1 or page_size > 100:
                 page_size = 10
+            max_page = len(queryset) // 10 + 1
+            next_page = ""
+            previous_page = ""
+            if page > 1:
+                previous_page = f"http://185.65.202.40:3222/api/products/?page={page-1}"
+            if page < max_page:
+                next_page = f"http://185.65.202.40:3222/api/products/?page={page+1}"
 
             start_index = (page - 1) * page_size
             end_index = start_index + page_size
             paginated_queryset = queryset[start_index:end_index]
-
             serializer = ProductSerializer(paginated_queryset, many=True)
-
+            data = {
+                'page': page,
+                'max_page': max_page,
+                'previous_page': previous_page,
+                'next_page': next_page,
+                'results': serializer.data
+            }
             return Response(
                 {"status": True,
                  "code": 200,
-                 "data": serializer.data,
+                 "data": data,
                  "message": []}
             )
         except Exception as exx:
