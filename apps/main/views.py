@@ -53,9 +53,9 @@ class SaleView(viewlist.ListAPIView):
         return Sale.objects.all()
 
 
-class UserSaleView(viewlist.ListAPIView):
+class UserSaleView(viewlist.ListCreateAPIView):
     serializer_class = SaleSerializer
-    permission_classes = [IsAuthenticatedCustom]
+    # permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         check_expired_sales()
