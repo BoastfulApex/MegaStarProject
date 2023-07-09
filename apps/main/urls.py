@@ -28,5 +28,6 @@ urlpatterns = [
     path('add_order', AddOrderView.as_view(), name='add-order'),
 
     path('users/', UserListView.as_view(), name='api-users'),
+    path('user_cashback_history/', UserCashbackHistoryVew.as_view(), name='user-cashback-history'),
 
 ]

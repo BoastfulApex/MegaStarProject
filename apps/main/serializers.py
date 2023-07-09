@@ -74,7 +74,13 @@ class UserSaleSerializer(serializers.ModelSerializer):
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = '__all__'
+        fields = ['id', 'name', 'description', 'image', 'created_date']
+
+
+class UserCashbackHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserCashback
+        fields = ['id', 'summa', 'user', 'created_date']
 
 
 class UserSerializer(serializers.ModelSerializer):

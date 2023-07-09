@@ -187,3 +187,13 @@ class PromoCode(models.Model):
 
 class Admin(models.Model):
     user_id = models.CharField(max_length=100)
+
+
+class Notification(models.Model):
+    name = models.CharField(max_length=1000, unique=True)
+    message = models.TextField(max_length=10000, null=True, blank=True)
+
+
+class UserCashbackHistory(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    summa = models.IntegerField(default=0)

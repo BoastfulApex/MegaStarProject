@@ -55,7 +55,7 @@ class SaleView(viewlist.ListAPIView):
 
 class UserSaleView(viewlist.ListAPIView):
     serializer_class = SaleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         check_expired_sales()
@@ -218,7 +218,7 @@ class OrderView(generics.ListAPIView):
 
 class OrderDetailView(generics.RetrieveAPIView):
     serializer_class = OrderDetailSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         user = self.request.user
@@ -252,7 +252,7 @@ class OrderDetailView(generics.RetrieveAPIView):
 
 class UserTotalStatusView(generics.ListAPIView):
     serializer_class = UserTotalStatusSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         return []
@@ -307,16 +307,16 @@ class DashboardListView(generics.ListAPIView):
 
 class CardView(viewlist.ListCreateAPIView):
     serializer_class = CardSerializer
-    permissions = [permissions.IsAuthenticated]
+    permissions = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         queryset = Card.objects.filter(user=self.request.user).all()
         return queryset
 
 
-class CardObject(viewlist.RetrieveUpdateAPIView):
+class CardObject(viewlist.RetrieveUpdateDestroyAPIView):
     serializer_class = CardSerializer
-    permissions = [permissions.IsAuthenticated]
+    permissions = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         queryset = Card.objects.filter(user=self.request.user).all()
@@ -325,7 +325,7 @@ class CardObject(viewlist.RetrieveUpdateAPIView):
 
 class AddOrderView(generics.ListAPIView):
     serializer_class = UserSerializer
-    permissions = [permissions.IsAuthenticated]
+    permissions = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         return []
@@ -396,6 +396,11 @@ class QrCodeView(generics.CreateAPIView):
                 card_code = data['card_code']
                 cashback = data['cashback']
                 user = User.objects.filter(card_code=card_code).first()
+                cashback_history = UserCashbackHistory.objects.create(
+                    user=user,
+                    summa=int(cashback)
+                )
+                cashback_history.save()
                 user.all_cashback = user.all_cashback - int(cashback)
                 user.save()
                 return Response({'status': 'success'})
@@ -404,6 +409,14 @@ class QrCodeView(generics.CreateAPIView):
                 return Response(errors)
 
 
-class NewsView(generics.ListCreateAPIView):
+class NewsView(viewlist.ListAPIView):
     serializer_class = NewsSerializer
     queryset = News.objects.all()
+
+
+class UserCashbackHistoryVew(viewlist.ListAPIView):
+    serializer_class = UserCashbackHistorySerializer
+    permission_classes = [IsAuthenticatedCustom]
+
+    def get_queryset(self):
+        return UserCashbackHistory.objects.filter(user=self.request.user)
