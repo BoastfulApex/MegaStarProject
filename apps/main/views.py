@@ -68,7 +68,6 @@ class UserSaleView(viewlist.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         try:
             user_sale = UserSale.objects.filter(user=request.user, product=request.data['product']).first()
-            print(user_sale)
             if not user_sale:
                 serializer = self.get_serializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
