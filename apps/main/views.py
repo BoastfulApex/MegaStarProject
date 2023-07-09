@@ -490,5 +490,10 @@ class Recommendation(viewlist.ListAPIView):
     # permission_classes = IsAuthenticatedCustom
 
     def get_queryset(self):
-        products = Product.objects.all()
-        return products[:10]
+        import random
+        from django.db.models import Count
+        all_products = Product.objects.all()
+        total_products = all_products.count()
+        random_indices = random.sample(range(total_products), 10)
+        random_products = [all_products[index] for index in random_indices]
+        return random_products
