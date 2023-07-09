@@ -20,6 +20,7 @@ urlpatterns = [
     path('top_products/', TopProductAPIView.as_view(), name='top_products'),
     path('similar_products/', SimilarProductView.as_view(), name='similar_products'),
     path('sale_products/', SaleProducts.as_view(), name='sale_products'),
+    path('recommendation_products/', Recommendation.as_view(), name='recommendation_products'),
 
     path('check_promocode/', CheckPromoCode.as_view(), name='check_promocode'),
 

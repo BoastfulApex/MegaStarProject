@@ -485,4 +485,10 @@ class UserRecommendation(viewlist.ListAPIView):
         return recommended_products[:10]
 
 
+class Recommendation(viewlist.ListAPIView):
+    serializer_class = ProductSerializer
+    # permission_classes = IsAuthenticatedCustom
 
+    def get_queryset(self):
+        products = Product.objects.all()
+        return products[:10]
