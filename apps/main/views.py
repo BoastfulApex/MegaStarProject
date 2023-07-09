@@ -286,7 +286,7 @@ class UserListView(viewlist.ListCreateAPIView):
     permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
-        return User.objects.filter(id=self.request.user.id).first()
+        return User.objects.filter(id=self.request.user.id)
 
 
 class DashboardListView(generics.ListAPIView):
