@@ -203,3 +203,8 @@ class UserComment(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(max_length=10000)
 
+
+class AboutUs(BaseModel):
+    about = models.TextField(max_length=10000)
+
+

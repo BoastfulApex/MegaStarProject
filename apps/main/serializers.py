@@ -164,3 +164,12 @@ class UserCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserComment
         fields = '__all__'
+
+
+class AboutSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AboutUs
+        fields = '__all__'
+
+
