@@ -15,5 +15,9 @@ urlpatterns = [
     path('products/', views.products, name='home_products'),
     path('products/<int:pk>', views.product_detail, name='product_update'),
     path('cashbacks_by_cashback/<int:pk>', views.user_cashback_by_cashback, name='cashbacks_by_cashback'),
+    path('notifications', views.notifications_list, name='notifications'),
+    path('notification_create', views.notification_create, name='notifications_create'),
+    path('notification/<int:pk>', views.notification_detail, name='notifications_detail'),
+    path('notification_delete/<int:pk>', views.NotificationDelete.as_view(), name='notifications_delete'),
 
 ]

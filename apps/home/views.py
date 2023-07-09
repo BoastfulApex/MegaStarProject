@@ -6,6 +6,8 @@ from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 from apps.authentication.models import *
 from apps.main.forms import *
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.urls import reverse_lazy
 
 
 @login_required(login_url="/login/")
@@ -194,3 +196,49 @@ def user_cashback_by_cashback(request, pk):
     return render(request,
                   'home/cashback_users.html', context)
 
+
+def notifications_list(request):
+    notifications = Notification.objects.all()
+    context = {
+        "notifications": notifications,
+        "segment": "notifications"
+    }
+
+    html_template = loader.get_template('home/notifications.html')
+    return HttpResponse(html_template.render(context, request))
+
+
+def notification_detail(request, pk):
+    notification = Notification.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = NotificationForm(request.POST, request.FILES, instance=notification)
+        if form.is_valid():
+            form.save()
+            return redirect('notifications')
+    else:
+        form = NotificationForm(instance=notification)
+
+    return render(request,
+                  'home/notification_update.html',
+                  {'form': form, 'notification': notification})
+
+
+def notification_create(request):
+    if request.method == 'POST':
+        form = NotificationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('notification')
+    else:
+        form = NotificationForm()
+
+    return render(request,
+                  'home/notification_create.html',
+                  {'form': form})
+
+
+class NotificationDelete(DeleteView):
+    model = Notification
+    fields = '__all__'
+    success_url = reverse_lazy('notifications')

@@ -165,3 +165,26 @@ class CashbackForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ["name", "summa", "period", "persent"]
+
+
+class NotificationForm(forms.ModelForm):
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Bildirishnoma Sarlavhasi",
+                "class": "form-control",
+            }
+        ))
+
+    message = forms.CharField(
+        widget=forms.Textarea(
+            attrs=
+            {
+                "placeholder": "Xabar matni",
+                "class": "form-control",
+            }
+        ))
+
+    class Meta:
+        model = Product
+        fields = '__all__'
