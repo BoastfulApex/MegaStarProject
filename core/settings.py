@@ -1,8 +1,7 @@
-
-from pathlib import Path
-import os, random, string
+import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -105,6 +104,10 @@ else:
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+}
+
+KNOX = {
+    'TOKEN_TTL': timedelta(hours=24),  # Set the token expiration time to 24 hours
 }
 
 AUTH_USER_MODEL = 'authentication.MegaUser'

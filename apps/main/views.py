@@ -283,7 +283,7 @@ class UserTotalStatusView(generics.ListAPIView):
 class UserListView(viewlist.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         return User.objects.filter(id=self.request.user.id).first()
