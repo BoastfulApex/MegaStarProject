@@ -60,7 +60,7 @@ class SaleView(viewlist.ListAPIView):
             response_data = []
             for sale in sales:
                 user_order_quantity = 0
-                user_sale = UserSale.objects.filter(user=request.user, sale=sale).forst()
+                user_sale = UserSale.objects.filter(user=request.user, sale=sale).first()
                 if user_sale:
                     user_order_quantity = user_sale.order_quantity
                 sale_data = {
