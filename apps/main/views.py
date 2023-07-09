@@ -310,7 +310,7 @@ class DashboardListView(generics.ListAPIView):
             )
 
 
-class CardView(generics.ListCreateAPIView):
+class CardView(viewlist.ListCreateAPIView):
     serializer_class = CardSerializer
     permissions = [IsAuthenticatedCustom]
 
