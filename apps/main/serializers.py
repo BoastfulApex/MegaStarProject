@@ -150,3 +150,10 @@ class QrCodeSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg)
 
         return attrs
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = '__all__'

@@ -459,3 +459,10 @@ class UserCashbackHistoryVew(viewlist.ListAPIView):
 
     def get_queryset(self):
         return UserCashbackHistory.objects.filter(user=self.request.user)
+
+
+class NotificationView(viewlist.ListAPIView):
+    serializer_class = NotificationSerializer
+
+    def get_queryset(self):
+        return Notification.objects.all()
