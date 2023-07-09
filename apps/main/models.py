@@ -204,7 +204,7 @@ class UserComment(BaseModel):
     comment = models.TextField(max_length=10000)
 
 
-class AboutUs(BaseModel):
+class AboutUs(models.Model):
     about = models.TextField(max_length=10000)
 
 
