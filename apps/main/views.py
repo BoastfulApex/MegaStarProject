@@ -349,6 +349,36 @@ class CardView(viewlist.ListCreateAPIView):
         queryset = Card.objects.filter(user=self.request.user).all()
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        try:
+            card = Card.objects.filter(user=request.user, product=request.data['product']).first()
+            if not card:
+                serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                self.perform_create(serializer)
+                headers = self.get_success_headers(serializer.data)
+                return Response(
+                    {"status": True,
+                     "code": 200,
+                     "data": serializer.data,
+                     "message": []}, status=status.HTTP_200_OK, headers=headers
+                )
+            else:
+                return Response(
+                    {"status": True,
+                     "code": 200,
+                     "data": [],
+                     "message": ['Maxsulot savatda bor']}
+                )
+
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
