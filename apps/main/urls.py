@@ -12,6 +12,7 @@ urlpatterns = [
     path('orders/', OrderView.as_view(), name='orders'),
     path('order_details/', OrderDetailView.as_view(), name='order_details'),
     path('products/', ProductView.as_view(), name='products'),
+    path('products/<>int:pk', ProductDetailView.as_view(), name='product-detail'),
 
     path('user_totals/', UserTotalStatusView.as_view(), name='user_totals'),
     path('top_products/', TopProductAPIView.as_view(), name='top_products'),

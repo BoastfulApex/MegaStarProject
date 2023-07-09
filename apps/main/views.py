@@ -151,6 +151,11 @@ class ProductView(generics.ListAPIView):
             )
 
 
+class ProductDetailView(generics.RetrieveAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+
+
 class TopProductAPIView(viewlist.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
