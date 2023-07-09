@@ -319,14 +319,27 @@ class CardView(generics.ListCreateAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        cards_data = serializer.data
-        response_data = {
-            'cards': cards_data,
-            'objects': len(queryset)
-        }
-        return Response(response_data)
+        try:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            cards_data = serializer.data
+            response_data = {
+                'cards': cards_data,
+                'objects': len(queryset)
+            }
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": response_data,
+                 "message": []})
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 500,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 
 class CardObject(viewlist.RetrieveUpdateDestroyAPIView):
