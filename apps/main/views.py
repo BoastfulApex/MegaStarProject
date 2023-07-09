@@ -330,7 +330,7 @@ class CardView(viewlist.ListCreateAPIView):
                     'count': card.count,
                     'summa': card.summa,
                     'product_id': card.product.id,
-                    'product_name': card.product.name,
+                    'product_name': card.product.itemname,
                     'product_image': card.product.image if card.product.image else None,
                 }
                 cards_data.append(cards)
