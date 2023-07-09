@@ -49,9 +49,44 @@ class ManufacturerView(viewlist.ListAPIView):
 class SaleView(viewlist.ListAPIView):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+    permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         return Sale.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        try:
+            sales = Sale.objects.filter(active=True).all()
+            response_data = []
+            for sale in sales:
+                user_order_quantity = 0
+                user_sale = UserSale.objects.filter(user=request.user, sale=sale).forst()
+                if user_sale:
+                    user_order_quantity = user_sale.order_quantity
+                sale_data = {
+                    "id": sale.id,
+                    "name": sale.name,
+                    "product_id": sale.product.id,
+                    "expiration_date": sale.expiration_date,
+                    "required_quantity": sale.required_quantity,
+                    "gift_product_id": sale.gift_product.id,
+                    "gift_quantity": sale.gift_quantity,
+                    "user_order_quantity": user_order_quantity,
+                }
+                response_data.append(sale_data)
+                return Response(
+                    {"status": True,
+                     "code": 200,
+                     "data": response_data,
+                     "message": []}
+                )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 500,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class UserSaleView(viewlist.ListCreateAPIView):
