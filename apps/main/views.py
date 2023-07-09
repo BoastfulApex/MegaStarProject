@@ -362,7 +362,7 @@ class CardView(viewlist.ListCreateAPIView):
                     'summa': card.summa,
                     'product_id': card.product.id,
                     'product_name': card.product.itemname.encode('utf-8'),
-                    'product_image': str(card.product.image) if card.product.image else None,
+                    'product_image': "http://185.65.202.40:3222/files/" + str(card.product.image) if card.product.image else None,
                 }
                 cards_data.append(cards)
             response_data = {
