@@ -65,6 +65,11 @@ class UserSaleView(viewlist.ListCreateAPIView):
         return active_sales
 
 
+class UserSaleDetailView(viewlist.RetrieveAPIView):
+    serializer_class = UserSaleSerializer
+    # permission_classes = [IsAuthenticatedCustom]
+
+
 class ProductView(generics.ListAPIView):
     serializer_class = ProductSerializer
 

@@ -68,7 +68,7 @@ class UserCashbackSerializer(serializers.ModelSerializer):
 class UserSaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSale
-        fields = '__all__'
+        fields = ['id', 'user', 'sale', 'order_quantity', 'created_date', 'is_full']
 
 
 class NewsSerializer(serializers.ModelSerializer):
