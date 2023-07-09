@@ -310,14 +310,23 @@ class DashboardListView(generics.ListAPIView):
             )
 
 
-class CardView(viewlist.ListCreateAPIView):
+class CardView(generics.ListCreateAPIView):
     serializer_class = CardSerializer
     permissions = [IsAuthenticatedCustom]
 
     def get_queryset(self):
-        # queryset = Card.objects.filter(user=self.request.user).all()
-        queryset = Card.objects.all()
+        queryset = Card.objects.filter(user=self.request.user).all()
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        cards_data = serializer.data
+        response_data = {
+            'cards': cards_data,
+            'objects': len(queryset)
+        }
+        return Response(response_data)
 
 
 class CardObject(viewlist.RetrieveUpdateDestroyAPIView):
