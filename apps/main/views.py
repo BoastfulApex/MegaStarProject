@@ -54,7 +54,7 @@ class SaleView(viewlist.ListAPIView):
 
 
 class UserSaleView(viewlist.ListCreateAPIView):
-    serializer_class = SaleSerializer
+    serializer_class = UserSaleSerializer
     # permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
