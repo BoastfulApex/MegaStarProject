@@ -33,5 +33,6 @@ urlpatterns = [
     path('users/', UserListView.as_view(), name='api-users'),
     path('user_cashback_history/', UserCashbackHistoryVew.as_view(), name='user-cashback-history'),
     path('user_recommendation/', UserRecommendation.as_view(), name='user-recommendation'),
+    path('user_comment/', CommentView.as_view(), name='user-comment'),
 
 ]
