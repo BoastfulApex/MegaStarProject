@@ -466,3 +466,23 @@ class NotificationView(viewlist.ListAPIView):
 
     def get_queryset(self):
         return Notification.objects.all()
+
+
+class UserRecommendation(viewlist.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedCustom]
+
+    def get_queryset(self):
+        user_orders = Order.objects.filter(user=self.request.user).all()
+        product_ids = []
+        for order in user_orders:
+            order_details = OrderDetail.objects.filter(order=order)
+            for order_detail in order_details:
+                product_ids.append(order_detail.product.id)
+        from collections import Counter
+        product_frequency = Counter(product_ids)
+        recommended_products = sorted(product_frequency, key=product_frequency.get, reverse=True)
+        return recommended_products[:10]
+
+
+
