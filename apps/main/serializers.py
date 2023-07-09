@@ -157,3 +157,10 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = '__all__'
+
+
+class UserCommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserComment
+        fields = '__all__'

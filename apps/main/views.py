@@ -75,7 +75,7 @@ class ProductView(generics.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
-        queryset = Product.objects.all()
+        queryset = Product.objects.all().order_by('id')
 
         category_id = self.request.GET.get('category_id')
         subcategory_id = self.request.GET.get('subcategory_id')
@@ -531,3 +531,8 @@ class Recommendation(viewlist.ListAPIView):
         random_indices = random.sample(range(total_products), 10)
         random_products = [all_products[index] for index in random_indices]
         return random_products
+
+
+class CommentView(viewlist.CreateAPIView):
+    serializer_class = UserCommentSerializer
+    permission_classes = IsAuthenticatedCustom
