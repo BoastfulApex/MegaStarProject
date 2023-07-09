@@ -397,3 +397,8 @@ class QrCodeView(generics.CreateAPIView):
             else:
                 errors = serializer.errors
                 return Response(errors)
+
+
+class NewsView(generics.ListAPIView):
+    serializer_class = NewsSerializer
+    queryset = News.objects.all()

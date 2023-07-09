@@ -71,10 +71,16 @@ class UserSaleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
+        fields = '__all__'
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'card_code', 'phone']
+        fields = ['id', 'first_name', 'last_name', 'card_code', 'phone', 'all_cashback']
 
 
 class UserTotalStatusSerializer(serializers.Serializer):
