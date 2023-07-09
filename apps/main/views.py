@@ -352,6 +352,7 @@ class CardView(viewlist.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         try:
             card = Card.objects.filter(user=request.user, product=request.data['product']).first()
+            print(card)
             if not card:
                 serializer = self.get_serializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
