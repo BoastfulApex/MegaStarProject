@@ -158,7 +158,9 @@ class UserSale(BaseModel):
 
 
 class News(BaseModel):
-    pass
+    name = models.CharField(max_length=10000, null=True, blank=True)
+    description = models.TextField(max_length=10000, null=True, blank=True)
+    image = models.FileField(null=True, blank=True)
 
 
 class Comment(BaseModel):
