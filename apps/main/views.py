@@ -8,6 +8,7 @@ from ..authentication.permission_classes import IsAuthenticatedCustom
 from django.db.models import Q
 from auth_models import viewlist
 from django.http import HttpResponse
+import random
 
 
 def check_expired_sales():
@@ -482,6 +483,11 @@ class UserRecommendation(viewlist.ListAPIView):
         from collections import Counter
         product_frequency = Counter(product_ids)
         recommended_products = sorted(product_frequency, key=product_frequency.get, reverse=True)
+        if not recommended_products:
+            all_products = Product.objects.all()
+            total_products = all_products.count()
+            random_indices = random.sample(range(total_products), 10)
+            recommended_products = [all_products[index] for index in random_indices]
         return recommended_products[:10]
 
 
@@ -490,8 +496,6 @@ class Recommendation(viewlist.ListAPIView):
     # permission_classes = IsAuthenticatedCustom
 
     def get_queryset(self):
-        import random
-        from django.db.models import Count
         all_products = Product.objects.all()
         total_products = all_products.count()
         random_indices = random.sample(range(total_products), 10)
