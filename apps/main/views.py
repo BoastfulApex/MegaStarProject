@@ -312,7 +312,7 @@ class DashboardListView(generics.ListAPIView):
 
 class CardView(viewlist.ListCreateAPIView):
     serializer_class = CardSerializer
-    # permissions = [IsAuthenticatedCustom]
+    permissions = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         # queryset = Card.objects.filter(user=self.request.user).all()
