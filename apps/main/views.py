@@ -570,7 +570,7 @@ class Recommendation(viewlist.ListAPIView):
 
 class CommentView(viewlist.CreateAPIView):
     serializer_class = UserCommentSerializer
-    permission_classes = [IsAuthenticatedCustom]
+    # permission_classes = [IsAuthenticatedCustom]
 
 
 class AboutUsView(viewlist.ListCreateAPIView):
