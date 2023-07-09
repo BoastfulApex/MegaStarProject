@@ -65,36 +65,6 @@ class UserSaleView(viewlist.ListCreateAPIView):
         active_sales = Sale.objects.filter(active=True, id__in=active_user_sales.values_list('sale_id', flat=True))
         return active_sales
 
-    def create(self, request, *args, **kwargs):
-        try:
-            user_sale = UserSale.objects.filter(user=request.user, product=request.data['product']).first()
-            if not user_sale:
-                serializer = self.get_serializer(data=request.data)
-                serializer.is_valid(raise_exception=True)
-                self.perform_create(serializer)
-                headers = self.get_success_headers(serializer.data)
-                return Response(
-                    {"status": True,
-                     "code": 200,
-                     "data": serializer.data,
-                     "message": []}, status=status.HTTP_200_OK, headers=headers
-                )
-            else:
-                return Response(
-                    {"status": True,
-                     "code": 200,
-                     "data": [],
-                     "message": ['Maxsulot savatda bor']}
-                )
-
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
 
 class UserSaleDetailView(viewlist.RetrieveAPIView):
     serializer_class = UserSaleSerializer
@@ -352,7 +322,6 @@ class CardView(viewlist.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         try:
             card = Card.objects.filter(user=request.user, product=request.data['product']).first()
-            print(card)
             if not card:
                 serializer = self.get_serializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
