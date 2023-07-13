@@ -173,3 +173,10 @@ class AboutSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class StorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Story
+        fields = '__all__'
+
+

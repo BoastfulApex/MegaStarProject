@@ -576,3 +576,8 @@ class CommentView(viewlist.CreateAPIView):
 class AboutUsView(viewlist.ListCreateAPIView):
     serializer_class = AboutSerializer
     queryset = AboutUs.objects.all()
+
+
+class StoryView(viewlist.ListCreateAPIView):
+    serializer_class = StorySerializer
+    queryset = Story.objects.all()

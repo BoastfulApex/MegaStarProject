@@ -208,3 +208,5 @@ class AboutUs(models.Model):
     about = models.TextField(max_length=10000)
 
 
+class Story(models.Model):
+    file = models.FileField(null=True)
