@@ -123,9 +123,9 @@ class UserTotalStatusSerializer(serializers.Serializer):
         ).aggregate(season_sum=Sum('summa'))['season_sum'] or 0
 
         return {
-            "monthly": monthly,
-            "seasonal": season,
-            "yearly": yearly
+            "monthly": monthly if monthly is not None else 0,
+            "seasonal": season if season is not None else 0,
+            "yearly": yearly if yearly is not None else 0
         }
 
 
