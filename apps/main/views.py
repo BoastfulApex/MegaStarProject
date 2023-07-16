@@ -134,7 +134,7 @@ class ProductView(generics.ListAPIView):
             queryset = queryset.filter(sub_category_id=subcategory_id)
 
         if min_price and max_price:
-            queryset = queryset.filter(Q(itemname__icontains=search))
+            queryset = queryset.filter(itemname__icontains=search)
 
         elif min_price:
             queryset = queryset.filter(price__gte=min_price)
