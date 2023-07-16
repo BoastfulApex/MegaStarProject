@@ -210,3 +210,4 @@ class AboutUs(models.Model):
 
 class Story(models.Model):
     file = models.FileField(null=True)
+    title = models.CharField(max_length=1000, null=True)

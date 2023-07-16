@@ -9,6 +9,7 @@ from django.db.models import Q
 from auth_models import viewlist
 from django.http import HttpResponse
 import random
+from django.db.models import Q
 
 
 def check_expired_sales():
@@ -118,6 +119,7 @@ class ProductView(generics.ListAPIView):
         min_price = self.request.GET.get('min_price')
         max_price = self.request.GET.get('max_price')
         order_by = self.request.GET.get('order_by')  # 'asc' or 'desc'
+        search = self.request.GET.get('search')
 
         if category_id:
             queryset = queryset.filter(category_id=category_id)
@@ -128,10 +130,12 @@ class ProductView(generics.ListAPIView):
         if brand_id:
             queryset = queryset.filter(brand_id=brand_id)
 
+        if search:
+            queryset = queryset.filter(sub_category_id=subcategory_id)
+
         if min_price and max_price:
-            queryset = queryset.filter(
-                Q(price__gte=min_price) & Q(price__lte=max_price)
-            )
+            queryset = queryset.filter(Q(itemname__icontains=search))
+
         elif min_price:
             queryset = queryset.filter(price__gte=min_price)
         elif max_price:
