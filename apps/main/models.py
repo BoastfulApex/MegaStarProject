@@ -175,8 +175,12 @@ class Card(models.Model):
     summa = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.summa = self.product.price * self.count
-        super(Card, self).save(*args, **kwargs)
+        if self.count == 0:
+            if self.pk:  # Check if the Card object already exists
+                self.delete()
+        else:
+            self.summa = self.product.price * self.count
+            super(Card, self).save(*args, **kwargs)
 
 
 class PromoCode(models.Model):
