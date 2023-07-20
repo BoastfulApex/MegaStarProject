@@ -65,14 +65,19 @@ def add_cashback_to_user(order_id, conn):
     for user_cashback in user_cashbacks:
         user_cashback_id = user_cashback[0]
         user_cashback_summa = user_cashback[3]
+        guid = str(uuid.uuid4())
+        created_date = datetime.datetime.now()
         new_user_cashback_summa = user_cashback_summa + (order_amount * 0.01)
         cur.execute("UPDATE main_usercashback SET summa=%s WHERE id=%s", (new_user_cashback_summa, user_cashback_id))
 
         # add 1% of the order amount to the user's all_cashback field
         user_id = user_cashback[1]
-        cur.execute("UPDATE authentication_megauser SET all_cashback=all_cashback+%s WHERE id=%s", (order_amount * 0.01, user_id))
-
-    # commit changes to the database
+        cur.execute("UPDATE authentication_megauser SET all_cashback=all_cashback+%s WHERE id=%s", (order_amount * 0.01,
+                                                                                                       user_id))
+        cashback_summa = order_amount * 0.01
+        cur.execute(
+            "INSERT INTO main_usercashbackhistory (guid, user_id, created_date, summa) VALUES (%s, %s, %s) RETURNING id",
+            [guid, user_id, created_date, cashback_summa])
     conn.commit()
 
 

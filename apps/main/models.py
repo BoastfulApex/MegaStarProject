@@ -201,6 +201,7 @@ class Notification(models.Model):
 class UserCashbackHistory(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     summa = models.IntegerField(default=0)
+    date = models.DateField(null=True, blank=True)
 
 
 class UserComment(BaseModel):
