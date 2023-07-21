@@ -102,7 +102,6 @@ def items():
     while True:
         items = get_objects(url=url, session=session)
         results += [item for item in items['value']]
-        print(len(results))
         if '@odata.nextLink' in items:
             url = items['@odata.nextLink']
         else:

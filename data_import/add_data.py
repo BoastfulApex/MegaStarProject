@@ -73,7 +73,7 @@ def add_cashback_to_user(order_id, conn):
         # add 1% of the order amount to the user's all_cashback field
         user_id = user_cashback[1]
         cur.execute("UPDATE authentication_megauser SET all_cashback=all_cashback+%s WHERE id=%s", (order_amount * 0.01,
-                                                                                                       user_id))
+                                                                                                    user_id))
         cashback_summa = order_amount * 0.01
         cur.execute(
             "INSERT INTO main_usercashbackhistory (guid, user_id, created_date, summa) VALUES (%s, %s, %s) RETURNING id",
@@ -161,19 +161,19 @@ def add_client(conn, cardcode, cardname, phone):
 def add_item(conn, itemcode, itemname, category, sub_category, manufacturer, price):
     cursor = conn.cursor()
     created_date = datetime.datetime.now()
-    guid = str(uuid.uuid4())
     cursor.execute("SELECT * FROM main_product WHERE itemcode = %s LIMIT 1", [itemcode])
     row = cursor.fetchone()
     if row:
         cursor.execute("UPDATE main_product SET price=%s WHERE itemcode=%s", (int(price), itemcode))
         return row
     else:
+        guid = str(uuid.uuid4())
         if sub_category != "None":
             cursor.execute(
                 "INSERT INTO main_product (guid, created_date, itemcode, itemname, category_id, sub_category_id, "
                 "manufacturer_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
                 [guid, created_date, itemcode, itemname, get_category_by_number(category),
-                 get_subcategory_by_code(sub_category), get_manufacturer_by_code(manufacturer), price])
+                 get_subcategory_by_code(sub_category), get_manufacturer_by_code(manufacturer), 0])
             new_row = cursor.fetchone()
             return new_row
         else:
@@ -378,6 +378,11 @@ def add_postgres_item():
     json_data = items()
 
     for data in json_data:
+        price = 0
+        try:
+            price = int(data['ItemPrices'][0]['Price'])
+        except Exception as exx:
+            price = 0
         item = add_item(
             conn=conn,
             itemcode=str(data['ItemCode']),
@@ -385,7 +390,7 @@ def add_postgres_item():
             category=str(data['ItemsGroupCode']),
             manufacturer=str(data['Manufacturer']),
             sub_category=str(data['U_Subgroup']),
-            price=int(data['ItemPrices'][0]['Price']) if data['ItemPrices'] != [] else 0
+            price=price
         )
         print("Product", item[0])
     conn.commit()

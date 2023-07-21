@@ -176,7 +176,7 @@ class Card(models.Model):
     summa = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        if self.count == 0:
+        if self.count <= 0:
             if self.pk:  # Check if the Card object already exists
                 self.delete()
         else:
