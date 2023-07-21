@@ -1,15 +1,13 @@
 from rest_framework import generics, status
 from .serializers import *
-from rest_framework import permissions
 from rest_framework.response import Response
 from django.utils import timezone
 from data_import.get_data import get_top_products
 from ..authentication.permission_classes import IsAuthenticatedCustom
-from django.db.models import Q
 from auth_models import viewlist
 from django.http import HttpResponse
 import random
-from django.db.models import Q
+import datetime
 
 
 def check_expired_sales():
@@ -297,18 +295,59 @@ class OrderDetailView(generics.RetrieveAPIView):
 
 class UserTotalStatusView(generics.ListAPIView):
     serializer_class = UserTotalStatusSerializer
-    permission_classes = [IsAuthenticatedCustom]
+    # permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         return []
 
     def list(self, request, *args, **kwargs):
         try:
-            serializer = self.serializer_class(context={'request': request})
+            user_id = request.user.id
+            month = datetime.date.today().month
+            year = datetime.date.today().year
+
+            # Monthly sum
+            monthly = Order.objects.filter(
+                user__telegram_id=user_id,
+                created_date__month=month,
+                created_date__year=year
+            ).aggregate(monthly_sum=Sum('summa'))['monthly_sum'] or 0
+
+            # Yearly sum
+            yearly = Order.objects.filter(
+                user__telegram_id=user_id,
+                created_date__year=year
+            ).aggregate(yearly_sum=Sum('summa'))['yearly_sum'] or 0
+
+            # Seasonal sum
+            start_month = ((month - 1) // 3) * 3
+            end_month = start_month + 2 if start_month != 12 else 12
+            season = Order.objects.filter(
+                user__telegram_id=user_id,
+                created_date__year=year,
+                created_date__month__gte=start_month,
+                created_date__month__lte=end_month
+            ).aggregate(season_sum=Sum('summa'))['season_sum'] or 0
+            month_cashback, created = Cashback.objects.get_or_create(
+                period="month"
+            )
+            season_cashback, created = Cashback.objects.get_or_create(
+                period="season"
+            )
+
+            year_cashback, created = Cashback.objects.get_or_create(
+                period="year"
+            )
+
+            data = {
+                f"{month_cashback.name}": f"{monthly}/{month_cashback.summa}",
+                f"{season_cashback.name}": f"{season}/{season_cashback.summa}",
+                f"{year_cashback.name}": f"{yearly}/{year_cashback.summa}",
+            }
             return Response(
                 {"status": True,
                  "code": 200,
-                 "data": serializer.data,
+                 "data": data,
                  "message": []}, status=status.HTTP_200_OK
             )
         except Exception as exx:

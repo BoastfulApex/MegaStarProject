@@ -89,44 +89,48 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'card_code', 'phone', 'all_cashback']
 
 
-class UserTotalStatusSerializer(serializers.Serializer):
-    monthly = serializers.DecimalField(max_digits=10, decimal_places=2)
-    seasonal = serializers.DecimalField(max_digits=10, decimal_places=2)
-    yearly = serializers.DecimalField(max_digits=10, decimal_places=2)
+class UserTotalStatusSerializer(serializers.ModelSerializer):
 
-    def to_representation(self, instance):
-        user_id = self.context['request'].user.id
-        month = datetime.date.today().month
-        year = datetime.date.today().year
-
-        # Monthly sum
-        monthly = Order.objects.filter(
-            user__telegram_id=user_id,
-            created_date__month=month,
-            created_date__year=year
-        ).aggregate(monthly_sum=Sum('summa'))['monthly_sum'] or 0
-
-        # Yearly sum
-        yearly = Order.objects.filter(
-            user__telegram_id=user_id,
-            created_date__year=year
-        ).aggregate(yearly_sum=Sum('summa'))['yearly_sum'] or 0
-
-        # Seasonal sum
-        start_month = ((month - 1) // 3) * 3
-        end_month = start_month + 2 if start_month != 12 else 12
-        season = Order.objects.filter(
-            user__telegram_id=user_id,
-            created_date__year=year,
-            created_date__month__gte=start_month,
-            created_date__month__lte=end_month
-        ).aggregate(season_sum=Sum('summa'))['season_sum'] or 0
-
-        return {
-            "monthly": monthly if monthly is not None else 0,
-            "seasonal": season if season is not None else 0,
-            "yearly": yearly if yearly is not None else 0
-        }
+    class Meta:
+        model = Cashback
+        fields = "__all__"
+    # monthly = serializers.DecimalField(max_digits=10, decimal_places=2)
+    # seasonal = serializers.DecimalField(max_digits=10, decimal_places=2)
+    # yearly = serializers.DecimalField(max_digits=10, decimal_places=2)
+    #
+    # def to_representation(self, instance):
+    #     user_id = self.context['request'].user.id
+    #     month = datetime.date.today().month
+    #     year = datetime.date.today().year
+    #
+    #     # Monthly sum
+    #     monthly = Order.objects.filter(
+    #         user__telegram_id=user_id,
+    #         created_date__month=month,
+    #         created_date__year=year
+    #     ).aggregate(monthly_sum=Sum('summa'))['monthly_sum'] or 0
+    #
+    #     # Yearly sum
+    #     yearly = Order.objects.filter(
+    #         user__telegram_id=user_id,
+    #         created_date__year=year
+    #     ).aggregate(yearly_sum=Sum('summa'))['yearly_sum'] or 0
+    #
+    #     # Seasonal sum
+    #     start_month = ((month - 1) // 3) * 3
+    #     end_month = start_month + 2 if start_month != 12 else 12
+    #     season = Order.objects.filter(
+    #         user__telegram_id=user_id,
+    #         created_date__year=year,
+    #         created_date__month__gte=start_month,
+    #         created_date__month__lte=end_month
+    #     ).aggregate(season_sum=Sum('summa'))['season_sum'] or 0
+    #
+    #     return {
+    #         "monthly": monthly if monthly is not None else 0,
+    #         "seasonal": season if season is not None else 0,
+    #         "yearly": yearly if yearly is not None else 0
+    #     }
 
 
 class PromoCodeStatusSerializer(serializers.Serializer):
