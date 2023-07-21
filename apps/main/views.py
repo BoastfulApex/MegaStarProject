@@ -308,14 +308,14 @@ class UserTotalStatusView(generics.ListAPIView):
 
             # Monthly sum
             monthly = Order.objects.filter(
-                user__telegram_id=user_id,
+                user_id=user_id,
                 created_date__month=month,
                 created_date__year=year
             ).aggregate(monthly_sum=Sum('summa'))['monthly_sum'] or 0
 
             # Yearly sum
             yearly = Order.objects.filter(
-                user__telegram_id=user_id,
+                user_id=user_id,
                 created_date__year=year
             ).aggregate(yearly_sum=Sum('summa'))['yearly_sum'] or 0
 
@@ -323,7 +323,7 @@ class UserTotalStatusView(generics.ListAPIView):
             start_month = ((month - 1) // 3) * 3
             end_month = start_month + 2 if start_month != 12 else 12
             season = Order.objects.filter(
-                user__telegram_id=user_id,
+                user_id=user_id,
                 created_date__year=year,
                 created_date__month__gte=start_month,
                 created_date__month__lte=end_month
