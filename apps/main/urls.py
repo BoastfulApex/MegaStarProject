@@ -31,7 +31,7 @@ urlpatterns = [
 
     path('cards/', CardView.as_view(), name='cards'),
     path('cards/<int:pk>', CardObject.as_view(), name='card-object'),
-    path('add_order', AddOrderView.as_view(), name='add-order'),
+    path('add_order/', AddOrderView.as_view(), name='add-order'),
 
     path('users/', UserListView.as_view(), name='api-users'),
     path('user_cashback_history/', UserCashbackHistoryVew.as_view(), name='user-cashback-history'),

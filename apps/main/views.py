@@ -471,14 +471,14 @@ class CardObject(viewlist.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
-class AddOrderView(generics.ListAPIView):
-    serializer_class = UserSerializer
+class AddOrderView(generics.ListCreateAPIView):
+    serializer_class = AddOrderSerializer
     permissions = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         return []
 
-    def list(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         try:
             cards = Card.objects.filter(user=request.user)
             for card in cards:

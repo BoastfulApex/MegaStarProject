@@ -190,3 +190,6 @@ class UserLocationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class AddOrderSerializer(serializers.Serializer):
+    pay_type = serializers.IntegerField()
+    location = serializers.CharField(max_length=10000)
