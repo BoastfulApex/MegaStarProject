@@ -105,7 +105,7 @@ class Product(BaseModel):
     image = models.FileField(null=True, blank=True)
     description = models.TextField(max_length=5000, null=True, blank=True)
     price = models.IntegerField()
-    order_sale = models.IntegerField(default=0)
+    order_sale = models.IntegerField(default=0, null=True)
 
     def __str__(self):
         return self.itemname
@@ -120,6 +120,7 @@ class Order(BaseModel):
 
     doc_entry = models.CharField(max_length=100, null=True, blank=True)
     doc_num = models.CharField(max_length=2000, null=True, blank=True)
+    pay_type = models.IntegerField(null=True, blank=True)
 
 
 class OrderDetail(models.Model):
@@ -129,7 +130,6 @@ class OrderDetail(models.Model):
     total = models.FloatField(default=0, null=True)
     total_uzs = models.FloatField(default=0, null=True)
     location = models.CharField(max_length=1000, null=True, blank=True)
-    pay_type = models.CharField(max_length=1000, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:

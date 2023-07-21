@@ -36,5 +36,6 @@ urlpatterns = [
     path('user_cashback_history/', UserCashbackHistoryVew.as_view(), name='user-cashback-history'),
     path('user_recommendation/', UserRecommendation.as_view(), name='user-recommendation'),
     path('user_comment/', CommentView.as_view(), name='user-comment'),
+    path('user_locations/', LocationView.as_view(), name='user-locations'),
 
 ]

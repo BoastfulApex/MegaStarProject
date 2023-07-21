@@ -165,7 +165,7 @@ def add_item(conn, itemcode, itemname, category, sub_category, manufacturer, pri
     cursor.execute("SELECT * FROM main_product WHERE itemcode = %s LIMIT 1", [itemcode])
     row = cursor.fetchone()
     if row:
-        # cursor.execute("UPDATE main_product SET price=%s WHERE itemcode=%s", (int(price), itemcode))
+        cursor.execute("UPDATE main_product SET price=%s WHERE itemcode=%s", (int(price), itemcode))
         return row
     else:
         if sub_category != "None":
@@ -385,7 +385,7 @@ def add_postgres_item():
             category=str(data['ItemsGroupCode']),
             manufacturer=str(data['Manufacturer']),
             sub_category=str(data['U_Subgroup']),
-            price=int(data['ItemPrices'][0]['Price'])
+            price=int(data['ItemPrices'][0]['Price']) if data['ItemPrices'] != [] else 0
         )
         print("Product", item[0])
     conn.commit()
