@@ -97,7 +97,7 @@ def clients():
 
 def items():
     session = get_session_id()
-    url = 'Items?$select=ItemCode,ItemName,ItemsGroupCode,U_Subgroup,Manufacturer'
+    url = 'Items?$select=ItemCode,ItemName,ItemsGroupCode,U_Subgroup,Manufacturer,ItemPrices'
     results = []
     while True:
         items = get_objects(url=url, session=session)

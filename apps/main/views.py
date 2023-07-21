@@ -585,3 +585,12 @@ class AboutUsView(viewlist.ListCreateAPIView):
 class StoryView(viewlist.ListCreateAPIView):
     serializer_class = StorySerializer
     queryset = Story.objects.all()
+
+
+class LocationView(viewlist.ListCreateAPIView):
+    serializer_class = UserLocationSerializer
+    permissions = [IsAuthenticatedCustom]
+
+    def get_queryset(self):
+        queryset = UserLocations.objects.filter(user=self.request.user).all()
+        return queryset

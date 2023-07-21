@@ -35,9 +35,9 @@ class MegaUser(AbstractUser):
 
     otp = models.CharField(max_length=10, null=True, blank=True)
 
-    all_cashback = models.IntegerField(default=0)
+    all_cashback = models.IntegerField(default=0, null=True, blank=True)
 
-    is_sale = models.BooleanField(default=False)
+    is_sale = models.BooleanField(default=False, null=True, blank=True)
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []

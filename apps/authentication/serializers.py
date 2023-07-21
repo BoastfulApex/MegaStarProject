@@ -49,7 +49,6 @@ class PhoneVerifySerializer(serializers.Serializer):
     def validate(self, attrs):
         phone = attrs['phone']
         data = MegaUser.objects.filter(phone=phone).first()
-        print(data)
         if not data:
             raise serializers.ValidationError({"Error": "Mijozlar bazasida bu telefon raqamga mos ma'lumotlar topilmadi!"})
         return attrs

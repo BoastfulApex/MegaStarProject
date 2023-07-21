@@ -158,13 +158,14 @@ def add_client(conn, cardcode, cardname, phone):
         pass
 
 
-def add_item(conn, itemcode, itemname, category, sub_category, manufacturer):
+def add_item(conn, itemcode, itemname, category, sub_category, manufacturer, price):
     cursor = conn.cursor()
     created_date = datetime.datetime.now()
     guid = str(uuid.uuid4())
     cursor.execute("SELECT * FROM main_product WHERE itemcode = %s LIMIT 1", [itemcode])
     row = cursor.fetchone()
     if row:
+        # cursor.execute("UPDATE main_product SET price=%s WHERE itemcode=%s", (int(price), itemcode))
         return row
     else:
         if sub_category != "None":
@@ -172,7 +173,7 @@ def add_item(conn, itemcode, itemname, category, sub_category, manufacturer):
                 "INSERT INTO main_product (guid, created_date, itemcode, itemname, category_id, sub_category_id, "
                 "manufacturer_id, price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
                 [guid, created_date, itemcode, itemname, get_category_by_number(category),
-                 get_subcategory_by_code(sub_category), get_manufacturer_by_code(manufacturer), 0])
+                 get_subcategory_by_code(sub_category), get_manufacturer_by_code(manufacturer), price])
             new_row = cursor.fetchone()
             return new_row
         else:
@@ -384,7 +385,8 @@ def add_postgres_item():
             category=str(data['ItemsGroupCode']),
             manufacturer=str(data['Manufacturer']),
             sub_category=str(data['U_Subgroup']),
+            price=int(data['ItemPrices'][0]['Price'])
         )
-        # print("Product", item[0])
+        print("Product", item[0])
     conn.commit()
     conn.close()

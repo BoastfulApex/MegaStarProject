@@ -180,3 +180,9 @@ class StorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UserLocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserLocations
+        fields = "__all__"
+
+

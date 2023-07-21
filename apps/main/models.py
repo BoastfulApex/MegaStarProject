@@ -21,16 +21,15 @@ class Cashback(models.Model):
     period = models.CharField(max_length=50, null=True, blank=True, choices=PERIOD_TYPES)
     summa = models.IntegerField(default=0)
     persent = models.IntegerField(default=1)
-    
+
 
 class UserCashback(BaseModel):
-    
     PERIOD_TYPES = (
         (MONTH, MONTH),
         (SEASON, SEASON),
         (YEAR, YEAR)
     )
-    
+
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     cashback = models.ForeignKey(Cashback, on_delete=models.SET_NULL, null=True)
     expiration_date = models.DateTimeField(null=True)
@@ -52,7 +51,7 @@ class UserCashback(BaseModel):
 
 class Category(BaseModel):
     image = models.FileField(null=True)
-    
+
     groupname = models.CharField(max_length=2000, null=True)
     number = models.CharField(max_length=2000, null=True)
 
@@ -69,7 +68,7 @@ class Category(BaseModel):
 
 class SubCategory(BaseModel):
     image = models.FileField(null=True)
-    
+
     name = models.CharField(max_length=2000, null=True)
     code = models.CharField(max_length=2000, null=True)
     # u_group = models.CharField(max_length=2000, null=True)
@@ -107,10 +106,10 @@ class Product(BaseModel):
     description = models.TextField(max_length=5000, null=True, blank=True)
     price = models.IntegerField()
     order_sale = models.IntegerField(default=0)
-    
+
     def __str__(self):
         return self.itemname
-        
+
 
 class Order(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -129,6 +128,8 @@ class OrderDetail(models.Model):
     count = models.IntegerField()
     total = models.FloatField(default=0, null=True)
     total_uzs = models.FloatField(default=0, null=True)
+    location = models.CharField(max_length=1000, null=True, blank=True)
+    pay_type = models.CharField(max_length=1000, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -142,10 +143,10 @@ class Sale(BaseModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     expiration_date = models.DateField(null=True, blank=True)
     required_quantity = models.IntegerField()
-    
+
     gift_product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name="gift_product")
     gift_quantity = models.IntegerField()
-    
+
     active = models.BooleanField(default=True)
     orders = models.IntegerField(default=0)
 
@@ -165,7 +166,7 @@ class News(BaseModel):
 
 class Comment(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.TextField(max_length=4500)    
+    comment = models.TextField(max_length=4500)
 
 
 class Card(models.Model):
@@ -216,3 +217,10 @@ class AboutUs(models.Model):
 class Story(models.Model):
     file = models.FileField(null=True)
     title = models.CharField(max_length=1000, null=True)
+
+
+class UserLocations(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    longitude = models.CharField(max_length=1000, null=True, blank=True)
+    latitude = models.CharField(max_length=1000, null=True, blank=True)
+    location = models.CharField(max_length=1000, null=True, blank=True)
