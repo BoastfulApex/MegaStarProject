@@ -295,7 +295,7 @@ class OrderDetailView(generics.RetrieveAPIView):
 
 class UserTotalStatusView(generics.ListAPIView):
     serializer_class = UserTotalStatusSerializer
-    # permission_classes = [IsAuthenticatedCustom]
+    permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         return []
@@ -391,11 +391,11 @@ class DashboardListView(generics.ListAPIView):
 
 class CardView(viewlist.ListCreateAPIView):
     serializer_class = CardSerializer
-    # permissions = [IsAuthenticatedCustom]
+    permissions = [IsAuthenticatedCustom]
 
     def get_queryset(self):
-        # queryset = Card.objects.filter(user=self.request.user).all()
-        return Card.objects.all()
+        queryset = Card.objects.filter(user=self.request.user).all()
+        return queryset
 
     def create(self, request, *args, **kwargs):
         try:
@@ -464,11 +464,11 @@ class CardView(viewlist.ListCreateAPIView):
 
 class CardObject(viewlist.RetrieveUpdateDestroyAPIView):
     serializer_class = CardSerializer
-    # permissions = [IsAuthenticatedCustom]
+    permissions = [IsAuthenticatedCustom]
 
     def get_queryset(self):
-        # queryset = Card.objects.filter(user=self.request.user).all()
-        return Card.objects.all()
+        queryset = Card.objects.filter(user=self.request.user).all()
+        return queryset
 
 
 class AddOrderView(generics.ListAPIView):
