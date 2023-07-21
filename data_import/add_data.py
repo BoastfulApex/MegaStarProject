@@ -164,7 +164,7 @@ def add_item(conn, itemcode, itemname, category, sub_category, manufacturer, pri
     cursor.execute("SELECT * FROM main_product WHERE itemcode = %s LIMIT 1", [itemcode])
     row = cursor.fetchone()
     if row:
-        cursor.execute("UPDATE main_product SET price=%s WHERE itemcode=%s", (int(price), itemcode))
+        cursor.execute("UPDATE main_product SET price=%s WHERE itemcode=%s", (float(price), itemcode))
         return row
     else:
         guid = str(uuid.uuid4())
@@ -380,7 +380,7 @@ def add_postgres_item():
     for data in json_data:
         price = 0
         try:
-            price = int(data['ItemPrices'][0]['Price'])
+            price = float(data['ItemPrices'][0]['Price'])
         except Exception as exx:
             price = 0
         item = add_item(
