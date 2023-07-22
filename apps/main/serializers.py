@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import *
 from rest_framework.exceptions import NotFound
 from django.utils.translation import gettext_lazy as _
+from data_import.get_data import get_kurs_valyuta
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -27,6 +28,14 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super(ProductSerializer, self).to_representation(instance)
+        kurs = get_kurs_valyuta()
+
+        data['price'] *= kurs
+
+        return data
 
 
 class CardSerializer(serializers.ModelSerializer):
