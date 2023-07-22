@@ -135,3 +135,12 @@ def get_top_products():
 
     return get_objects(url=url, session=session)
 
+
+def get_kurs_valyuta():
+    today = date.today()
+    formatted_date = today.strftime("%Y-%m-%d")
+    url = f"sml.svc/CURRENCIESParameters(P_Date='{formatted_date}')/CURRENCIES?$filter=Code eq 'UZS'"
+    session = get_session_id()
+
+    response_data = get_objects(url=url, session=session)
+    return response_data['value']['Rate']

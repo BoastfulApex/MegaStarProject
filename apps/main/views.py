@@ -2,7 +2,7 @@ from rest_framework import generics, status
 from .serializers import *
 from rest_framework.response import Response
 from django.utils import timezone
-from data_import.get_data import get_top_products
+from data_import.get_data import get_top_products, get_kurs_valyuta
 from ..authentication.permission_classes import IsAuthenticatedCustom
 from auth_models import viewlist
 from django.http import HttpResponse
@@ -172,6 +172,9 @@ class ProductView(generics.ListAPIView):
             end_index = start_index + page_size
             paginated_queryset = queryset[start_index:end_index]
             serializer = ProductSerializer(paginated_queryset, many=True)
+            kurs = get_kurs_valyuta()
+            for product in serializer.data:
+                product['price'] *= kurs
             data = {
                 'page': page,
                 'max_page': max_page,
