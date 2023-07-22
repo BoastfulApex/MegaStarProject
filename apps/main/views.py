@@ -268,7 +268,6 @@ class SimilarProductView(viewlist.ListAPIView):
             )
 
 
-
 class OrderView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticatedCustom]
@@ -477,12 +476,15 @@ class CardView(viewlist.ListCreateAPIView):
             queryset = self.get_queryset()
             cards_data = []
             summa = 0
+            kurs = get_kurs_valyuta()
             for card in queryset:
+                card.summa = card.product.price * card.count
+                card.save()
                 summa += card.summa
                 cards = {
                     'id': card.id,
                     'count': card.count,
-                    'summa': card.summa,
+                    'summa': card.summa * kurs,
                     'product_id': card.product.id,
                     'product_name': card.product.itemname.encode('utf-8'),
                     'product_image': "http://185.65.202.40:3222/files/" + str(card.product.image) if card.product.image else None,
