@@ -680,9 +680,3 @@ class LocationView(viewlist.ListCreateAPIView):
     # def get_queryset(self):
     #     queryset = UserLocations.objects.filter(user=self.request.user).all()
     #     return queryset
-
-    def list(self, request, *args, **kwargs):
-        locations = UserLocations.objects.all()
-        for i in locations:
-            i.delete()
-        return Response([])
