@@ -215,7 +215,8 @@ class TopProductAPIView(viewlist.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         try:
-            serializer = ProductSerializer(self.get_serializer(), many=True)
+            queryset = self.get_queryset()
+            serializer = ProductSerializer(queryset, many=True)
             kurs = get_kurs_valyuta()
             for product in serializer.data:
                 product['price'] *= kurs
@@ -247,7 +248,8 @@ class SimilarProductView(viewlist.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         try:
-            serializer = ProductSerializer(self.get_serializer(), many=True)
+            queryset = self.get_queryset()
+            serializer = ProductSerializer(queryset, many=True)
             kurs = get_kurs_valyuta()
             for product in serializer.data:
                 product['price'] *= kurs
