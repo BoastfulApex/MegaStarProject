@@ -675,8 +675,8 @@ class StoryView(viewlist.ListCreateAPIView):
 
 class LocationView(viewlist.ListCreateAPIView):
     serializer_class = UserLocationSerializer
-    # permissions = [IsAuthenticatedCustom]
-    queryset = UserLocations.objects.all()
-    # def get_queryset(self):
-    #     queryset = UserLocations.objects.filter(user=self.request.user).all()
-    #     return queryset
+    permissions = [IsAuthenticatedCustom]
+
+    def get_queryset(self):
+        queryset = UserLocations.objects.filter(user=self.request.user).all()
+        return queryset
