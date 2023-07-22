@@ -143,4 +143,4 @@ def get_kurs_valyuta():
     session = get_session_id()
 
     response_data = get_objects(url=url, session=session)
-    return response_data['value']['Rate']
+    return response_data['value'][0]['Rate']
