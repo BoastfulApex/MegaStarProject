@@ -29,13 +29,15 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 
-    def to_representation(self, instance):
-        data = super(ProductSerializer, self).to_representation(instance)
-        kurs = get_kurs_valyuta()
-
-        data['price'] *= kurs
-
-        return data
+    # def to_representation(self, instance):
+    #     # Get the original representation of the instance
+    #     data = super(ProductSerializer, self).to_representation(instance)
+    #     kurs = get_kurs_valyuta()
+    #
+    #     # Increase the price by 2 times
+    #     data['price'] *= 2
+    #
+    #     return data
 
 
 class CardSerializer(serializers.ModelSerializer):

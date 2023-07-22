@@ -172,9 +172,9 @@ class ProductView(generics.ListAPIView):
             end_index = start_index + page_size
             paginated_queryset = queryset[start_index:end_index]
             serializer = ProductSerializer(paginated_queryset, many=True)
-            # kurs = get_kurs_valyuta()
-            # for product in serializer.data:
-            #     product['price'] *= kurs
+            kurs = get_kurs_valyuta()
+            for product in serializer.data:
+                product['price'] *= kurs
             data = {
                 'page': page,
                 'max_page': max_page,
