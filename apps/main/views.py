@@ -213,6 +213,26 @@ class TopProductAPIView(viewlist.ListAPIView):
             queryset = queryset.filter(itemcode__in=item_codes)
         return queryset
 
+    def list(self, request, *args, **kwargs):
+        try:
+            serializer = ProductSerializer(self.get_serializer(), many=True)
+            kurs = get_kurs_valyuta()
+            for product in serializer.data:
+                product['price'] *= kurs
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 500,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class SimilarProductView(viewlist.ListAPIView):
     serializer_class = ProductSerializer
@@ -224,6 +244,27 @@ class SimilarProductView(viewlist.ListAPIView):
         similar_products = Product.objects.filter(category=product.category).exclude(id=product_id)[:5]
 
         return similar_products
+
+    def list(self, request, *args, **kwargs):
+        try:
+            serializer = ProductSerializer(self.get_serializer(), many=True)
+            kurs = get_kurs_valyuta()
+            for product in serializer.data:
+                product['price'] *= kurs
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 500,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 
 class OrderView(generics.ListAPIView):
