@@ -382,12 +382,22 @@ class UserTotalStatusView(generics.ListAPIView):
             year_cashback, created = Cashback.objects.get_or_create(
                 period="year"
             )
-
-            data = {
-                f"{month_cashback.name}": f"{monthly}/{month_cashback.summa}",
-                f"{season_cashback.name}": f"{season}/{season_cashback.summa}",
-                f"{year_cashback.name}": f"{yearly}/{year_cashback.summa}",
+            d_1 = {
+                "name": month_cashback.name,
+                "need": month_cashback.summa,
+                "earn": monthly,
             }
+            d_2 = {
+                "name": season_cashback.name,
+                "need": season_cashback.summa,
+                "earn": season,
+            }
+            d_3 = {
+                "name": year_cashback.name,
+                "need": year_cashback.summa,
+                "earn": yearly,
+            }
+            data = [d_1, d_2, d_3]
             return Response(
                 {"status": True,
                  "code": 200,
