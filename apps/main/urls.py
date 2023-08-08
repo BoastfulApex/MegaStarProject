@@ -19,7 +19,7 @@ urlpatterns = [
     path('products/<int:pk>', ProductDetailView.as_view(), name='product-detail'),
 
     path('user_totals/', UserTotalStatusView.as_view(), name='user_totals'),
-    path('user_bonuses/', UserTotalStatusView.as_view(), name='user_bonuses'),
+    path('user_bonuses/', UserCashbackHistoryVew.as_view(), name='user_bonuses'),
     path('top_products/', TopProductAPIView.as_view(), name='top_products'),
     path('similar_products/', SimilarProductView.as_view(), name='similar_products'),
     path('sale_products/', SaleProducts.as_view(), name='sale_products'),
