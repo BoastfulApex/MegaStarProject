@@ -51,6 +51,9 @@ class LoginView(KnoxLoginView):
                             request=request, user=request.user)
         data = self.get_post_response_data(request, token, instance)
 
+        user.first_name = serializer.validated_data['first_name']
+        user.last_name = serializer.validated_data['last_name']
+
         return Response(
             {"status": True,
              "code": 200,
