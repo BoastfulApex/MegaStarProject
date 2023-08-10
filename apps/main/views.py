@@ -167,7 +167,6 @@ class ProductView(generics.ListAPIView):
                 previous_page = f"http://arzon.maxone.uz/api/products/?page={page-1}"
             if page < max_page:
                 next_page = f"http://arzon.maxone.uz/api/products/?page={page+1}"
-
             start_index = (page - 1) * page_size
             end_index = start_index + page_size
             paginated_queryset = queryset[start_index:end_index]
@@ -666,6 +665,29 @@ class Recommendation(viewlist.ListAPIView):
         random_indices = random.sample(range(total_products), 10)
         random_products = [all_products[index] for index in random_indices]
         return random_products
+
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            serializer = ProductSerializer(queryset, many=True)
+            kurs = get_kurs_valyuta()
+            for product in serializer.data:
+                product['price'] *= kurs
+
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 500,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class CommentView(viewlist.CreateAPIView):
