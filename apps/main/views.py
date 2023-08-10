@@ -164,9 +164,9 @@ class ProductView(generics.ListAPIView):
             next_page = ""
             previous_page = ""
             if page > 1:
-                previous_page = f"http://arzon.maxone.uz/api/products/?page={page-1}"
+                previous_page = f"https://arzon.maxone.uz/api/products/?page={page-1}"
             if page < max_page:
-                next_page = f"http://arzon.maxone.uz/api/products/?page={page+1}"
+                next_page = f"https://arzon.maxone.uz/api/products/?page={page+1}"
             start_index = (page - 1) * page_size
             end_index = start_index + page_size
             paginated_queryset = queryset[start_index:end_index]
@@ -496,7 +496,7 @@ class CardView(viewlist.ListCreateAPIView):
                     'summa': card.summa * kurs,
                     'product_id': card.product.id,
                     'product_name': card.product.itemname.encode('utf-8'),
-                    'product_image': "http://185.65.202.40:3222/files/" + str(card.product.image) if card.product.image else None,
+                    'product_image': "https://arzon.maxone.uz/files/" + str(card.product.image) if card.product.image else None,
                 }
                 cards_data.append(cards)
             response_data = {
@@ -665,7 +665,6 @@ class Recommendation(viewlist.ListAPIView):
         random_indices = random.sample(range(total_products), 10)
         random_products = [all_products[index] for index in random_indices]
         return random_products
-
 
     def list(self, request, *args, **kwargs):
         try:
