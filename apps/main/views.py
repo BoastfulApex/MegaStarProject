@@ -164,9 +164,9 @@ class ProductView(generics.ListAPIView):
             next_page = ""
             previous_page = ""
             if page > 1:
-                previous_page = f"http://185.65.202.40:3222/api/products/?page={page-1}"
+                previous_page = f"http://arzon.maxone.uz/api/products/?page={page-1}"
             if page < max_page:
-                next_page = f"http://185.65.202.40:3222/api/products/?page={page+1}"
+                next_page = f"http://arzon.maxone.uz/api/products/?page={page+1}"
 
             start_index = (page - 1) * page_size
             end_index = start_index + page_size
