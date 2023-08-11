@@ -620,7 +620,7 @@ class NewsView(viewlist.ListAPIView):
 
 class UserCashbackHistoryVew(viewlist.ListAPIView):
     serializer_class = UserCashbackHistorySerializer
-    permission_classes = [IsAuthenticatedCustom]
+    # permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
         # return UserCashbackHistory.objects.filter(user=self.request.user)
