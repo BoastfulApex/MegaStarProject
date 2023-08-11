@@ -90,7 +90,7 @@ class NewsSerializer(serializers.ModelSerializer):
 
 class UserCashbackHistorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserCashback
+        model = UserCashbackHistory
         fields = ['id', 'summa', 'user', 'created_date']
 
 
