@@ -618,7 +618,7 @@ class NewsView(viewlist.ListAPIView):
     queryset = News.objects.all()
 
 
-class UserCashbackHistoryVew(viewlist.ListAPIView):
+class UserCashbackHistoryVew(viewlist.ListCreateAPIView):
     serializer_class = UserCashbackHistorySerializer
     # permission_classes = [IsAuthenticatedCustom]
 
