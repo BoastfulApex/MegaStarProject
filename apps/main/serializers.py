@@ -97,7 +97,7 @@ class UserCashbackHistorySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'card_code', 'phone', 'all_cashback']
+        fields = ['id', 'first_name', 'last_name', 'card_code', 'card_name', 'phone', 'all_cashback']
 
 
 class UserTotalStatusSerializer(serializers.ModelSerializer):
