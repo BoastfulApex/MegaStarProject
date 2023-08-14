@@ -6,6 +6,7 @@ from data_import.get_data import get_top_products, get_kurs_valyuta
 from ..authentication.permission_classes import IsAuthenticatedCustom
 from auth_models import viewlist
 from django.http import HttpResponse
+from django.db.models import Q
 import random
 import datetime
 
@@ -129,14 +130,11 @@ class ProductView(generics.ListAPIView):
             queryset = queryset.filter(brand_id=brand_id)
 
         if search:
-            queryset = queryset.filter(sub_category_id=subcategory_id)
+            queryset = queryset.filter(Q(itemname__icontains=search))
 
-        if min_price and max_price:
-            queryset = queryset.filter(itemname__icontains=search)
-
-        elif min_price:
+        if min_price:
             queryset = queryset.filter(price__gte=min_price)
-        elif max_price:
+        if max_price:
             queryset = queryset.filter(price__lte=max_price)
 
         if order_by == 'asc':
