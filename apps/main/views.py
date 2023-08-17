@@ -656,6 +656,28 @@ class UserRecommendation(viewlist.ListAPIView):
             recommended_products = [all_products[index] for index in random_indices]
         return recommended_products[:10]
 
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.get_queryset()
+            serializer = ProductSerializer(queryset, many=True)
+            kurs = get_kurs_valyuta()
+            for product in serializer.data:
+                product['price'] *= kurs
+
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 500,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class Recommendation(viewlist.ListAPIView):
     serializer_class = ProductSerializer

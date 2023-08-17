@@ -188,3 +188,53 @@ class NotificationForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = '__all__'
+
+
+class SaleForm(forms.ModelForm):
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ))
+    expiration_date = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control",
+                "type": "date",
+                "style": "width: 200px;"
+            }
+        )
+    )
+    required_product = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ))
+    required_quantity = forms.FloatField(
+        widget=forms.NumberInput(
+            attrs={
+                "placeholder": "Kerakli miqdor",
+                "class": "form-control",
+            }
+        ))
+    gift_quantity = forms.FloatField(
+        widget=forms.NumberInput(
+            attrs={
+                "placeholder": "Sovg'a miqdori",
+                "class": "form-control",
+            }
+        ))
+    gift_product = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ))
+
+    class Meta:
+        model = Sale
+        fields = ["name", "expiration_date", "required_quantity", "gift_quantity"]
+        
+

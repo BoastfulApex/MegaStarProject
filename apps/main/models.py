@@ -140,7 +140,7 @@ class OrderDetail(models.Model):
 
 class Sale(BaseModel):
     name = models.CharField(max_length=10000, null=True, blank=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     expiration_date = models.DateField(null=True, blank=True)
     required_quantity = models.IntegerField()
 

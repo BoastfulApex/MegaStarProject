@@ -242,3 +242,34 @@ class NotificationDelete(DeleteView):
     model = Notification
     fields = '__all__'
     success_url = reverse_lazy('notifications')
+
+
+def sales(request):
+    sales = Sale.objects.all().order_by('id')
+    search_query = request.GET.get('q')
+    if search_query:
+        sales = sales.filter(Q(name__icontains=search_query))
+    paginator = Paginator(sales, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj,
+        "segment": "sales"
+    }
+    html_template = loader.get_template('home/sales.html')
+    return HttpResponse(html_template.render(context, request))
+
+
+def sale_create(request):
+    if request.method == 'POST':
+        form = SaleForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home_sales')
+    else:
+        form = SaleForm()
+
+    return render(request,
+                  'home/sale_create.html',
+                  {'form': form})
+
