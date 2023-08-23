@@ -60,9 +60,11 @@ class SaleView(viewlist.ListAPIView):
             response_data = []
             for sale in sales:
                 user_order_quantity = 0
+                user_active = False
                 user_sale = UserSale.objects.filter(user=request.user, sale=sale).first()
                 if user_sale:
                     user_order_quantity = user_sale.order_quantity
+                    user_active = True
                 sale_data = {
                     "id": sale.id,
                     "name": sale.name,
@@ -72,6 +74,7 @@ class SaleView(viewlist.ListAPIView):
                     "gift_product_id": sale.gift_product.id,
                     "gift_quantity": sale.gift_quantity,
                     "user_order_quantity": user_order_quantity,
+                    "user_presence": user_active
                 }
                 response_data.append(sale_data)
                 return Response(
