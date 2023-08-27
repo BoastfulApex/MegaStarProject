@@ -77,12 +77,12 @@ class SaleView(viewlist.ListAPIView):
                     "user_presence": user_active
                 }
                 response_data.append(sale_data)
-                return Response(
-                    {"status": True,
-                     "code": 200,
-                     "data": response_data,
-                     "message": []}
-                )
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": response_data,
+                 "message": []}
+            )
         except Exception as exx:
             return Response(
                 {"status": True,
