@@ -201,6 +201,27 @@ class ProductDetailView(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
 
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            kurs = get_kurs_valyuta()
+            for product in serializer.data:
+                product['price'] *= kurs
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": serializer.data,
+                 "message": []}, status=status.HTTP_200_OK
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 500,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class TopProductAPIView(viewlist.ListAPIView):
     serializer_class = ProductSerializer
