@@ -149,52 +149,53 @@ class ProductView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         try:
-            page = request.query_params.get('page')
-            page_size = request.query_params.get('page_size')
+            page = int(request.query_params.get('page', 1))
+            page_size = int(request.query_params.get('page_size', 10))
+            page_size = max(1, min(page_size, 100))  # Ensure page_size is between 1 and 100
 
             queryset = self.get_queryset()
+            total_items = queryset.count()
+            max_page = (total_items + page_size - 1) // page_size
 
-            page = int(page) if page else 1
-            page_size = int(page_size) if page_size else 10
+            if page > max_page:
+                page = max_page
 
-            if page <= 1:
-                page = 1
-            if page_size < 1 or page_size > 100:
-                page_size = 10
-            max_page = len(queryset) // 10 + 1
-            next_page = ""
-            previous_page = ""
-            if page > 1:
-                previous_page = f"https://arzon.maxone.uz/api/products/?page={page-1}"
-            if page < max_page:
-                next_page = f"https://arzon.maxone.uz/api/products/?page={page+1}"
             start_index = (page - 1) * page_size
             end_index = start_index + page_size
             paginated_queryset = queryset[start_index:end_index]
+
             serializer = ProductSerializer(paginated_queryset, many=True)
             kurs = get_kurs_valyuta()
             for product in serializer.data:
                 product['price'] *= kurs
+
             data = {
                 'page': page,
                 'max_page': max_page,
-                'previous_page': previous_page,
-                'next_page': next_page,
+                'previous_page': self.get_page_url(page - 1) if page > 1 else None,
+                'next_page': self.get_page_url(page + 1) if page < max_page else None,
                 'results': serializer.data
             }
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": data,
-                 "message": []}
-            )
+
+            return Response({
+                "status": True,
+                "code": 200,
+                "data": data,
+                "message": []
+            })
+
         except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 500,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response({
+                "status": True,
+                "code": 500,
+                "data": [],
+                "message": [str(exx)]
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get_page_url(self, page_number):
+        if page_number < 1:
+            return None
+        return self.request.build_absolute_uri(f"?page={page_number}")
 
 
 class ProductDetailView(generics.RetrieveAPIView):
