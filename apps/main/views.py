@@ -207,8 +207,8 @@ class ProductDetailView(generics.RetrieveAPIView):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             # kurs = get_kurs_valyuta()
-            for product in serializer.data:
-                product['price'] *= 12156.52
+            # for product in serializer.data:
+            #     product['price'] *= 12156.52
             return Response(
                 {"status": True,
                  "code": 200,
