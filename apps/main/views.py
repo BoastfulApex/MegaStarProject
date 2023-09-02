@@ -303,17 +303,10 @@ class OrderView(generics.ListAPIView):
             serializer = self.get_serializer(queryset, many=True)
             response_data = []
 
-            for order in queryset:
-                order_details = OrderDetail.objects.filter(order=order)
-                order_detail_serializer = OrderDetailSerializer(order_details, many=True)
-                order_data = serializer.data  # No need to use index here
-                order_data['order_details'] = order_detail_serializer.data
-                response_data.append(order_data)
-
             return Response(
                 {"status": True,
                  "code": 200,
-                 "data": response_data,
+                 "data": serializer.data,
                  "message": []}
             )
         except Exception as exx:
