@@ -518,7 +518,6 @@ class CardView(viewlist.ListCreateAPIView):
                     'id': card.id,
                     'count': card.count,
                     'summa': card.summa * 12156.52,
-                    'summa': card.summa,
                     'product_id': card.product.id,
                     'product_name': card.product.itemname.encode('utf-8'),
                     'product_image': "https://arzon.maxone.uz/files/" + str(card.product.image) if card.product.image else None,
@@ -526,7 +525,7 @@ class CardView(viewlist.ListCreateAPIView):
                 cards_data.append(cards)
             response_data = {
                 'cards': cards_data,
-                'all_summa': summa,
+                'all_summa': summa * 12156.52,
                 'objects': len(queryset)
             }
             return Response(
