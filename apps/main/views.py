@@ -288,39 +288,39 @@ class SimilarProductView(viewlist.ListAPIView):
             )
 
 
-class OrderView(generics.ListAPIView):
+class OrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticatedCustom]
-
-    def get_queryset(self):
-        user = self.request.user
-        orders = Order.objects.filter(user=user)
-        return orders
-
-    def list(self, request, *args, **kwargs):
-        try:
-            queryset = self.get_queryset()
-            serializer = self.get_serializer(queryset, many=True)
-            response_data = []
-            for order in queryset:
-                order_details = OrderDetail.objects.filter(order=order)
-                order_detail_serializer = OrderDetailSerializer(order_details, many=True)
-                order_data = serializer.data[queryset.index(order)]
-                order_data['order_details'] = order_detail_serializer.data
-                response_data.append(order_data)
-            return Response(
-                {"status": True,
-                 "code": 200,
-                 "data": response_data,
-                 "message": []}
-            )
-        except Exception as exx:
-            return Response(
-                {"status": True,
-                 "code": 500,
-                 "data": [],
-                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    # permission_classes = [IsAuthenticatedCustom]
+    #
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     orders = Order.objects.filter(user=user)
+    #     return orders
+    #
+    # def list(self, request, *args, **kwargs):
+    #     try:
+    #         queryset = self.get_queryset()
+    #         serializer = self.get_serializer(queryset, many=True)
+    #         response_data = []
+    #         for order in queryset:
+    #             order_details = OrderDetail.objects.filter(order=order)
+    #             order_detail_serializer = OrderDetailSerializer(order_details, many=True)
+    #             order_data = serializer.data[queryset.index(order)]
+    #             order_data['order_details'] = order_detail_serializer.data
+    #             response_data.append(order_data)
+    #         return Response(
+    #             {"status": True,
+    #              "code": 200,
+    #              "data": response_data,
+    #              "message": []}
+    #         )
+    #     except Exception as exx:
+    #         return Response(
+    #             {"status": True,
+    #              "code": 500,
+    #              "data": [],
+    #              "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #         )
 
 
 class OrderDetailView(generics.RetrieveAPIView):
