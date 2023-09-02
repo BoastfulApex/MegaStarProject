@@ -166,8 +166,8 @@ class ProductView(generics.ListAPIView):
 
             serializer = ProductSerializer(paginated_queryset, many=True)
             # kurs = get_kurs_valyuta()
-            # for product in serializer.data:
-            #     product['price'] *= kurs
+            for product in serializer.data:
+                product['price'] *= 12156.52
 
             data = {
                 'page': page,
@@ -207,8 +207,8 @@ class ProductDetailView(generics.RetrieveAPIView):
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             # kurs = get_kurs_valyuta()
-            # for product in serializer.data:
-            #     product['price'] *= kurs
+            for product in serializer.data:
+                product['price'] *= 12156.52
             return Response(
                 {"status": True,
                  "code": 200,
@@ -229,19 +229,15 @@ class TopProductAPIView(viewlist.ListAPIView):
 
     def get_queryset(self):
         queryset = Product.objects.all()
-        top_products = get_top_products()
-        item_codes = [item['ItemCode'] for item in top_products['value']]
-        if item_codes:
-            queryset = queryset.filter(itemcode__in=item_codes)
-        return queryset
+        return queryset[:100]
 
     def list(self, request, *args, **kwargs):
         try:
             queryset = self.get_queryset()
             serializer = ProductSerializer(queryset, many=True)
             # kurs = get_kurs_valyuta()
-            # for product in serializer.data:
-            #     product['price'] *= kurs
+            for product in serializer.data:
+                product['price'] *= 12156.52
             return Response(
                 {"status": True,
                  "code": 200,
@@ -273,8 +269,8 @@ class SimilarProductView(viewlist.ListAPIView):
             queryset = self.get_queryset()
             serializer = ProductSerializer(queryset, many=True)
             # kurs = get_kurs_valyuta()
-            # for product in serializer.data:
-            #     product['price'] *= kurs
+            for product in serializer.data:
+                product['price'] *= 12156.52
             return Response(
                 {"status": True,
                  "code": 200,
@@ -519,7 +515,7 @@ class CardView(viewlist.ListCreateAPIView):
                 cards = {
                     'id': card.id,
                     'count': card.count,
-                    # 'summa': card.summa * kurs,
+                    'summa': card.summa * 12156.52,
                     'summa': card.summa,
                     'product_id': card.product.id,
                     'product_name': card.product.itemname.encode('utf-8'),
@@ -687,8 +683,8 @@ class UserRecommendation(viewlist.ListAPIView):
             queryset = self.get_queryset()
             serializer = ProductSerializer(queryset, many=True)
             # kurs = get_kurs_valyuta()
-            # for product in serializer.data:
-            #     product['price'] *= kurs
+            for product in serializer.data:
+                product['price'] *= 12156.52
 
             return Response(
                 {"status": True,
@@ -721,8 +717,8 @@ class Recommendation(viewlist.ListAPIView):
             queryset = self.get_queryset()
             serializer = ProductSerializer(queryset, many=True)
             # kurs = get_kurs_valyuta()
-            # for product in serializer.data:
-            #     product['price'] *= kurs
+            for product in serializer.data:
+                product['price'] *= 12156.52
 
             return Response(
                 {"status": True,
