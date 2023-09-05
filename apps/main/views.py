@@ -757,4 +757,5 @@ class LocationView(viewlist.ListCreateAPIView):
 
 class LocationDetail(viewlist.RetrieveUpdateDestroyAPIView):
     serializer_class = UserLocationSerializer
+    queryset = UserLocations.objects.all()
     permissions = [IsAuthenticatedCustom]
