@@ -38,5 +38,6 @@ urlpatterns = [
     path('user_recommendation/', UserRecommendation.as_view(), name='user-recommendation'),
     path('user_comment/', CommentView.as_view(), name='user-comment'),
     path('user_locations/', LocationView.as_view(), name='user-locations'),
+    path('user_locations/<int:pk>', LocationDetail.as_view(), name='user-locations-detail'),
 
 ]

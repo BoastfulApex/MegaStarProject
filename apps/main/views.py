@@ -753,3 +753,8 @@ class LocationView(viewlist.ListCreateAPIView):
     def get_queryset(self):
         queryset = UserLocations.objects.filter(user=self.request.user).all()
         return queryset
+
+
+class LocationDetail(viewlist.RetrieveUpdateDestroyAPIView):
+    serializer_class = UserLocationSerializer
+    permissions = [IsAuthenticatedCustom]
