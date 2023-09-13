@@ -150,8 +150,8 @@ def add_client(conn, cardcode, cardname, phone):
             otp = generateOTP()
             cursor.execute(
                 "INSERT INTO authentication_megauser (phone, password, is_superuser, date_joined, is_staff, "
-                "is_active, card_code, card_name, otp) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
-                [phone, otp, False, created_date, False, True, cardcode, cardname, otp])
+                "is_active, card_code, card_name, otp, all_cashback) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                [phone, otp, False, created_date, False, True, cardcode, cardname, otp, 0])
             new_row = cursor.fetchone()
             return new_row
     else:
