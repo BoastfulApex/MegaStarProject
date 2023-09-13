@@ -107,7 +107,7 @@ REST_FRAMEWORK = {
 }
 
 KNOX = {
-    'TOKEN_TTL': timedelta(hours=24),  # Set the token expiration time to 24 hours
+    'TOKEN_TTL': timedelta(hours=24 * 30),
 }
 
 AUTH_USER_MODEL = 'authentication.MegaUser'
