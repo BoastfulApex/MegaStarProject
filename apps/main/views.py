@@ -166,9 +166,9 @@ class ProductView(generics.ListAPIView):
             paginated_queryset = queryset[start_index:end_index]
 
             serializer = ProductSerializer(paginated_queryset, many=True)
-            # kurs = get_kurs_valyuta()
+            kurs = get_kurs_valyuta()
             for product in serializer.data:
-                product['price'] *= 12156.52
+                product['price'] *= kurs
 
             data = {
                 'page': page,
@@ -206,11 +206,9 @@ class ProductDetailView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
-            instance.price *= 12156.52
             serializer = self.get_serializer(instance)
-            # kurs = get_kurs_valyuta()
-            # for product in serializer.data:
-            #     product['price'] *= 12156.52
+            kurs = get_kurs_valyuta()
+            instance.price *= kurs
             return Response(
                 {"status": True,
                  "code": 200,
@@ -237,9 +235,9 @@ class TopProductAPIView(viewlist.ListAPIView):
         try:
             queryset = self.get_queryset()
             serializer = ProductSerializer(queryset, many=True)
-            # kurs = get_kurs_valyuta()
+            kurs = get_kurs_valyuta()
             for product in serializer.data:
-                product['price'] *= 12156.52
+                product['price'] *= kurs
             return Response(
                 {"status": True,
                  "code": 200,
@@ -270,9 +268,9 @@ class SimilarProductView(viewlist.ListAPIView):
         try:
             queryset = self.get_queryset()
             serializer = ProductSerializer(queryset, many=True)
-            # kurs = get_kurs_valyuta()
+            kurs = get_kurs_valyuta()
             for product in serializer.data:
-                product['price'] *= 12156.52
+                product['price'] *= kurs
             return Response(
                 {"status": True,
                  "code": 200,
@@ -678,9 +676,9 @@ class UserRecommendation(viewlist.ListAPIView):
         try:
             queryset = self.get_queryset()
             serializer = ProductSerializer(queryset, many=True)
-            # kurs = get_kurs_valyuta()
+            kurs = get_kurs_valyuta()
             for product in serializer.data:
-                product['price'] *= 12156.52
+                product['price'] *= kurs
 
             return Response(
                 {"status": True,
@@ -712,9 +710,9 @@ class Recommendation(viewlist.ListAPIView):
         try:
             queryset = self.get_queryset()
             serializer = ProductSerializer(queryset, many=True)
-            # kurs = get_kurs_valyuta()
+            kurs = get_kurs_valyuta()
             for product in serializer.data:
-                product['price'] *= 12156.52
+                product['price'] *= kurs
 
             return Response(
                 {"status": True,
