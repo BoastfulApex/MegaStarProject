@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
@@ -246,6 +248,11 @@ class NotificationDelete(DeleteView):
 
 def sales(request):
     sales = Sale.objects.all().order_by('id')
+    today = datetime.today().date()
+    for sale in sales:
+        if sale.expiration_date <= today:
+            sale.active = False
+            sale.save()
     search_query = request.GET.get('q')
     if search_query:
         sales = sales.filter(Q(name__icontains=search_query))
@@ -264,7 +271,12 @@ def sale_create(request):
     if request.method == 'POST':
         form = SaleForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            instance = form.save()
+            required_product = Product.objects.filter(itemcode=form.cleaned_data['required_product']).first()
+            gift_product = Product.objects.filter(itemcode=form.cleaned_data['required_product']).first()
+            instance.product = required_product
+            instance.gift_product = gift_product
+            instance.save()
             return redirect('home_sales')
     else:
         form = SaleForm()
@@ -273,3 +285,30 @@ def sale_create(request):
                   'home/sale_create.html',
                   {'form': form})
 
+
+@login_required(login_url="/login/")
+def sale_detail(request, pk):
+    sale = Sale.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = SaleForm(request.POST, request.FILES, instance=sale)
+        if form.is_valid():
+            instance = form.save()
+            required_product = Product.objects.filter(itemcode=form.cleaned_data['required_product']).first()
+            gift_product = Product.objects.filter(itemcode=form.cleaned_data['required_product']).first()
+            instance.product = required_product
+            instance.gift_product = gift_product
+            instance.save()
+            return redirect('home_sales')
+    else:
+        form = SaleForm(instance=sale)
+
+    return render(request,
+                  'home/sale_detail.html',
+                  {'form': form, 'segment': 'sales', 'sale': sale})
+
+
+class SaleDelete(DeleteView):
+    model = Sale
+    fields = '__all__'
+    success_url = reverse_lazy('home_sales')

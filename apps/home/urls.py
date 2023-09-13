@@ -21,5 +21,7 @@ urlpatterns = [
     path('notification_delete/<int:pk>/', views.NotificationDelete.as_view(), name='notifications_delete'),
     path('sales/', views.sales, name='home_sales'),
     path('sales_create/', views.sale_create, name='sale_create'),
+    path('sales_detail/<int:pk>', views.sale_detail, name='sale_detail'),
+    path('sales_delete/<int:pk>', views.SaleDelete.as_view(), name='sale_delete'),
 
 ]

@@ -144,11 +144,21 @@ class Sale(BaseModel):
     expiration_date = models.DateField(null=True, blank=True)
     required_quantity = models.IntegerField()
 
+    image = models.ImageField(null=True, blank=True)
+    description = models.CharField(max_length=5000, null=True, blank=True)
+
     gift_product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name="gift_product")
     gift_quantity = models.IntegerField()
 
     active = models.BooleanField(default=True)
     orders = models.IntegerField(default=0)
+
+    @property
+    def PhotoURL(self):
+        try:
+            return self.image.url
+        except:
+            return ''
 
 
 class UserSale(BaseModel):

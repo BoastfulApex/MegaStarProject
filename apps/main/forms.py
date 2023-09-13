@@ -233,8 +233,19 @@ class SaleForm(forms.ModelForm):
             }
         ))
 
+    image = forms.ImageField(
+      widget=forms.FileInput()
+    )
+
+    description = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+    ))
+
     class Meta:
         model = Sale
-        fields = ["name", "expiration_date", "required_quantity", "gift_quantity"]
-        
+        fields = ["name", "expiration_date", "required_quantity", "gift_quantity", 'image', 'description']
+
 

@@ -218,7 +218,7 @@ def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
                            "u_sumuzs, is_sale) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
                            [guid, created_date,
                             user[0], DocEntry, DocNum,
-                            DocTotal, U_sumUZS, user[1]])
+                            DocTotal, U_sumUZS, False])
             new_row = cursor.fetchone()
             if user[1]:
                 check_user_sale(user[0])

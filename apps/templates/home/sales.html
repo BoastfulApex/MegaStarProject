@@ -62,16 +62,20 @@
 												</td>
 											{% endif %}
 											<td class="d-none d-md-table-cell">
-
 												<div class="col-auto">
 													<div class="stat text-primary">
+														<div class="stat text-primary">
+															<a href="{% url 'sale_delete' sale.id %}"><i
+																	class="align-middle"
+																	data-feather="alert-circle"></i></a>
+														</div>
 													</div>
 												</div>
 
 											</td>
 										</tr>
 									{% endfor %}
-									<a class="btn btn-succes text-right" href="{% url 'sale_create' %}">
+									<a class="btn btn-outline-success text-right" href="{% url 'sale_create' %}">
 										<i class="fas fa-plus"></i>Qo'shish
 									</a>
 									</tbody>
