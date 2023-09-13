@@ -45,6 +45,7 @@ class LoginView(KnoxLoginView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
+        user.first_name = serializer.validated_data['first_name']
         token_ttl = self.get_token_ttl()
         instance, token = AuthToken.objects.create(request.user, token_ttl)
         user_logged_in.send(sender=request.user.__class__,
@@ -74,6 +75,25 @@ class PhoneVerify(generics.CreateAPIView):
                     "status": True,
                     "code": 200,
                     "data": user.otp,
+                    "message": []
+                }
+            )
+
+
+class GetNameView(generics.CreateAPIView):
+    queryset = MegaUser.objects.all()
+    serializer_class = PhoneVerifySerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = MegaUser.objects.get(phone=request.data["phone"])
+            name = user.first_name if user.first_name else None
+            return Response(
+                {
+                    "status": True,
+                    "code": 200,
+                    "data": {'name': name},
                     "message": []
                 }
             )

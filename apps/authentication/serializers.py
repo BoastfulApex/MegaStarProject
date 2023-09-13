@@ -10,12 +10,9 @@ class PhoneAuthTokenSerializer(serializers.Serializer):
         label=_("Phone"),
         write_only=True
     )
-    # first_name = serializers.CharField(
-    #     label=_("full_name"),
-    # )
-    # last_name = serializers.CharField(
-    #     label=_("full_name"),
-    # )
+    first_name = serializers.CharField(
+        label=_("full_name"),
+    )
     password = serializers.CharField(
         label=_("Password"),
         style={'input_type': 'password'},

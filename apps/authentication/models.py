@@ -14,7 +14,6 @@ def send_sms(otp, phone):
         "messages":[{"recipient":f"{phone}","message-id":"abc000000003","sms":{"originator": "MEGASTAR","content": {"text": f"Mega Star uchun tasdiqkash kodi: {otp}"}}}]}
     url = "http://91.204.239.44/broker-api/send"
     res = requests.post(url=url, headers={}, auth=(username, password), json=sms_data)
-    print(res)
 
 
 class MegaUser(AbstractUser):
