@@ -12,10 +12,10 @@ def set_scheduled_jobs(scheduler, *args, **kwargs):
 
     # scheduler.add_job(add_postgres_category, "interval", seconds=20)
     # scheduler.add_job(add_postgres_manufacturer, "interval", seconds=20)
-    # scheduler.add_job(add_postgres_users, "interval", seconds=20)
+    scheduler.add_job(add_postgres_users, "interval", seconds=20)
     # scheduler.add_job(add_postgres_subcategory, "interval", seconds=60)
     # scheduler.add_job(add_postgres_item, "interval", seconds=100)
-    scheduler.add_job(add_postgres_invoices, "interval", seconds=100)
+    # scheduler.add_job(add_postgres_invoices, "interval", seconds=100)
 
 
 async def on_startup(dp):
