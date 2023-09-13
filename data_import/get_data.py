@@ -10,7 +10,7 @@ load_dotenv()
 
 def get_session_id():
     headers = {}
-    url = 'https://212.83.152.252:50000/b1s/v2/Login'
+    url = 'https://212.83.191.99:50000/b1s/v2/Login'
     data = {
         'CompanyDB': str(os.getenv("SAP_COMPANY_DB")),
         'Password': str(os.getenv("SAP_PASSWORD")),
@@ -23,7 +23,7 @@ def get_session_id():
 
 
 def get_objects(url, session):
-    url = f'https://212.83.152.252:50000/b1s/v2/{url}'
+    url = f'https://212.83.191.99:50000/b1s/v2/{url}'
 
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
