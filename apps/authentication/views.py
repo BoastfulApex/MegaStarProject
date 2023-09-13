@@ -69,12 +69,16 @@ class PhoneVerify(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             user = MegaUser.objects.get(phone=request.data["phone"])
             user.generate_otp()
+            data = {
+                'otp': user.otp,
+                'name': user.first_name
+            }
             send_sms(phone=user.phone, otp=user.otp)
             return Response(
                 {
                     "status": True,
                     "code": 200,
-                    "data": user.otp,
+                    "data": data,
                     "message": []
                 }
             )
