@@ -13,55 +13,59 @@
 {% endblock stylesheets %}
 
 {% block content %}
-
-<main class="content">
-    <div class="container-fluid p-0">
-        <div class="row">
-            <div class="col-12 col-lg-12 col-xxl-12 d-flex">
-                <div class="card flex-fill">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Bildirishnomalar ro'yxati</h5>
-                    </div>
-                    <table class="table table-hover my-0">
-                        <thead>
-                        <tr>
-                            <th>Nomi</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for notification in notifications %}
-                        <tr>
-                            <td class="d-none d-xl-table-cell">{{ notification.name }}</td>
-
-                            <td class="d-none d-md-table-cell">
-
-                                <div class="col-auto d-flex">
-                                    <div class="stat text-primary">
-                                        <a href="{% url 'notifications_detail' notification.id %}"><i
-                                                class="align-middle" data-feather="edit-3"></i></a>
-                                    </div>
-                                    <div class="stat text-primary">
-                                        <a href="{% url 'notifications_delete' notification.id %}"><i
-                                                class="align-middle" data-feather="delete"></i></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                        <a class="btn btn-outline-success text-right" href="{% url 'notifications_create' %}">
-                            <i class="fas fa-plus"></i>Qo'shish
-                        </a>
-
-                    </table>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Bildirishnomani tahrirlash</h1>
                 </div>
             </div>
-        </div>
-    </div>
-</main>
-{% endblock content %}
+        </div><!-- /.container-fluid -->
+    </section>
 
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Bildirishnomalar</h3>
+                    </div>
+                    <div class="card-body">
+                        <form role="form" method="post" action="" enctype="multipart/form-data">
+
+                            {% csrf_token %}
+
+                            <div class="form-group">
+                                <label for="inputName">Bildirishnomalar Nomi</label>
+                                {{ form.name}}
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <label for="inputName">Bildirishnoma matni</label>
+                                {{ form.message}}
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="submit" class="btn btn-success float-right" value="Saqlash">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div><!-- /.card -->
+        </div>
+        <!-- /.card -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock content %}
 {% block javascripts %}
 <script src="{% static 'js/app.js' %}"></script>
 

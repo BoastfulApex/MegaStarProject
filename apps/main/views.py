@@ -228,6 +228,8 @@ class TopProductAPIView(viewlist.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
+        # top = get_top_products()
+        # print(top)
         queryset = Product.objects.all()
         return queryset[:100]
 

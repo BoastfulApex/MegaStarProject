@@ -106,6 +106,7 @@ class Product(BaseModel):
     description = models.TextField(max_length=5000, null=True, blank=True)
     price = models.FloatField()
     order_sale = models.IntegerField(default=0, null=True)
+    top = models.BooleanField(null=True, blank=True, default=False)
 
     def __str__(self):
         return self.itemname

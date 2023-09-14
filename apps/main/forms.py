@@ -120,10 +120,16 @@ class ProductForm(forms.ModelForm):
     image = forms.ImageField(
       widget=forms.FileInput()
     )
+    top = forms.BooleanField(
+        label="Top 100",
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(attrs={'class': 'custom-class'}),
+    )
 
     class Meta:
         model = Product
-        fields = ["itemname", "itemcode", "description", "price", "image"]
+        fields = ["itemname", "itemcode", "description", "price", "image", "top"]
 
 
 class CashbackForm(forms.ModelForm):
@@ -186,7 +192,7 @@ class NotificationForm(forms.ModelForm):
         ))
 
     class Meta:
-        model = Product
+        model = Notification
         fields = '__all__'
 
 

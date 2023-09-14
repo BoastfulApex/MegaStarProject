@@ -217,7 +217,7 @@ def notification_detail(request, pk):
         form = NotificationForm(request.POST, request.FILES, instance=notification)
         if form.is_valid():
             form.save()
-            return redirect('notifications')
+            return redirect('home_notifications')
     else:
         form = NotificationForm(instance=notification)
 
@@ -231,7 +231,7 @@ def notification_create(request):
         form = NotificationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('notification')
+            return redirect('home_notifications')
     else:
         form = NotificationForm()
 
@@ -243,7 +243,7 @@ def notification_create(request):
 class NotificationDelete(DeleteView):
     model = Notification
     fields = '__all__'
-    success_url = reverse_lazy('notifications')
+    success_url = reverse_lazy('home_notifications')
 
 
 def sales(request):
