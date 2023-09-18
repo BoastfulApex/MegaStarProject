@@ -256,7 +256,7 @@ def add_postgres_invoices():
                               DocDate=str(data['DocDate']),
                               U_sumUZS=data['U_sumUZS'])
             if order is not None:
-                # print("Order: ", order)
+                print("Order: ", order)
                 details = data['DocumentLines']
                 for detail in details:
                     add_order_detail(
