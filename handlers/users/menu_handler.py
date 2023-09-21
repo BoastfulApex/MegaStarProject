@@ -94,7 +94,6 @@ async def get_year(call: types.CallbackQuery, state: FSMContext):
         markup = await month_keyboard(date)
         await call.message.edit_text(text='Kerakli oyni tanlang 👇', reply_markup=markup)
         await state.update_data(year=data)
-        print(data)
         await state.set_state('get_month_')
     else:
         await call.message.delete()
@@ -102,7 +101,7 @@ async def get_year(call: types.CallbackQuery, state: FSMContext):
         markup = await menu_keyboard()
         await state.finish()
         await bot.send_message(chat_id=call.from_user.id, text='Kerakli buyruqni tanlang 👇', reply_markup=markup)
-
+        await state.set_state('user_menu')
 
 @dp.callback_query_handler(state="get_month_")
 async def get_year(call: types.CallbackQuery, state: FSMContext):

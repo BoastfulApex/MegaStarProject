@@ -236,7 +236,6 @@ def add_postgres_invoices():
     i = 1
     while True:
         i += 1
-
         conn = psycopg2.connect(
             host=DB_HOST,
             port=DB_PORT,
