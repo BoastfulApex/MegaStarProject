@@ -243,7 +243,9 @@ def add_postgres_invoices():
         today_date = datetime.datetime.now().strftime("%Y-%m-%d")
         current_time_formatted = current_time.strftime("%H:%M:%S")
         two_minutes_ago_formatted = two_minutes_ago.strftime("%H:%M:%S")
-        url += (f"UpdateDate,UpdateTime&$orderby=UpdateDate,UpdateTime&$filter=(UpdateDate ge '{today_date}' and "
+        print(current_time)
+        print(two_minutes_ago_formatted)
+        url += (f",UpdateDate,UpdateTime&$orderby=UpdateDate,UpdateTime&$filter=(UpdateDate ge '{today_date}' and "
                 f"UpdateTime ge '{current_time_formatted}') and (UpdateDate le '{today_date}' and UpdateTime le "
                 f"'{two_minutes_ago_formatted}') and Cancelled eq 'tNO'")
         i += 1
@@ -256,6 +258,7 @@ def add_postgres_invoices():
         )
         results = []
         items = get_objects(url=url, session=session)
+        print(items)
         results += [item for item in items['value']]
         for data in results:
             order = add_order(conn=conn,
