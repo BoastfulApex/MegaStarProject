@@ -4,7 +4,7 @@ import uuid
 import datetime
 import random
 import json
-
+from datetime import timedelta
 from dotenv import load_dotenv
 
 from .get_data import categories, sub_categories, manufacturers, clients, items, invoices, get_session_id, get_objects
@@ -235,6 +235,17 @@ def add_postgres_invoices():
           'DocumentLines'
     i = 1
     while True:
+        current_time = datetime.datetime.now()
+        two_minutes_ago = current_time - timedelta(minutes=1)
+        if current_time.minute == 0:
+            two_minutes_ago = datetime.datetime.now()
+
+        today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        current_time_formatted = current_time.strftime("%H:%M:%S")
+        two_minutes_ago_formatted = two_minutes_ago.strftime("%H:%M:%S")
+        url += (f"UpdateDate,UpdateTime&$orderby=UpdateDate,UpdateTime&$filter=(UpdateDate ge '{today_date}' and "
+                f"UpdateTime ge '{current_time_formatted}') and (UpdateDate le '{today_date}' and UpdateTime le "
+                f"'{two_minutes_ago_formatted}') and Cancelled eq 'tNO'")
         i += 1
         conn = psycopg2.connect(
             host=DB_HOST,
