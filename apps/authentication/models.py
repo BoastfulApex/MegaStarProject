@@ -38,6 +38,9 @@ class MegaUser(AbstractUser):
 
     is_sale = models.BooleanField(default=False, null=True, blank=True)
 
+    sale_cashback = models.IntegerField(null=True, blank=True, default=0)
+    sale_cashback_summa = models.IntegerField(null=True, blank=True, default=0)
+
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 

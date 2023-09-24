@@ -1,11 +1,11 @@
 import psycopg2
-import os
+import requests
 import uuid
 import datetime
+import calendar
 import random
 import json
 from datetime import timedelta
-from dotenv import load_dotenv
 
 from .get_data import categories, sub_categories, manufacturers, clients, items, invoices, get_session_id, get_objects
 from .db_get_id import *
@@ -52,15 +52,25 @@ def check_user_sale(user_id):
     conn.close()
 
 
-def add_cashback_to_user(order_id, conn):
+def add_cashback_to_user(order_id, conn, CardCode):
     cur = conn.cursor()
+    user = get_user_by_cardcode(CardCode)
 
     cur.execute("SELECT summa, created_date FROM main_order WHERE id=%s", (order_id,))
     order = cur.fetchone()
     order_amount = order[0]
     order_datetime = order[1]
-    cur.execute("SELECT * FROM main_usercashback WHERE expiration_date > %s AND active=True", (order_datetime,))
+    cur.execute("SELECT * FROM main_usercashback WHERE user = %s AND expiration_date > %s AND active=True",
+                (user[0], order_datetime,))
     user_cashbacks = cur.fetchall()
+
+    if user[2] is not None and user[2] != 0:
+        sale_cashback = user[2]
+        sale_cashback_summa = user[3]
+        new_sale_cashback_summa = sale_cashback_summa + order_amount * sale_cashback / 100
+        cur.execute("UPDATE authentication_megauser SET sale_cashback_summa=%s WHERE id=%s",
+                    (new_sale_cashback_summa,
+                     user[0]))
 
     for user_cashback in user_cashbacks:
         user_cashback_id = user_cashback[0]
@@ -71,10 +81,13 @@ def add_cashback_to_user(order_id, conn):
         cur.execute("UPDATE main_usercashback SET summa=%s WHERE id=%s", (new_user_cashback_summa, user_cashback_id))
 
         # add 1% of the order amount to the user's all_cashback field
-        user_id = user_cashback[1]
-        cur.execute("UPDATE authentication_megauser SET all_cashback=all_cashback+%s WHERE id=%s", (order_amount * 0.01,
-                                                                                                    user_id))
+        user_id = user[0]
+        all_cashback = user[4]
+
         cashback_summa = order_amount * 0.01
+        new_cashback_summa = all_cashback + cashback_summa
+        cur.execute("UPDATE authentication_megauser SET all_cashback=%s WHERE id=%s", (new_cashback_summa,
+                                                                                       user_id))
         cur.execute(
             "INSERT INTO main_usercashbackhistory (guid, user_id, created_date, summa) VALUES (%s, %s, %s) RETURNING id",
             [guid, user_id, created_date, cashback_summa])
@@ -150,8 +163,8 @@ def add_client(conn, cardcode, cardname, phone):
             otp = generateOTP()
             cursor.execute(
                 "INSERT INTO authentication_megauser (phone, password, is_superuser, date_joined, is_staff, "
-                "is_active, card_code, card_name, otp, all_cashback) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
-                [phone, otp, False, created_date, False, True, cardcode, cardname, otp, 0])
+                "is_active, card_code, card_name, otp, all_cashback, sale_cashback, sale_cashback_summa) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                [phone, otp, False, created_date, False, True, cardcode, cardname, otp, 0, 0, 0])
             new_row = cursor.fetchone()
             return new_row
     else:
@@ -223,7 +236,7 @@ def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
             if user[1]:
                 check_user_sale(user[0])
             else:
-                add_cashback_to_user(new_row[0], conn)
+                add_cashback_to_user(new_row[0], conn, CardCode)
             return new_row[0]
     else:
         return None
@@ -243,8 +256,6 @@ def add_postgres_invoices():
         today_date = datetime.datetime.now().strftime("%Y-%m-%d")
         current_time_formatted = current_time.strftime("%H:%M:%S")
         two_minutes_ago_formatted = two_minutes_ago.strftime("%H:%M:%S")
-        print(current_time)
-        print(two_minutes_ago_formatted)
         url += (f",UpdateDate,UpdateTime&$orderby=UpdateDate,UpdateTime&$filter=(UpdateDate ge '{today_date}' and "
                 f"UpdateTime ge '{current_time_formatted}') and (UpdateDate le '{today_date}' and UpdateTime le "
                 f"'{two_minutes_ago_formatted}') and Cancelled eq 'tNO'")
@@ -408,3 +419,18 @@ def add_postgres_item():
         print("Product", item[0])
     conn.commit()
     conn.close()
+
+
+def check_sale_cashback():
+    current_date = datetime.date.today()
+
+    last_day_of_month = calendar.monthrange(current_date.year, current_date.month)[1]
+
+    if current_date.day == last_day_of_month:
+        url = f'https://arzon.maxone.uz/api/check_last_month_sale/'
+
+        response = requests.request("GET", url)
+        response_data = response.json()
+        return response_data
+    else:
+        pass

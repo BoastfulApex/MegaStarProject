@@ -148,3 +148,4 @@ venv.bak/
 /files
 /static
 start_django.sh
+test.py

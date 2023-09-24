@@ -40,4 +40,6 @@ urlpatterns = [
     path('user_locations/', LocationView.as_view(), name='user-locations'),
     path('user_locations/<int:pk>', LocationDetail.as_view(), name='user-locations-detail'),
 
+    path('check_last_month_sale/', CheckSaleUsers.as_view(), name='user-check_last_month_sale'),
+
 ]
