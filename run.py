@@ -5,17 +5,18 @@ import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loader import bot
 from data_import.add_data import add_postgres_users, add_postgres_category,\
-    add_postgres_subcategory, add_postgres_manufacturer, add_postgres_item, add_postgres_invoices
+    add_postgres_subcategory, add_postgres_manufacturer, add_postgres_item, add_postgres_invoices, check_sale_cashback
 
 
 def set_scheduled_jobs(scheduler, *args, **kwargs):
 
-    # scheduler.add_job(add_postgres_category, "interval", seconds=20)
-    # scheduler.add_job(add_postgres_manufacturer, "interval", seconds=20)
-    # scheduler.add_job(add_postgres_users, "interval", seconds=20)
-    # scheduler.add_job(add_postgres_subcategory, "interval", seconds=60)
-    # scheduler.add_job(add_postgres_item, "interval", seconds=100)
+    scheduler.add_job(add_postgres_category, "interval", seconds=20)
+    scheduler.add_job(add_postgres_manufacturer, "interval", seconds=20)
+    scheduler.add_job(add_postgres_users, "interval", seconds=20)
+    scheduler.add_job(add_postgres_subcategory, "interval", seconds=60)
+    scheduler.add_job(add_postgres_item, "interval", seconds=100)
     scheduler.add_job(add_postgres_invoices, "interval", seconds=60)
+    scheduler.add_job(check_sale_cashback, "interval", days=1)
 
 
 async def on_startup(dp):
