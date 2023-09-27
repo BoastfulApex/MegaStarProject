@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 
 from .models import MegaUser, send_sms
-from .serializers import PhoneVerifySerializer, PhoneAuthTokenSerializer
+from .serializers import PhoneVerifySerializer, PhoneAuthTokenSerializer, SetNameSerializer
 
 
 def login_view(request):
@@ -45,8 +45,6 @@ class LoginView(KnoxLoginView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        user.first_name = serializer.validated_data['first_name']
-        user.save()
         token_ttl = self.get_token_ttl()
         instance, token = AuthToken.objects.create(request.user, token_ttl)
         user_logged_in.send(sender=request.user.__class__,
@@ -102,3 +100,50 @@ class GetNameView(generics.CreateAPIView):
                     "message": []
                 }
             )
+
+
+    queryset = MegaUser.objects.all()
+    serializer_class = PhoneVerifySerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = MegaUser.objects.get(phone=request.data["phone"])
+            user.generate_otp()
+            data = {
+                'otp': user.otp,
+                'name': user.first_name
+            }
+            send_sms(phone=user.phone, otp=user.otp)
+            return Response(
+                {
+                    "status": True,
+                    "code": 200,
+                    "data": data,
+                    "message": []
+                }
+            )
+
+
+class SetNameView(generics.CreateAPIView):
+    queryset = MegaUser.objects.all()
+    serializer_class = SetNameSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = MegaUser.objects.get(phone=serializer.validated_data["phone"])
+            user.first_name = serializer.validated_data['first_name']
+            data = {
+                'phone': user.phone,
+                'name': user.first_name
+            }
+            return Response(
+                {
+                    "status": True,
+                    "code": 200,
+                    "data": data,
+                    "message": []
+                }
+            )
+
