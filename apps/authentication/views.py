@@ -45,8 +45,6 @@ class LoginView(KnoxLoginView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        phone = serializer.validated_data['phone']
-        user = MegaUser.objects.get(phone=phone)
         user.first_name = serializer.validated_data['first_name']
         user.save()
         token_ttl = self.get_token_ttl()

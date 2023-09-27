@@ -434,9 +434,10 @@ class UserListView(viewlist.ListCreateAPIView):
     permission_classes = [IsAuthenticatedCustom]
 
     def get_queryset(self):
-        user =  User.objects.filter(id=self.request.user.id).first()
-        user.first_name = user.card_name
-        user.save()
+        user = User.objects.filter(id=self.request.user.id).first()
+        if not user.first_name:
+            user.first_name = user.card_name
+            user.save()
         return User.objects.filter(id=self.request.user.id)
 
 
