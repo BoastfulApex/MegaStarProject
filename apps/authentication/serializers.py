@@ -27,6 +27,7 @@ class PhoneAuthTokenSerializer(serializers.Serializer):
     def validate(self, attrs):
         phone = attrs.get('phone')
         password = attrs.get('password')
+        first_name = attrs.get('first_name')
 
         if phone and password:
             user = authenticate(request=self.context.get('request'),
