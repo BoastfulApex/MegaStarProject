@@ -46,6 +46,7 @@ class LoginView(KnoxLoginView):
         user = serializer.validated_data['user']
         login(request, user)
         user.first_name = serializer.validated_data['first_name']
+        user.save()
         token_ttl = self.get_token_ttl()
         instance, token = AuthToken.objects.create(request.user, token_ttl)
         user_logged_in.send(sender=request.user.__class__,
