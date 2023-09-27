@@ -134,6 +134,7 @@ class SetNameView(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             user = MegaUser.objects.get(phone=serializer.validated_data["phone"])
             user.first_name = serializer.validated_data['first_name']
+            user.save()
             data = {
                 'phone': user.phone,
                 'name': user.first_name
