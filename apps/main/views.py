@@ -770,32 +770,59 @@ class CheckSaleUsers(generics.ListAPIView):
         users = User.objects.all()
         thirty_days_ago = timezone.now() - timedelta(days=30)
         for user in users:
-            total_uzs_gt_2000000 = Order.objects.filter(
+            count_cashback = 0
+            price_cashback = 0
+            total_sum = Order.objects.filter(
                 user=user,
                 created_date__gte=thirty_days_ago,
-                u_sumuzs__gt=2000000
-            ).all()
-            total_uzs_gt_3500000 = Order.objects.filter(
+            ).aggregate(total_sum=Sum('u_sumuzs'))['total_sum'] or 0
+
+            # total_uzs_gt_2000000 = Order.objects.filter(
+            #     user=user,
+            #     created_date__gte=thirty_days_ago,
+            #     u_sumuzs__gt=2000000
+            # ).all()
+            # total_uzs_gt_3500000 = Order.objects.filter(
+            #     user=user,
+            #     created_date__gte=thirty_days_ago,
+            #     u_sumuzs__gt=3500000
+            # ).all()
+            # total_uzs_gt_6000000 = Order.objects.filter(
+            #     user=user,
+            #     created_date__gte=thirty_days_ago,
+            #     u_sumuzs__gt=6000000
+            # ).all()
+            # if len(total_uzs_gt_6000000) >= 3:
+            #     user.sale_cashback += 7
+            # elif len(total_uzs_gt_6000000) >= 2:
+            #     user.sale_cashback += 6
+            # if len(total_uzs_gt_3500000) >= 3:
+            #     user.sale_cashback += 5
+            # elif len(total_uzs_gt_3500000) >= 2:
+            #     user.sale_cashback += 4
+            # if len(total_uzs_gt_2000000) >= 3:
+            #     user.sale_cashback += 3
+            # elif len(total_uzs_gt_2000000) >= 2:
+            #     user.sale_cashback += 2
+            # user.save()
+            if 2000000 <= total_sum <= 6000000:
+                price_cashback = 2
+            if 6000000 <= total_sum <= 12000000:
+                price_cashback = 3
+            if 12000000 <= total_sum:
+                price_cashback = 5
+            total_count = Order.objects.filter(
                 user=user,
-                created_date__gte=thirty_days_ago,
-                u_sumuzs__gt=3500000
-            ).all()
-            total_uzs_gt_6000000 = Order.objects.filter(
-                user=user,
-                created_date__gte=thirty_days_ago,
-                u_sumuzs__gt=6000000
-            ).all()
-            if len(total_uzs_gt_6000000) >= 3:
-                user.sale_cashback += 7
-            elif len(total_uzs_gt_6000000) >= 2:
-                user.sale_cashback += 6
-            if len(total_uzs_gt_3500000) >= 3:
-                user.sale_cashback += 5
-            elif len(total_uzs_gt_3500000) >= 2:
-                user.sale_cashback += 4
-            if len(total_uzs_gt_2000000) >= 3:
-                user.sale_cashback += 3
-            elif len(total_uzs_gt_2000000) >= 2:
-                user.sale_cashback += 2
+                created_date__gte=thirty_days_ago).count()
+            if total_count >= 500:
+                count_cashback = 3
+            if total_count >= 1000:
+                count_cashback = 5
+
+            if price_cashback > count_cashback:
+                user.sale_cashback += price_cashback
+            else:
+                user.sale_cashback += count_cashback
             user.save()
+
         return Response({'status': 'ok'})

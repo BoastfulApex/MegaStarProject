@@ -103,6 +103,7 @@ async def get_year(call: types.CallbackQuery, state: FSMContext):
         await bot.send_message(chat_id=call.from_user.id, text='Kerakli buyruqni tanlang 👇', reply_markup=markup)
         await state.set_state('user_menu')
 
+
 @dp.callback_query_handler(state="get_month_")
 async def get_year(call: types.CallbackQuery, state: FSMContext):
     data = call.data
