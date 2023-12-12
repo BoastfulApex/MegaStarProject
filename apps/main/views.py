@@ -805,16 +805,16 @@ class CheckSaleUsers(generics.ListAPIView):
             # elif len(total_uzs_gt_2000000) >= 2:
             #     user.sale_cashback += 2
             # user.save()
-            if 2000000 <= total_sum <= 6000000:
+            if 2000000 <= total_sum < 6000000:
                 price_cashback = 2
-            if 6000000 <= total_sum <= 12000000:
+            if 6000000 <= total_sum < 12000000:
                 price_cashback = 3
             if 12000000 <= total_sum:
                 price_cashback = 5
             total_count = Order.objects.filter(
                 user=user,
                 created_date__gte=thirty_days_ago).count()
-            if total_count >= 500:
+            if 500 <= total_count < 1000:
                 count_cashback = 3
             if total_count >= 1000:
                 count_cashback = 5

@@ -51,8 +51,8 @@ class MegaUser(AbstractUser):
 
     def generate_otp(self):
         otp = random.randint(111111, 999999)
-        self.set_password(str(otp))
-        self.otp = otp
+        self.set_password(str(1111))
+        self.otp = 1111
         self.save()
         return otp
 

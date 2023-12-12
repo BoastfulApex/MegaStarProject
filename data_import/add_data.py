@@ -269,7 +269,6 @@ def add_postgres_invoices():
         )
         results = []
         items = get_objects(url=url, session=session)
-        print(items)
         results += [item for item in items['value']]
         for data in results:
             order = add_order(conn=conn,
