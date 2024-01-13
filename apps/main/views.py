@@ -372,6 +372,13 @@ class UserTotalStatusView(generics.ListAPIView):
                 created_date__year=year
             ).aggregate(monthly_sum=Sum('summa'))['monthly_sum'] or 0
 
+            # Monthly count
+            monthly_count = Order.objects.filter(
+                user_id=user_id,
+                created_date__month=month,
+                created_date__year=year
+            ).count()
+
             # Yearly sum
             yearly = Order.objects.filter(
                 user_id=user_id,
@@ -401,35 +408,55 @@ class UserTotalStatusView(generics.ListAPIView):
                 "name": month_cashback.name,
                 "need": month_cashback.summa,
                 "earn": monthly,
+                "type": "standart",
             }
             d_2 = {
                 "name": season_cashback.name,
                 "need": season_cashback.summa,
                 "earn": season,
+                "type": "standart",
             }
             d_3 = {
                 "name": year_cashback.name,
                 "need": year_cashback.summa,
                 "earn": yearly,
+                "type": "standart",
             }
             d_4 = {
                 "name": "2% 2-6 mln so'm",
                 "need": 6000000,
-                "earn": monthly
+                "earn": monthly,
+                "type": "aksiya",
 
             }
             d_5 = {
                 "name": "3% 6-12 mln so'm",
                 "need": 12000000,
-                "earn": monthly
+                "earn": monthly,
+                "type": "aksiya",
             }
             d_6 = {
                 "name": "2% 12 mln + so'm",
                 "need": 12000000,
-                "earn": monthly
+                "earn": monthly,
+                "type": "aksiya",
             }
 
-            data = [d_1, d_2, d_3, d_4, d_5, d_6]
+            d_7 = {
+                "name": "3% 500-1000",
+                "need": 500,
+                "earn": monthly_count,
+                "type": "Yoki",
+            }
+
+            d_8 = {
+                "name": "5% 1000+ ta",
+                "need": 1000,
+                "earn": monthly_count,
+                "type": "Yoki",
+            }
+
+            data = [d_1, d_2, d_3, d_4, d_5, d_6, d_7, d_8]
             return Response(
                 {"status": True,
                  "code": 200,
