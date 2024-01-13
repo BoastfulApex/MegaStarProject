@@ -412,7 +412,24 @@ class UserTotalStatusView(generics.ListAPIView):
                 "need": year_cashback.summa,
                 "earn": yearly,
             }
-            data = [d_1, d_2, d_3]
+            d_4 = {
+                "name": "2% 2-6 mln so'm",
+                "need": 6000000,
+                "earn": monthly
+
+            }
+            d_5 = {
+                "name": "3% 6-12 mln so'm",
+                "need": 12000000,
+                "earn": monthly
+            }
+            d_6 = {
+                "name": "2% 12 mln + so'm",
+                "need": 12000000,
+                "earn": monthly
+            }
+
+            data = [d_1, d_2, d_3, d_4, d_5, d_6]
             return Response(
                 {"status": True,
                  "code": 200,
