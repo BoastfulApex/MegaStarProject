@@ -456,7 +456,13 @@ class UserTotalStatusView(generics.ListAPIView):
                 "type": "Yoki",
             }
 
-            data = [d_1, d_2, d_3, d_4, d_5, d_6, d_7, d_8]
+            d_9 = {
+                "name": "2% Keshbek 25 mln +",
+                "need": 25000000,
+                "earn": monthly_count,
+                "type": "Boshqa",
+            }
+            data = [d_4, d_5, d_6, d_7, d_8, d_9]
             return Response(
                 {"status": True,
                  "code": 200,
