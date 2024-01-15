@@ -59,6 +59,18 @@ def get_user_monthly(user_id):
 
 
 @sync_to_async
+def get_user_monthly_count(user_id):
+    try:
+        month = datetime.date.today().month
+        orders = Order.objects.filter(user__telegram_id=user_id, created_date__month=month, created_date__year=datetime
+                                      .date.today().year).count()
+        return orders
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
 def get_user_yearly(user_id):
     try:
         orders = Order.objects.filter(user__telegram_id=user_id, created_date__year=datetime.date.today().year)\
