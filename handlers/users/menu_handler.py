@@ -13,6 +13,7 @@ async def menu(message: types.Message, state: FSMContext):
     if message.text == "Mening hisobim/Bonuslarim":
         keyboard = await menu_keyboard()
         orders_m = await get_user_monthly(message.from_id)
+        orders_m_count = await get_user_monthly_count(message.from_id)
         orders_y = await get_user_yearly(message.from_id)
         orders_s = await get_user_seasonly(message.from_id)
         cashbacks = await get_user_kashbacks(message.from_user.id)
@@ -21,9 +22,17 @@ async def menu(message: types.Message, state: FSMContext):
         cashback_s = await get_cashback_season()
         cashback_y = await get_cashback_year()
         text = f"💵Ushbu oydagi xaridlar: {round(orders_m, 2)}\n"
-        text += f"\n💰Sizda bonusgacha qoldi:\n    💵 {cashback_m.name}: {round(orders_m, 2)}/{cashback_m.summa}\n    " \
-                f"💵 {cashback_s.name}: {round(orders_s, 2)}/{cashback_s.summa}\n"
-        text += f"    💵 {cashback_y.name} : {round(orders_y, 2)}/{cashback_y.summa}\n"
+        # text += f"\n💰Sizda bonusgacha qoldi:\n    💵 {cashback_m.name}: {round(orders_m, 2)}/{cashback_m.summa}\n    " \
+        #         f"💵 {cashback_s.name}: {round(orders_s, 2)}/{cashback_s.summa}\n"
+        # text += f"    💵 {cashback_y.name} : {round(orders_y, 2)}/{cashback_y.summa}\n"
+        text += f"\n💰Sizda bonusgacha qoldi:\n"
+        text += f"💎 2% 2-6 mln so'm    {round(orders_m, 2)}/ 6000000.00 so'm\n"
+        text += f"💎 3% 6-12 mln so'm    {round(orders_m, 2)}/ 12000000.00 so'm\n"
+        text += f"💎 5% 12 mln + so'm    {round(orders_m, 2)}/ 12000000.00 so'm\n"
+        text += f"\n💎 3% 500-1000     {round(orders_m_count, 2)}/ 500 ta\n"
+        text += f"💎 5% 1000 +     {round(orders_m_count, 2)}/ 1000 ta\n"
+        text += f"\n💎 5% 25 mln + so'm    {round(orders_m, 2)}/ 25000000.00 so'm\n"
+
         text += f"\nQo'shimcha aksiyalar: \n"
         for sale in user_sales:
             text += f"📌{sale.sale.name}\n   {sale.sale.required_quantity} dona {sale.sale.product.itemname} uchun {sale.sale.gift_quantity} dona {sale.sale.gift_product.itemname}\n    {sale.order_quantity}/{sale.sale.required_quantity}. Muddat: {sale.sale.expiration_date.strftime('%d.%m.%Y')}"
