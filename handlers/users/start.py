@@ -72,15 +72,22 @@ async def start_func(message: types.Message, state: FSMContext):
         if user is not None:
             keyboard = await menu_keyboard()
             orders_m = await get_user_monthly(message.from_id)
+            orders_m_count = await get_user_monthly_count(message.from_id)
             orders_y = await get_user_yearly(message.from_id)
             orders_s = await get_user_seasonly(message.from_id)
             cashback_m = await get_cashback_monthly()
             cashback_s = await get_cashback_season()
             cashback_y = await get_cashback_year()
             text = "👋 Mega Star botiga xush kelibsiz.\n\n"
-            text += f"💎 {cashback_m.name} bonus uchun limit: {round(orders_m, 2)}/ {cashback_m.summa}\n"
-            text += f"💎 {cashback_s.name} bunus uchun limit: {round(orders_s, 2)}/ {cashback_s.summa}\n"
-            text += f"💎 {cashback_y.name} bunus uchun limit: {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
+            # text += f"💎 {cashback_m.name} bonus uchun limit: {round(orders_m, 2)}/ {cashback_m.summa}\n"
+            # text += f"💎 {cashback_s.name} bunus uchun limit: {round(orders_s, 2)}/ {cashback_s.summa}\n"
+            # text += f"💎 {cashback_y.name} bunus uchun limit: {round(orders_y, 2)}/ {cashback_y.summa}\n\n"
+            text += f"💎 2% 2-6 mln so'm    {round(orders_m, 2)}/ 6000000.00 so'm\n"
+            text += f"💎 3% 6-12 mln so'm    {round(orders_m, 2)}/ 12000000.00 so'm\n"
+            text += f"💎 5% 12 mln + so'm    {round(orders_m, 2)}/ 12000000.00 so'm\n"
+            text += f"\n💎 3% 500-1000     {round(orders_m_count, 2)}/ 500 ta\n"
+            text += f"💎 5% 1000 +     {round(orders_m_count, 2)}/ 1000 ta\n"
+            text += f"💎\n 5% 25 mln + so'm    {round(orders_m, 2)}/ 25000000.00 so'm\n"
             await message.answer(text, reply_markup=keyboard)
             await state.set_state("user_menu")
         else:
