@@ -151,6 +151,8 @@ class PromoCodeStatusSerializer(serializers.Serializer):
 class QrCodeSerializer(serializers.Serializer):
     card_code = serializers.CharField(max_length=100)
     cashback = serializers.IntegerField()
+    doc_entry = serializers.CharField(max_length=100)
+    doc_num = serializers.CharField(max_length=100)
 
     def validate(self, attrs):
         card_code = attrs.get('card_code')

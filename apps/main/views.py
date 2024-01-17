@@ -672,7 +672,9 @@ class QrCodeView(generics.CreateAPIView):
                 user = User.objects.filter(card_code=card_code).first()
                 cashback_history = UserCashbackHistory.objects.create(
                     user=user,
-                    summa=int(cashback)
+                    summa=int(cashback),
+                    doc_entry=data['doc_entry'],
+                    doc_num=data['doc_num'],
                 )
                 cashback_history.save()
                 user.all_cashback = user.all_cashback - int(cashback)

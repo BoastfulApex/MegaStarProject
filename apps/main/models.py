@@ -214,6 +214,8 @@ class UserCashbackHistory(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     summa = models.IntegerField(default=0)
     order = models.CharField(max_length=500, null=True, blank=True)
+    doc_entry = models.CharField(max_length=500, null=True, blank=True)
+    doc_num = models.CharField(max_length=500, null=True, blank=True)
 
 
 class UserComment(BaseModel):
