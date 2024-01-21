@@ -42,4 +42,6 @@ urlpatterns = [
 
     path('check_last_month_sale/', CheckSaleUsers.as_view(), name='user-check_last_month_sale'),
 
+    path('push_token/', PushTokenView.as_view(), name='push-token'),
+
 ]

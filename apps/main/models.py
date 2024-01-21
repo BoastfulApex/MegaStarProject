@@ -237,3 +237,8 @@ class UserLocations(models.Model):
     longitude = models.CharField(max_length=1000, null=True, blank=True)
     latitude = models.CharField(max_length=1000, null=True, blank=True)
     location = models.CharField(max_length=1000, null=True, blank=True)
+
+
+class PushToken(models.Model):
+    push = models.CharField(max_length=5000, null=True, blank=True)
+

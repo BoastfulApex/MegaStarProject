@@ -206,3 +206,9 @@ class UserLocationSerializer(serializers.ModelSerializer):
 class AddOrderSerializer(serializers.Serializer):
     pay_type = serializers.IntegerField()
     location = serializers.CharField(max_length=10000)
+
+
+class PushTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PushToken
+        fields = '__all__'

@@ -878,3 +878,11 @@ class CheckSaleUsers(generics.ListAPIView):
             user.save()
 
         return Response({'status': 'ok'})
+
+
+class PushTokenView(viewlist.ListCreateAPIView):
+    serializer_class = PushTokenSerializer
+
+    def get_queryset(self):
+        return PushToken.objects.all()
+
