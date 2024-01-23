@@ -102,27 +102,27 @@ class GetNameView(generics.CreateAPIView):
             )
 
 
-    queryset = MegaUser.objects.all()
-    serializer_class = PhoneVerifySerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            user = MegaUser.objects.get(phone=request.data["phone"])
-            user.generate_otp()
-            data = {
-                'otp': user.otp,
-                'name': user.first_name
-            }
-            send_sms(phone=user.phone, otp=user.otp)
-            return Response(
-                {
-                    "status": True,
-                    "code": 200,
-                    "data": data,
-                    "message": []
-                }
-            )
+    # queryset = MegaUser.objects.all()
+    # serializer_class = PhoneVerifySerializer
+    #
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     if serializer.is_valid(raise_exception=True):
+    #         user = MegaUser.objects.get(phone=request.data["phone"])
+    #         user.generate_otp()
+    #         data = {
+    #             'otp': user.otp,
+    #             'name': user.first_name
+    #         }
+    #         send_sms(phone=user.phone, otp=user.otp)
+    #         return Response(
+    #             {
+    #                 "status": True,
+    #                 "code": 200,
+    #                 "data": data,
+    #                 "message": []
+    #             }
+    #         )
 
 
 class SetNameView(generics.CreateAPIView):

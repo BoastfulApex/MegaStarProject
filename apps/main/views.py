@@ -566,7 +566,8 @@ class CardView(viewlist.ListCreateAPIView):
                     'summa': card.summa * 12156.52,
                     'product_id': card.product.id,
                     'product_name': card.product.itemname.encode('utf-8'),
-                    'product_image': "https://arzon.maxone.uz/files/" + str(card.product.image) if card.product.image else None,
+                    'product_image': "https://arzon.maxone.uz/files/" + str(
+                        card.product.image) if card.product.image else None,
                 }
                 cards_data.append(cards)
             response_data = {
@@ -752,6 +753,7 @@ class UserRecommendation(viewlist.ListAPIView):
 
 class Recommendation(viewlist.ListAPIView):
     serializer_class = ProductSerializer
+
     # permission_classes = IsAuthenticatedCustom
 
     def get_queryset(self):
@@ -797,6 +799,60 @@ class AboutUsView(viewlist.ListCreateAPIView):
 class StoryView(viewlist.ListCreateAPIView):
     serializer_class = StorySerializer
     queryset = Story.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        try:
+            data = {
+                {
+                    'id': 1,
+                    'user_image': 'https://mjko.uz/images/ins1.png',
+                    'user_name': 'Top product',
+                    'stories':
+                        {
+                            {
+                                'story_id': 1,
+                                'story_image': 'https://image.freepik.com/free-vector/universe-mobile-wallpaper-with-planets_79603-600.jpg',
+                                'swipeText': 'Custom swipe text for this story'
+                            },
+                            {
+                                'story_id': 2,
+                                'story_image': 'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
+                            }
+                        }
+                },
+                {
+                    id: 2,
+                    'user_image':
+                        'https://mjko.uz/images/ins2.png',
+                    'user_name': 'Fikrlar',
+                    'stories':
+                        {
+                            {
+                                'story_id': 1,
+                                'story_image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
+                                'swipeText': 'Custom swipe text for this story',
+                            },
+                            {
+                                'story_id': 2,
+                                'story_image': 'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
+                                'swipeText': 'Custom swipe text for this story',
+                            }
+                        }
+                }
+            }
+            return Response(
+                {"status": True,
+                 "code": 200,
+                 "data": data,
+                 "message": []}
+            )
+        except Exception as exx:
+            return Response(
+                {"status": True,
+                 "code": 500,
+                 "data": [],
+                 "message": [str(exx)]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class LocationView(viewlist.ListCreateAPIView):
@@ -885,4 +941,3 @@ class PushTokenView(viewlist.ListCreateAPIView):
 
     def get_queryset(self):
         return PushToken.objects.all()
-
