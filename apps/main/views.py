@@ -821,7 +821,7 @@ class StoryView(viewlist.ListCreateAPIView):
                         ]
                 },
                 {
-                    id: 2,
+                    'id': 2,
                     'user_image':
                         'https://mjko.uz/images/ins2.png',
                     'user_name': 'Fikrlar',
