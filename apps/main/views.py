@@ -802,13 +802,13 @@ class StoryView(viewlist.ListCreateAPIView):
 
     def list(self, request, *args, **kwargs):
         try:
-            data = {
+            data = [
                 {
                     'id': 1,
                     'user_image': 'https://mjko.uz/images/ins1.png',
                     'user_name': 'Top product',
                     'stories':
-                        {
+                        [
                             {
                                 'story_id': 1,
                                 'story_image': 'https://image.freepik.com/free-vector/universe-mobile-wallpaper-with-planets_79603-600.jpg',
@@ -818,7 +818,7 @@ class StoryView(viewlist.ListCreateAPIView):
                                 'story_id': 2,
                                 'story_image': 'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
                             }
-                        }
+                        ]
                 },
                 {
                     id: 2,
@@ -826,7 +826,7 @@ class StoryView(viewlist.ListCreateAPIView):
                         'https://mjko.uz/images/ins2.png',
                     'user_name': 'Fikrlar',
                     'stories':
-                        {
+                        [
                             {
                                 'story_id': 1,
                                 'story_image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
@@ -837,9 +837,9 @@ class StoryView(viewlist.ListCreateAPIView):
                                 'story_image': 'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
                                 'swipeText': 'Custom swipe text for this story',
                             }
-                        }
+                        ]
                 }
-            }
+            ]
             return Response(
                 {"status": True,
                  "code": 200,
