@@ -72,7 +72,7 @@ class PhoneVerify(generics.CreateAPIView):
                 'otp': user.otp,
                 'name': user.first_name
             }
-            # send_sms(phone=user.phone, otp=user.otp)
+            send_sms(phone=user.phone, otp=user.otp)
             return Response(
                 {
                     "status": True,

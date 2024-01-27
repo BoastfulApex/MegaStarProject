@@ -50,9 +50,11 @@ class MegaUser(AbstractUser):
         return "{}".format(self.phone)
 
     def generate_otp(self):
-        otp = random.randint(111111, 999999)
-        self.set_password(str(111111))
-        self.otp = 111111
+        otp = random.randint(100000, 999999)
+        if self.is_superuser:
+            otp = 111111
+        self.set_password(str(otp))
+        self.otp = otp
         self.save()
         return otp
 
