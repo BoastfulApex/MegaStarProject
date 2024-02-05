@@ -335,7 +335,11 @@ class OrderDetailView(generics.RetrieveAPIView):
             order_details = OrderDetail.objects.filter(order=instance)
             order_detail_serializer = OrderDetailSerializer(order_details, many=True)
             response_data = serializer.data
+            keshbeklar = UserCashbackHistory.objects.filtervalues('summa').all()
+            all_summa = [cashback['summa'] for cashback in keshbeklar]
+
             response_data['order_details'] = order_detail_serializer.data
+            response_data['all_cashback'] = all_summa
 
             return Response(
                 {"status": True,
