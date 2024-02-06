@@ -806,48 +806,32 @@ class StoryView(viewlist.ListCreateAPIView):
 
     def list(self, request, *args, **kwargs):
         try:
-            data = [
-                {
-                    'id': 1,
-                    'user_image': 'https://mjko.uz/images/ins1.png',
-                    'user_name': 'Top product',
-                    'stories':
-                        [
-                            {
-                                'story_id': 1,
-                                'story_image': 'https://image.freepik.com/free-vector/universe-mobile-wallpaper-with-planets_79603-600.jpg',
-                                'swipeText': 'Custom swipe text for this story'
-                            },
-                            {
-                                'story_id': 2,
-                                'story_image': 'https://image.freepik.com/free-vector/mobile-wallpaper-with-fluid-shapes_79603-601.jpg',
-                            }
-                        ]
-                },
-                {
-                    'id': 2,
-                    'user_image':
-                        'https://mjko.uz/images/ins2.png',
-                    'user_name': 'Fikrlar',
-                    'stories':
-                        [
-                            {
-                                'story_id': 1,
-                                'story_image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU',
-                                'swipeText': 'Custom swipe text for this story',
-                            },
-                            {
-                                'story_id': 2,
-                                'story_image': 'https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg',
-                                'swipeText': 'Custom swipe text for this story',
-                            }
-                        ]
+            stories = self.get_queryset()
+            story_categories = StoryCategory.objects.all().order_by('index')
+            response_data = []
+            for category in story_categories:
+                story_data = []
+                stories = Story.objects.filter(story_category=category).all()
+                for story in stories:
+                    st_data = {
+                            'story_id': story.id,
+                            'story_image': f'https://arzon.maxone.uz{story.file.url}',
+                            'swipeText': f'{story.file}'
+                    }
+                    story_data.append(st_data)
+                cat_data = {
+                    'id': category.id,
+                    'user_image': f'https://arzon.maxone.uz{category.image.url}',
+                    'user_name': f'{category.name}',
+                    'stories': story_data
                 }
-            ]
+                response_data.append(cat_data)
+
+
             return Response(
                 {"status": True,
                  "code": 200,
-                 "data": data,
+                 "data": response_data,
                  "message": []}
             )
         except Exception as exx:
