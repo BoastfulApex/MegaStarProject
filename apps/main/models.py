@@ -2,6 +2,7 @@ from django.db import models
 from apps.authentication.models import MegaUser as User
 from apps.home.models import BaseModel
 from datetime import datetime, timedelta
+from urllib.parse import unquote
 
 MONTH, SEASON, YEAR = (
     "month",
@@ -227,9 +228,26 @@ class AboutUs(models.Model):
     about = models.TextField(max_length=10000)
 
 
+class StoryCategory(models.Model):
+    name = models.CharField(max_length=200, null=True, blank=True)
+    image = models.ImageField(null=True)
+    index = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
 class Story(models.Model):
+    story_category = models.ForeignKey(StoryCategory, null=True, blank=True, on_delete=models.SET_NULL)
     file = models.FileField(null=True)
     title = models.CharField(max_length=1000, null=True)
+
+    @property
+    def PhotoURL(self):
+        try:
+            return self.file.url
+        except:
+            return ''
 
 
 class UserLocations(models.Model):

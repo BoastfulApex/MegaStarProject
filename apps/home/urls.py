@@ -23,5 +23,11 @@ urlpatterns = [
     path('sales_create/', views.sale_create, name='sale_create'),
     path('sales_detail/<int:pk>', views.sale_detail, name='sale_detail'),
     path('sales_delete/<int:pk>', views.SaleDelete.as_view(), name='sale_delete'),
+    path('story_categories/', views.story_categories, name='home_story_category'),
+    path('story_category_create/', views.story_category_create, name='story_category_create'),
+    path('story_category_delete/<int:pk>', views.StoryCategoryDelete.as_view(), name='story_category_delete'),
+    path('stories/', views.stories, name='home_stories'),
+    path('story_delete/<int:pk>', views.StoryDelete.as_view(), name='story_delete'),
+    path('story_create/', views.story_create, name='story_create'),
 
 ]

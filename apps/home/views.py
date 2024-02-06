@@ -312,3 +312,109 @@ class SaleDelete(DeleteView):
     model = Sale
     fields = '__all__'
     success_url = reverse_lazy('home_sales')
+
+
+def story_categories(request):
+    story_category = StoryCategory.objects.all().order_by('index')
+    search_query = request.GET.get('q')
+    if search_query:
+        story_category = story_category.filter(Q(name__icontains=search_query))
+    paginator = Paginator(story_category, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj,
+        "segment": "story_category"
+    }
+    html_template = loader.get_template('home/story_categories.html')
+    return HttpResponse(html_template.render(context, request))
+
+
+def story_category_create(request):
+    if request.method == 'POST':
+        form = StoryCategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home_story_category')
+    else:
+        form = StoryCategoryForm()
+
+    return render(request,
+                  'home/story_category_create.html',
+                  {'form': form})
+
+
+@login_required(login_url="/login/")
+def story_category_detail(request, pk):
+    story_category = StoryCategory.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = StoryCategoryForm(request.POST, request.FILES, instance=story_category)
+        if form.is_valid():
+            form.save()
+            return redirect('home_story_category')
+    else:
+        form = StoryCategoryForm(instance=story_category)
+
+    return render(request,
+                  'home/story_category_detail.html',
+                  {'form': form, 'segment': 'story_category', 'sale': story_category})
+
+
+class StoryCategoryDelete(DeleteView):
+    model = StoryCategory
+    fields = '__all__'
+    success_url = reverse_lazy('home_story_category')
+
+
+def stories(request):
+    story = Story.objects.all().order_by('id')
+    search_query = request.GET.get('q')
+    if search_query:
+        story = story.filter(Q(name__icontains=search_query))
+    paginator = Paginator(story, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj,
+        "segment": "stories"
+    }
+    html_template = loader.get_template('home/stories.html')
+    return HttpResponse(html_template.render(context, request))
+
+
+def story_create(request):
+    if request.method == 'POST':
+        form = StoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home_stories')
+    else:
+        form = StoryForm()
+
+    return render(request,
+                  'home/story_create.html',
+                  {'form': form})
+
+
+@login_required(login_url="/login/")
+def story_detail(request, pk):
+    story = Story.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = StoryForm(request.POST, request.FILES, instance=story)
+        if form.is_valid():
+            form.save()
+            return redirect('home_stories')
+    else:
+        form = StoryForm(instance=story)
+
+    return render(request,
+                  'home/story_detail.html',
+                  {'form': form, 'segment': 'stories', 'story': story})
+
+
+class StoryDelete(DeleteView):
+    model = Story
+    fields = '__all__'
+    success_url = reverse_lazy('home_stories')

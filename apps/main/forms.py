@@ -255,3 +255,56 @@ class SaleForm(forms.ModelForm):
         fields = ["name", "expiration_date", "required_quantity", "gift_quantity", 'image', 'description']
 
 
+class StoryCategoryForm(forms.ModelForm):
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ))
+    image = forms.ImageField(
+      widget=forms.FileInput()
+    )
+    index = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ))
+
+    class Meta:
+        model = StoryCategory
+        fields = '__all__'
+
+
+class StoryForm(forms.ModelForm):
+    title = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ))
+    file = forms.FileField(
+      widget=forms.FileInput(
+          attrs={
+              "class": "form-control-file",
+          }
+      )
+    )
+    story_category = forms.ModelChoiceField(
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+        queryset=StoryCategory.objects.all(),
+        empty_label=None
+    )
+
+    class Meta:
+        model = Story
+        fields = '__all__'
+
+    # def __init__(self, *args, **kwargs):
+    #     super(StoryForm, self).__init__(*args, **kwargs)
+    #     self.fields['story_category'].choices = [(category.id, category.name) for category in StoryCategory.objects.all()]
