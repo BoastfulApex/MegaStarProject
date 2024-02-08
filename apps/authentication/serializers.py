@@ -54,7 +54,23 @@ class PhoneVerifySerializer(serializers.Serializer):
         phone = attrs['phone']
         data = MegaUser.objects.filter(phone=phone).first()
         if not data:
-            raise serializers.ValidationError({"Error": "Mijozlar bazasida bu telefon raqamga mos ma'lumotlar topilmadi!"})
+            raise serializers.ValidationError({
+                "Error": "Mijozlar bazasida bu telefon raqamga mos ma'lumotlar topilmadi!"
+            })
+        return attrs
+
+
+class SetPasswordSerializer(serializers.Serializer):
+    phone = serializers.CharField()
+    password = serializers.IntegerField()
+
+    def validate(self, attrs):
+        phone = attrs['phone']
+        data = MegaUser.objects.filter(phone=phone).first()
+        if not data:
+            raise serializers.ValidationError({
+                "Error": "Mijozlar bazasida bu telefon raqamga mos ma'lumotlar topilmadi!"
+            })
         return attrs
 
 

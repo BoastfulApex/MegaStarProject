@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 
 from .models import MegaUser, send_sms
-from .serializers import PhoneVerifySerializer, PhoneAuthTokenSerializer, SetNameSerializer
+from .serializers import PhoneVerifySerializer, PhoneAuthTokenSerializer, SetNameSerializer, SetPasswordSerializer
 
 
 def login_view(request):
@@ -68,9 +68,13 @@ class PhoneVerify(generics.CreateAPIView):
         if serializer.is_valid(raise_exception=True):
             user = MegaUser.objects.get(phone=request.data["phone"])
             user.generate_otp()
+            password = "Not"
+            if user.has_usable_password():
+                password = 'Yes'
             data = {
                 'otp': user.otp,
-                'name': user.first_name
+                'name': user.first_name,
+                'password': password
             }
             send_sms(phone=user.phone, otp=user.otp)
             return Response(
@@ -148,3 +152,25 @@ class SetNameView(generics.CreateAPIView):
                 }
             )
 
+
+class SetPassword(generics.CreateAPIView):
+    queryset = MegaUser.objects.all()
+    serializer_class = SetPasswordSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = MegaUser.objects.get(phone=request.data["phone"])
+            password = str(request.data["password"])
+            user.set_password(password)
+            data = {
+            }
+            # send_sms(phone=user.phone, otp=user.otp)
+            return Response(
+                {
+                    "status": True,
+                    "code": 200,
+                    "data": "Password aha been set!",
+                    "message": []
+                }
+            )

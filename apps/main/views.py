@@ -806,7 +806,6 @@ class StoryView(viewlist.ListCreateAPIView):
 
     def list(self, request, *args, **kwargs):
         try:
-            stories = self.get_queryset()
             story_categories = StoryCategory.objects.all().order_by('index')
             response_data = []
             for category in story_categories:
