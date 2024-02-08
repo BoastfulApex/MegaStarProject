@@ -13,6 +13,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
+	{% if request.user.is_media_staff == False %}
 
 			<main class="content">
 				<div class="container-fluid p-0">
@@ -52,6 +53,7 @@
 					</div>
 				</div>
 			</main>
+	{% endif %}
 {% endblock content %}
 
 {% block javascripts %}

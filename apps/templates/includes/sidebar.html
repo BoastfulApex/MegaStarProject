@@ -5,7 +5,7 @@
             <li class="sidebar-header">
                 Pages
             </li>
-
+            {% if request.user.is_media_staff == False %}
             <li class="sidebar-item {% if 'dashboard' in segment %} active {% endif %}">
                 <a class="sidebar-link" href="{% url 'home' %}">
                     <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
@@ -17,6 +17,7 @@
                     <i class="align-middle" data-feather="user"></i> <span class="align-middle">Xaridorlar</span>
                 </a>
             </li>
+            {% endif %}
 
             <li class="sidebar-item {% if 'cats' in segment %} active {% endif %}">
                 <a class="sidebar-link " href="{% url 'home_categories' %}">

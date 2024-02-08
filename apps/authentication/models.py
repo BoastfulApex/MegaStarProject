@@ -41,6 +41,8 @@ class MegaUser(AbstractUser):
     sale_cashback = models.IntegerField(null=True, blank=True, default=0)
     sale_cashback_summa = models.IntegerField(null=True, blank=True, default=0)
 
+    is_media_staff = models.BooleanField(null=True, blank=True, default=False)
+
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 

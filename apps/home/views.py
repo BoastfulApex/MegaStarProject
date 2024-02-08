@@ -368,7 +368,7 @@ class StoryCategoryDelete(DeleteView):
 
 
 def stories(request):
-    story = Story.objects.all().order_by('id')
+    story = Story.objects.all()
     search_query = request.GET.get('q')
     if search_query:
         story = story.filter(Q(name__icontains=search_query))
