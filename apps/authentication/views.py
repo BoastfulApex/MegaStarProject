@@ -163,6 +163,7 @@ class SetPassword(generics.CreateAPIView):
             user = MegaUser.objects.get(phone=request.data["phone"])
             password = str(request.data["password"])
             user.set_password(password)
+            user.save()
             data = {
             }
             # send_sms(phone=user.phone, otp=user.otp)
@@ -170,7 +171,7 @@ class SetPassword(generics.CreateAPIView):
                 {
                     "status": True,
                     "code": 200,
-                    "data": "Password aha been set!",
+                    "data": "Password has been set!",
                     "message": []
                 }
             )
