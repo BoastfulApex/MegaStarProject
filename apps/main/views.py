@@ -332,17 +332,15 @@ class OrderDetailView(generics.RetrieveAPIView):
         try:
             instance = self.get_object()
             serializer = self.get_serializer(instance)
-            # order = Order.objects.filter(id=kwargs['pk']).first()
+
             order_details = OrderDetail.objects.filter(order=instance)
             order_detail_serializer = OrderDetailSerializer(order_details, many=True)
             response_data = serializer.data
-            print(response_data)
             keshbeklar = UserCashbackHistory.objects.filtervalues('summa').all()
             all_summa = [cashback['summa'] for cashback in keshbeklar]
 
             response_data['order_details'] = order_detail_serializer.data
             response_data['all_cashback'] = all_summa
-            print(response_data)
 
             return Response(
                 {"status": True,
