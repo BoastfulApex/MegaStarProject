@@ -321,7 +321,7 @@ class OrderView(generics.ListAPIView):
 class OrderDetailView(generics.RetrieveAPIView):
     serializer_class = OrderDetailSerializer
     # permission_classes = [IsAuthenticatedCustom]
-    queryset = OrderDetail.objects.all()
+    queryset = Order.objects.all()
 
     # def get_queryset(self):
     #     user = self.request.user
