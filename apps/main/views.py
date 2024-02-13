@@ -341,6 +341,7 @@ class OrderDetailView(generics.RetrieveAPIView):
 
             response_data['order_details'] = order_detail_serializer.data
             response_data['all_cashback'] = all_summa
+            print(response_data)
 
             return Response(
                 {"status": True,
