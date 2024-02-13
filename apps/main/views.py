@@ -340,7 +340,7 @@ class OrderDetailView(generics.RetrieveAPIView):
             all_summa = [cashback['summa'] for cashback in keshbeklar]
 
             response_data['order_details'] = order_detail_serializer.data
-            response_data['all_cashback'] = all_summa
+            response_data['all_cashback'] = sum(all_summa)
 
             return Response(
                 {"status": True,
