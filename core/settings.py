@@ -107,7 +107,7 @@ REST_FRAMEWORK = {
 }
 
 KNOX = {
-    'TOKEN_TTL': timedelta(hours=24 * 30),
+    'TOKEN_TTL': timedelta(hours=24 * 1000),
 }
 
 AUTH_USER_MODEL = 'authentication.MegaUser'
