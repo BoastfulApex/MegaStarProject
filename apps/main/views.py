@@ -338,8 +338,20 @@ class OrderDetailView(generics.RetrieveAPIView):
             response_data = serializer.data
             keshbeklar = UserCashbackHistory.objects.filter(user=instance.user).values('summa')
             all_summa = [cashback['summa'] for cashback in keshbeklar]
+            details_all_data = []
+            for i in order_detail_serializer.data:
+                d = {
+                    'id': i['id'],
+                    'count': i['count'],
+                    'total': i['total'],
+                    'total_uzs': i['total_uzs'],
+                    'location': i['location'],
+                    'order': i['order'],
+                    'product': Product.objects.get(id=i['product']).itemname
+                }
+                details_all_data.append(d)
+            response_data['order_details'] = details_all_data
 
-            response_data['order_details'] = order_detail_serializer.data
             response_data['all_cashback'] = sum(all_summa)
 
             return Response(
