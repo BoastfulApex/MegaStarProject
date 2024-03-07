@@ -428,41 +428,41 @@ class UserTotalStatusView(generics.ListAPIView):
                 "type": "standart",
             }
             d_4 = {
-                "name": "2% 2-6 mln so'm",
+                "name": "2% Keshbek:      2-6 mln. so’m",
                 "need": 6000000,
                 "earn": monthly,
                 "type": "aksiya",
 
             }
             d_5 = {
-                "name": "3% 6-12 mln so'm",
+                "name": "3% Keshbek:      6-12 mln. so’m",
                 "need": 12000000,
                 "earn": monthly,
                 "type": "aksiya",
             }
             d_6 = {
-                "name": "2% 12 mln + so'm",
+                "name": "5% Keshbek:      12+ mln. so’m",
                 "need": 12000000,
                 "earn": monthly,
                 "type": "aksiya",
             }
 
             d_7 = {
-                "name": "3% 500-1000",
+                "name": "3% Keshbek:      500-1,000 ta",
                 "need": 500,
                 "earn": monthly_count,
                 "type": "Yoki",
             }
 
             d_8 = {
-                "name": "5% 1000+ ta",
+                "name": "5% Keshbek:      1,000+ ta",
                 "need": 1000,
                 "earn": monthly_count,
                 "type": "Yoki",
             }
 
             d_9 = {
-                "name": "2% Keshbek 25 mln +",
+                "name": "2% Keshbek:      25 mln +",
                 "need": 25000000,
                 "earn": monthly_count,
                 "type": "Boshqa",
