@@ -15,6 +15,8 @@ from rest_framework import generics
 from .models import MegaUser, send_sms
 from .serializers import PhoneVerifySerializer, PhoneAuthTokenSerializer, SetNameSerializer, SetPasswordSerializer
 
+from datetime import timedelta
+
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -45,7 +47,7 @@ class LoginView(KnoxLoginView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        token_ttl = self.get_token_ttl()
+        token_ttl = timedelta(days=30)
         instance, token = AuthToken.objects.create(request.user, token_ttl)
         user_logged_in.send(sender=request.user.__class__,
                             request=request, user=request.user)
