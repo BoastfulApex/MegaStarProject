@@ -247,7 +247,7 @@ def add_postgres_invoices():
     url = ("Invoices?$select=DocEntry,DocNum,DocDate,DocDueDate,CardCode,CardName,"
            "DocTotal,U_sumUZS,DiscountPercent,DocumentLines$filter=CardCode eq 'FIZ0006670'")
     i = 1
-    url = "Invoices?$filter=CardCode eq 'FIZ006670'"
+    # url = "Invoices?$filter=CardCode eq 'FIZ006670'"
     while True:
         # current_time = datetime.datetime.now()
         # two_minutes_ago = current_time - timedelta(minutes=1)
