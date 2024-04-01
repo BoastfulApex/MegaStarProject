@@ -60,7 +60,7 @@ def add_cashback_to_user(order_id, conn, CardCode):
     order = cur.fetchone()
     order_amount = order[0]
     order_datetime = order[1]
-    cur.execute("SELECT * FROM main_usercashback WHERE user = %s AND expiration_date > %s AND active=True",
+    cur.execute("SELECT * FROM main_usercashback WHERE user_id = %s AND expiration_date > %s AND active=True",
                 (user[0], order_datetime,))
     user_cashbacks = cur.fetchall()
 
@@ -244,21 +244,22 @@ def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
 
 def add_postgres_invoices():
     session = get_session_id()
-    url = 'Invoices?$select=DocEntry,DocNum,DocDate,DocDueDate,CardCode,CardName,DocTotal,U_sumUZS,DiscountPercent,' \
-          'DocumentLines'
+    url = ("Invoices?$select=DocEntry,DocNum,DocDate,DocDueDate,CardCode,CardName,"
+           "DocTotal,U_sumUZS,DiscountPercent,DocumentLines$filter=CardCode eq 'FIZ0006670'")
     i = 1
+    url = "Invoices?$filter=CardCode eq 'FIZ006670'"
     while True:
-        current_time = datetime.datetime.now()
-        two_minutes_ago = current_time - timedelta(minutes=1)
-        if current_time.minute == 0:
-            two_minutes_ago = datetime.datetime.now()
-
-        today_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        current_time_formatted = current_time.strftime("%H:%M:%S")
-        two_minutes_ago_formatted = two_minutes_ago.strftime("%H:%M:%S")
-        url += (f",UpdateDate,UpdateTime&$orderby=UpdateDate,UpdateTime&$filter=(UpdateDate ge '{today_date}' and "
-                f"UpdateTime ge '{current_time_formatted}') and (UpdateDate le '{today_date}' and UpdateTime le "
-                f"'{two_minutes_ago_formatted}') and Cancelled eq 'tNO'")
+        # current_time = datetime.datetime.now()
+        # two_minutes_ago = current_time - timedelta(minutes=1)
+        # if current_time.minute == 0:
+        #     two_minutes_ago = datetime.datetime.now()
+        #
+        # today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        # current_time_formatted = current_time.strftime("%H:%M:%S")
+        # two_minutes_ago_formatted = two_minutes_ago.strftime("%H:%M:%S")
+        # url += (f",UpdateDate,UpdateTime&$orderby=UpdateDate,UpdateTime&$filter=(UpdateDate ge '{today_date}' and "
+        #         f"UpdateTime ge '{current_time_formatted}') and (UpdateDate le '{today_date}' and UpdateTime le "
+        #         f"'{two_minutes_ago_formatted}') and Cancelled eq 'tNO'")
         i += 1
         conn = psycopg2.connect(
             host=DB_HOST,
