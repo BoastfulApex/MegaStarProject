@@ -105,10 +105,11 @@ else:
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
 }
+
 REST_KNOX_TOKEN_TTL = timedelta(days=30)
 
 KNOX = {
-    'TOKEN_TTL': timedelta(hours=24 * 1000),
+    'TOKEN_TTL': timedelta(hours=24 * 1000 * 30),
 }
 
 AUTH_USER_MODEL = 'authentication.MegaUser'
