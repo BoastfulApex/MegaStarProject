@@ -123,7 +123,11 @@ class Order(BaseModel):
     doc_entry = models.CharField(max_length=100, null=True, blank=True)
     doc_num = models.CharField(max_length=2000, null=True, blank=True)
     pay_type = models.IntegerField(null=True, blank=True)
-
+    moll = models.CharField(max_length=100, null=True)
+    client_name = models.CharField(max_length=100, null=True)
+    clinet_phone_number = models.CharField(max_length=100, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    manager_phone_number = models.CharField(max_length=100, null=True)
 
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

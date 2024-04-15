@@ -331,8 +331,8 @@ class OrderDetailView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
-            serializer = self.get_serializer(instance)
-
+            serializer = OrderSerializer(instance)
+            da=
             order_details = OrderDetail.objects.filter(order=instance)
             order_detail_serializer = OrderDetailSerializer(order_details, many=True)
             response_data = serializer.data
@@ -347,6 +347,11 @@ class OrderDetailView(generics.RetrieveAPIView):
                     'total_uzs': i['total_uzs'],
                     'location': i['location'],
                     'order': i['order'],
+                    'moll': i['moll'],
+                    'client_name': i['client_name'],
+                    'clinet_phone_number': i['clinet_phone_number'],
+                    'manager_phone_number': i['manager_phone_number'],
+                    'created_date': i['created_date'],
                     'product': Product.objects.get(id=i['product']).itemname
                 }
                 details_all_data.append(d)
