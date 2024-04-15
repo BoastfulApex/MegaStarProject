@@ -332,7 +332,6 @@ class OrderDetailView(generics.RetrieveAPIView):
         try:
             instance = self.get_object()
             serializer = OrderSerializer(instance)
-            da=
             order_details = OrderDetail.objects.filter(order=instance)
             order_detail_serializer = OrderDetailSerializer(order_details, many=True)
             response_data = serializer.data
