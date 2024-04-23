@@ -346,11 +346,6 @@ class OrderDetailView(generics.RetrieveAPIView):
                     'total_uzs': i['total_uzs'],
                     'location': i['location'],
                     'order': i['order'],
-                    'moll': i['moll'],
-                    'client_name': i['client_name'],
-                    'clinet_phone_number': i['clinet_phone_number'],
-                    'manager_phone_number': i['manager_phone_number'],
-                    'created_date': i['created_date'],
                     'product': Product.objects.get(id=i['product']).itemname
                 }
                 details_all_data.append(d)

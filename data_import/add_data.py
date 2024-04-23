@@ -7,7 +7,8 @@ import random
 import json
 from datetime import timedelta
 
-from .get_data import categories, sub_categories, manufacturers, clients, items, invoices, get_session_id, get_objects
+from .get_data import (categories, sub_categories, manufacturers, clients, items, invoices, get_session_id, get_objects,
+                       get_warehouses)
 from .db_get_id import *
 
 load_dotenv()
@@ -242,6 +243,26 @@ def add_order(conn, DocEntry, DocNum, CardCode, DocTotal, DocDate, U_sumUZS):
         return None
 
 
+def add_warehouse(conn, code, name):
+    cursor = conn.cursor()
+    guid = str(uuid.uuid4())
+    created_date = datetime.datetime.now()
+    try:
+        cursor.execute("SELECT * FROM main_warehouse WHERE warehouse_code = %s LIMIT 1", [code])
+        row = cursor.fetchone()
+    except:
+        row = None
+    if row is not None:
+        return row
+    else:
+        cursor.execute(
+            "INSERT INTO main_warehouse (guid, warehouse_code, warehouse_name, created_date) VALUES (%s, %s, %s, %s) RETURNING id",
+            [guid, code, name, created_date])
+        new_row = cursor.fetchone()
+        return new_row
+
+
+
 def add_postgres_invoices():
     session = get_session_id()
     url = ("Invoices?$select=DocEntry,DocNum,DocDate,DocDueDate,CardCode,CardName,"
@@ -434,3 +455,24 @@ def check_sale_cashback():
         return response_data
     else:
         pass
+
+
+def add_postgres_warehouse():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    json_data = get_warehouses()
+
+    for data in json_data:
+        warehouse = add_warehouse(
+            conn=conn,
+            name=str(data['WarehouseName']),
+            code=str(data['WarehouseCode'])
+        )
+    conn.commit()
+    conn.close()

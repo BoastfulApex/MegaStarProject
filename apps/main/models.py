@@ -96,6 +96,20 @@ class Manufacturer(BaseModel):
         return self.manufacturer_name
 
 
+class WareHouse(BaseModel):
+    warehouse_code = models.CharField(max_length=1000, null=True, blank=True)
+    warehouse_name = models.CharField(max_length=1000, null=True, blank=True)
+
+    def __str__(self):
+        return self.warehouse_name
+
+
+class SalesEmployee(BaseModel):
+    employee_code = models.IntegerField(null=True)
+    employee_name = models.CharField(max_length=1000, null=True, blank=True)
+    ware_house = models.CharField(max_length=1000, null=True, blank=True)
+
+
 class Product(BaseModel):
     itemcode = models.CharField(max_length=100, null=True, blank=True)
     itemname = models.CharField(max_length=2000, null=True, blank=True)
@@ -123,11 +137,9 @@ class Order(BaseModel):
     doc_entry = models.CharField(max_length=100, null=True, blank=True)
     doc_num = models.CharField(max_length=2000, null=True, blank=True)
     pay_type = models.IntegerField(null=True, blank=True)
-    moll = models.CharField(max_length=100, null=True)
-    client_name = models.CharField(max_length=100, null=True)
-    clinet_phone_number = models.CharField(max_length=100, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    manager_phone_number = models.CharField(max_length=100, null=True)
+    sales_employee = models.ForeignKey(SalesEmployee, on_delete=models.SET_NULL, null=True, blank=True)
+    warehouse = models.ForeignKey(WareHouse, on_delete=models.SET_NULL, null=True, blank=True)
+
 
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
