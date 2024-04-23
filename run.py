@@ -6,7 +6,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loader import bot
 from data_import.add_data import (add_postgres_users, add_postgres_category,\
     add_postgres_subcategory, add_postgres_manufacturer, add_postgres_item, add_postgres_invoices, check_sale_cashback,
-                                  add_postgres_warehouse)
+                                  add_postgres_warehouse, add_postgres_salesemployee)
 
 
 def set_scheduled_jobs(scheduler, *args, **kwargs):
@@ -19,6 +19,7 @@ def set_scheduled_jobs(scheduler, *args, **kwargs):
     # scheduler.add_job(add_postgres_invoices, "interval", seconds=15)
     scheduler.add_job(check_sale_cashback, "interval", days=1)
     scheduler.add_job(add_postgres_warehouse, "interval", seconds=10)
+    scheduler.add_job(add_postgres_salesemployee, "interval", seconds=10)
 
 
 async def on_startup(dp):

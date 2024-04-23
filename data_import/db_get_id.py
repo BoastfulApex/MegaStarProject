@@ -15,7 +15,6 @@ DB_PORT     = os.getenv('DB_PORT'     , None)
 DB_NAME     = os.getenv('DB_NAME'     , None)
 
 
-
 def get_category_by_number(number):
     conn = psycopg2.connect(
         host=DB_HOST,
@@ -119,3 +118,21 @@ def get_item_by_itemcode(itemcode):
         return row[0]
     else:
         return None
+
+
+def get_warehouse_by_code(code):
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM main_warehouse WHERE warehouse_code = %s", (f'{code}',))
+    row = cursor.fetchone()
+    conn.commit()
+    conn.close()
+    return row[0]
+

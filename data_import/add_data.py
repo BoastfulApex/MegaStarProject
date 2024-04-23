@@ -8,7 +8,7 @@ import json
 from datetime import timedelta
 
 from .get_data import (categories, sub_categories, manufacturers, clients, items, invoices, get_session_id, get_objects,
-                       get_warehouses)
+                       get_warehouses, get_salespersons)
 from .db_get_id import *
 
 load_dotenv()
@@ -262,6 +262,23 @@ def add_warehouse(conn, code, name):
         return new_row
 
 
+def add_sales_employee(conn, code, name, warehouse_code):
+    cursor = conn.cursor()
+    guid = str(uuid.uuid4())
+    created_date = datetime.datetime.now()
+    cursor.execute("SELECT * FROM main_salesemployee WHERE employee_code = %s LIMIT 1", [code])
+    row = cursor.fetchone()
+
+    if row:
+        return row
+    else:
+        cursor.execute(
+            "INSERT INTO main_salesemployee (guid, employee_code, employee_name, created_date, warehouse_id) VALUES (%s, %s, %s, %s, "
+            "%s) RETURNING id",
+            [guid, code, name, created_date, str(get_warehouse_by_code(warehouse_code))])
+        new_row = cursor.fetchone()
+        return new_row
+
 
 def add_postgres_invoices():
     session = get_session_id()
@@ -476,3 +493,29 @@ def add_postgres_warehouse():
         )
     conn.commit()
     conn.close()
+
+
+def add_postgres_salesemployee():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USERNAME,
+        password=DB_PASS
+    )
+
+    json_data = get_salespersons()
+
+    for data in json_data:
+        print(str(data['U_whs']))
+        if str(data['U_whs']) != 'None' and str(data['SalesEmployeeCode']) != 'None':
+            emp = add_sales_employee(
+                conn=conn,
+                name=str(data['SalesEmployeeName']),
+                code=str(data['SalesEmployeeCode']),
+                warehouse_code=str(data['U_whs'])
+            )
+    conn.commit()
+    conn.close()
+
+

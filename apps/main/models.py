@@ -107,7 +107,7 @@ class WareHouse(BaseModel):
 class SalesEmployee(BaseModel):
     employee_code = models.IntegerField(null=True)
     employee_name = models.CharField(max_length=1000, null=True, blank=True)
-    ware_house = models.CharField(max_length=1000, null=True, blank=True)
+    warehouse = models.ForeignKey(WareHouse, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Product(BaseModel):
